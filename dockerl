@@ -1,0 +1,14 @@
+#!/bin/bash
+
+ME=$(realpath $(dirname $0))
+
+# Load up .env
+set -o allexport
+[[ -f $ME/.env ]] && source $ME/.env
+set +o allexport
+
+cd $ME
+
+printf 'Running in: %' ${DOCKER_PROJECT_NAME}
+
+docker-compose -p ${DOCKER_PROJECT_NAME} $@

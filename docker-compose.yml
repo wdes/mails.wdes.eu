@@ -1,0 +1,178 @@
+version: "3.8"
+
+services:
+    mail:
+        image: tvial/docker-mailserver:latest
+        hostname: mail
+        domainname: ${DOMAIN_NAME}
+        container_name: mail-server.${DOMAIN_NAME}
+        dns: 1.1.1.1
+        networks:
+            mail_infra_network:
+                aliases:
+                    - mail-server.${DOMAIN_NAME}
+        ports:
+            - "25:25" # SMTP
+            - "587:587" # ESMTP
+            - "465:465" # ESMTP
+            - "143:143" # IMAP4
+            - "993:993" # IMAP4
+            - "110:110" # POP3
+            - "995:995" # POP3
+        volumes:
+            - ${MAIL_DATA_DIR}:/var/mail
+            - ${MAIL_STATE_DIR}:/var/mail-state
+            - ${MAIL_LOGS_DIR}:/var/log/mail
+            - ${MAIL_CONFIGS_DIR}:/tmp/docker-mailserver/
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror3:/acme.sh/${DOMAIN_NAME}/
+        environment:
+            OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
+            ENABLE_SPAMASSASSIN: "1"
+            SPAMASSASSIN_SPAM_TO_INBOX: "1"
+            ENABLE_CLAMAV: "1"
+            ENABLE_FAIL2BAN: "0"
+            ENABLE_POSTGREY: "1"
+            ENABLE_POP3: "1"
+            ONE_DIR: "1"
+            DMS_DEBUG: "0"
+            ENABLE_LDAP: "1"
+            LDAP_SERVER_HOST: "ldap.${DOMAIN_NAME}"
+            LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
+            LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
+            LDAP_BIND_PW: ${LDAP_ADMIN_PASSWORD}
+            LDAP_QUERY_FILTER_USER: "(&(mail=%s)(mailEnabled=TRUE))"
+            LDAP_QUERY_FILTER_GROUP: "(&(mailGroupMember=%s)(mailEnabled=TRUE))"
+            LDAP_QUERY_FILTER_ALIAS: "(|(&(mailAlias=%s)(objectClass=PostfixBookMailForward))(&(mailAlias=%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE)))"
+            LDAP_QUERY_FILTER_DOMAIN: "(|(&(mail=*@%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE))(&(mailGroupMember=*@%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE))(&(mailalias=*@%s)(objectClass=PostfixBookMailForward)))"
+            DOVECOT_PASS_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%n@${DOMAIN_NAME}))"
+            DOVECOT_USER_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%n@${DOMAIN_NAME}))"
+            DOVECOT_DEFAULT_PASS_SCHEME: "SSHA256"
+            TLS_LEVEL: "intermediate"
+            SASLAUTHD_LDAP_START_TLS: "no"
+            SASLAUTHD_LDAP_SSL: "1"
+            SASLAUTHD_LDAP_TLS_CHECK_PEER: "yes"
+            ENABLE_SASLAUTHD: "1"
+            SASLAUTHD_MECHANISMS: "ldap"
+            SASLAUTHD_LDAP_SERVER: "ldaps://ldap.${DOMAIN_NAME}"
+            SASLAUTHD_LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
+            SASLAUTHD_LDAP_PASSWORD: ${LDAP_ADMIN_PASSWORD}
+            SASLAUTHD_LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
+            SASLAUTHD_LDAP_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%U@${DOMAIN_NAME}))"
+            POSTMASTER_ADDRESS: "postmaster@${DOMAIN_NAME}"
+            POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
+            DOVECOT_TLS: "yes"
+            LDAP_START_TLS: "yes"
+            SSL_TYPE: "manual"
+            SSL_CERT_PATH: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"
+            SSL_KEY_PATH: "/acme.sh/${DOMAIN_NAME}/${DOMAIN_NAME}.key"
+        cap_add:
+            - NET_ADMIN
+            - SYS_PTRACE
+        restart: always
+        depends_on:
+            - openldap
+            - acme
+
+    openldap:
+        image: osixia/openldap:1.4.0
+        container_name: ldap.${DOMAIN_NAME}
+        dns_search: ${DOMAIN_NAME}
+        hostname: ldap.${DOMAIN_NAME}
+        domainname: ldap.${DOMAIN_NAME}
+        networks:
+            mail_infra_network:
+                aliases:
+                    - ldap-admin.${DOMAIN_NAME}
+        environment:
+            LDAP_OPENLDAP_GID: 0
+            LDAP_OPENLDAP_UID: 0
+            LDAP_TLS: "true"
+            LDAP_TLS_CRT_FILENAME: "${DOMAIN_NAME}.cer"
+            LDAP_TLS_KEY_FILENAME: "${DOMAIN_NAME}.key"
+            LDAP_TLS_CA_CRT_FILENAME: "ca.cer"
+            LDAP_TLS_CIPHER_SUITE: "NORMAL"
+            LDAP_TLS_VERIFY_CLIENT: "allow"
+            LDAP_TLS_ENFORCE: "true"
+            LDAP_ORGANISATION: ${LDAP_ORGANISATION}
+            LDAP_DOMAIN: "${DOMAIN_NAME}"
+            LDAP_BASE_DN: "${LDAP_BASE_DN}"
+            LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
+            LDAP_CONFIG_PASSWORD: ${LDAP_CONFIG_PASSWORD}
+            LDAP_READONLY_USER: "true"
+            LDAP_READONLY_USER_USERNAME: "ldap-ro"
+            LDAP_READONLY_USER_PASSWORD: ${LDAP_READONLY_PASSWORD}
+            LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
+            LDAP_SEED_INTERNAL_LDIF_PATH: "/tmp/ldap-custom-ldif"
+        tty: true
+        stdin_open: true
+        volumes:
+            - ${LDAP_DATA_DIR}:/var/lib/ldap
+            - ${LDAP_SLAPD_DIR}:/etc/ldap/slapd.d
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/ca.cer:/container/service/slapd/assets/certs/ca.cer
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/fullchain.cer:/container/service/slapd/assets/certs/${DOMAIN_NAME}.cer
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/${DOMAIN_NAME}.key
+            - ./data/ldap-custom-schema/postfix-book.schema:/container/service/slapd/assets/config/bootstrap/schema/mmc/mail.schema
+            - ${LDAP_CUSTOM_LDIF_DIR:-./data/ldap-custom-ldif}:/tmp/ldap-custom-ldif
+        ports:
+            - "389:389"
+            - "636:636"
+        depends_on:
+            - acme
+
+    phpldapadmin:
+        image: osixia/phpldapadmin:latest
+        container_name: phpldapadmin
+        networks:
+            mail_infra_network:
+                aliases:
+                    - ldap-admin.${DOMAIN_NAME}
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "php -r \"file_get_contents('https://localhost', false, stream_context_create(['ssl' => ['verify_peer'=> false, 'verify_peer_name'=> true, 'peer_name'=> '${DOMAIN_NAME}', 'peer_fingerprint' => openssl_x509_fingerprint(file_get_contents('/container/service/phpldapadmin/assets/apache2/certs/fullchain.cer')) ]]));\""
+                ]
+            interval: 300s
+            timeout: 1s
+            retries: 3
+        environment:
+            PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.${DOMAIN_NAME}': [{'server': [{'tls': True}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
+            PHPLDAPADMIN_HTTPS_CRT_FILENAME: "fullchain.cer"
+            PHPLDAPADMIN_HTTPS_KEY_FILENAME: "${DOMAIN_NAME}.key"
+            PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: "ca.cer"
+            PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT: "try"
+            PHPLDAPADMIN_LDAP_CLIENT_TLS: "true"
+            PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME: "ca.cer"
+            PHPLDAPADMIN_LDAP_CLIENT_TLS_CRT_FILENAME: "fullchain.cer"
+            PHPLDAPADMIN_LDAP_CLIENT_TLS_KEY_FILENAME: "${DOMAIN_NAME}.key"
+        volumes:
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1:/container/service/phpldapadmin/assets/apache2/certs
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1:/container/service/ldap-client/assets/certs
+        ports:
+            - "8080:443"
+        depends_on:
+            - openldap
+            - acme
+    acme:
+        image: neilpang/acme.sh:latest
+        volumes:
+            - ./scripts:/scripts:ro
+            - ${ACME_HOME_DIR}:/acme.sh
+        healthcheck:
+            test: ["CMD", "sh", "/scripts/healthcheck.sh"]
+            interval: 300s
+            timeout: 1s
+            retries: 3
+        environment:
+            # CloudFlare
+            CF_Key: ${CF_API_KEY}
+            CF_Email: ${CF_API_EMAIL}
+            DOMAIN_NAME: "${DOMAIN_NAME}"
+            DNS_API: "dns_cf"
+            ACME_SH_EMAIL: "williamdes@wdes.fr"
+        command: sh ./scripts/acme.sh-docker.sh
+        container_name: acme
+
+networks:
+    mail_infra_network:
+        driver: bridge
