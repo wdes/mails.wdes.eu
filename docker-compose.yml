@@ -95,6 +95,9 @@ services:
                 aliases:
                     - ldap-admin.${DOMAIN_NAME}
         environment:
+            # 256 to enable debug
+            # See: https://www.openldap.org/doc/admin24/slapdconf2.html
+            LDAP_LOG_LEVEL: 0
             LDAP_OPENLDAP_GID: 0
             LDAP_OPENLDAP_UID: 0
             LDAP_TLS: "true"
