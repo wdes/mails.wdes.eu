@@ -3,6 +3,12 @@ version: "3.8"
 services:
     mail:
         image: tvial/docker-mailserver:latest
+        restart: on-failure:40
+        logging:
+            driver: "json-file"
+            options:
+                max-file: 5
+                max-size: 5m
         hostname: mail
         domainname: ${DOMAIN_NAME}
         container_name: mail-server.${DOMAIN_NAME}
@@ -68,13 +74,18 @@ services:
         cap_add:
             - NET_ADMIN
             - SYS_PTRACE
-        restart: always
         depends_on:
             - openldap
             - acme
 
     openldap:
+        logging:
+            driver: "json-file"
+            options:
+                max-file: 5
+                max-size: 1m
         image: osixia/openldap:1.4.0
+        restart: on-failure:5
         container_name: ldap.${DOMAIN_NAME}
         dns_search: ${DOMAIN_NAME}
         hostname: ldap.${DOMAIN_NAME}
@@ -121,7 +132,13 @@ services:
 
     phpldapadmin:
         image: osixia/phpldapadmin:latest
+        restart: on-failure:5
         container_name: phpldapadmin
+        logging:
+            driver: "json-file"
+            options:
+                max-file: 1
+                max-size: 200k
         networks:
             mail_infra_network:
                 aliases:
@@ -155,6 +172,12 @@ services:
             - acme
     acme:
         image: neilpang/acme.sh:latest
+        restart: on-failure:5
+        logging:
+            driver: "json-file"
+            options:
+                max-file: 1
+                max-size: 200k
         volumes:
             - ./scripts:/scripts:ro
             - ${ACME_HOME_DIR}:/acme.sh
