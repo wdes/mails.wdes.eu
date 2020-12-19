@@ -82,8 +82,8 @@ services:
         logging:
             driver: "json-file"
             options:
-                max-file: 5
-                max-size: 1m
+                max-file: "5"
+                max-size: "1m"
         image: osixia/openldap:1.4.0
         restart: on-failure:5
         container_name: ldap.${DOMAIN_NAME}
@@ -176,7 +176,7 @@ services:
         logging:
             driver: "json-file"
             options:
-                max-file: "1"
+                max-file: "2"
                 max-size: "200k"
         volumes:
             - ./scripts:/scripts:ro
