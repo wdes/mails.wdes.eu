@@ -117,6 +117,7 @@ services:
             LDAP_READONLY_USER_PASSWORD: ${LDAP_READONLY_PASSWORD}
             LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
             LDAP_SEED_INTERNAL_LDIF_PATH: "/tmp/ldap-custom-ldif"
+            LDAP_SEED_INTERNAL_SCHEMA_PATH: "/tmp/ldap-custom-schema"
         tty: true
         stdin_open: true
         volumes:
@@ -125,7 +126,7 @@ services:
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/ca.cer:/container/service/slapd/assets/certs/ca.cer
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/fullchain.cer:/container/service/slapd/assets/certs/${DOMAIN_NAME}.cer
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/${DOMAIN_NAME}.key
-            - ./data/ldap-custom-schema/postfix-book.schema:/container/service/slapd/assets/config/bootstrap/schema/mmc/mail.schema
+            - ${LDAP_CUSTOM_SCHEMA_DIR:-./data/ldap-custom-schema}:/tmp/ldap-custom-schema
             - ${LDAP_CUSTOM_LDIF_DIR:-./data/ldap-custom-ldif}:/tmp/ldap-custom-ldif
         ports:
             - "389:389"
