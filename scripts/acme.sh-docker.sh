@@ -7,8 +7,10 @@ touch /tmp/system.lock
 if [ ! -f /acme.sh/account.conf ]; then
     echo 'First startup'
     acme.sh --register-account
-    acme.sh --update-account --accountemail ${ACME_SH_EMAIL}
+    # shellcheck disable=SC2154
+    acme.sh --update-account --accountemail "${ACME_SH_EMAIL}"
     echo 'Asking for certificates'
+    # shellcheck disable=SC2086,SC2154
     acme.sh --issue ${ACME_COMMAND_ARGUMENTS} \
         -d "${DOMAIN_NAME}" -d "*.${DOMAIN_NAME}" \
         --dns dns_cf --reloadcmd "sh /scripts/acme.sh-success.sh"

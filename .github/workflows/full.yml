@@ -9,7 +9,7 @@ jobs:
             - name: run shellcheck
               uses: sudo-bot/action-shellcheck@latest
               with:
-                  cli-args: "scripts/*.sh"
+                  cli-args: "--severity=info --enable=all scripts/*.sh"
             - name: docker-compose build
               uses: sudo-bot/action-docker-compose@latest
               with:
