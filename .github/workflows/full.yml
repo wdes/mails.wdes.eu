@@ -1,0 +1,17 @@
+name: run full tests
+on: [push]
+
+jobs:
+    run-all:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: run shellcheck
+              uses: sudo-bot/action-shellcheck@latest
+              with:
+                  cli-args: "tests/script.sh"
+            - name: docker-compose build
+              uses: sudo-bot/action-docker-compose@latest
+              with:
+                  # https://docs.docker.com/compose/reference/overview/
+                  cli-args: "build"
