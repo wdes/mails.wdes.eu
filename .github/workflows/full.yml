@@ -11,7 +11,7 @@ jobs:
               with:
                   cli-args: "--format=checkstyle --severity=info --enable=all scripts/*.sh"
             - name: copy the test env
-              run: cp test/.env.test1 .env
+              run: cp tests/.env.test1 .env
             - name: docker-compose build
               uses: sudo-bot/action-docker-compose@latest
               with:
