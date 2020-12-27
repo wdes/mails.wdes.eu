@@ -29,4 +29,10 @@ swaks --to cyrielle@mail.williamdes.eu.org -server localhost --from john@mail.wi
 swaks --to cyrielle@mail.williamdes.eu.org --server localhost --from john@mail.williamdes.eu.org --protocol SSMTP --auth PLAIN --auth-user john@mail.williamdes.eu.org --auth-password 'JohnPassWord!645987zefdm' --attach-type text/plain --attach-body @LICENSE
 
 
-swaks --port 587 --tls --server localhost --to cyrielle@mail.williamdes.eu.org --auth-user john@mail.williamdes.eu.org --auth-password 'JohnPassWord!645987zefdm' --header "Subject: A test email" --body "Hi\n:)\nBye" --from "John <john@mail.williamdes.eu.org>"
+swaks --port 587 --tls --auth PLAIN --server localhost --to cyrielle@mail.williamdes.eu.org --auth-user john@mail.williamdes.eu.org --auth-password 'JohnPassWord!645987zefdm' --header "Subject: A test email" --body "Hi\n:)\nBye" --from "John <john@mail.williamdes.eu.org>"
+
+
+LDAPTLS_REQCERT=never ldapsearch -LLL -Z -h localhost -D "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org" -w 'JohnPassWord!645987zefdm' "*" -b "dc=mail,dc=williamdes,dc=eu,dc=org"
+
+
+LDAPTLS_REQCERT=never ldapsearch -Z -h localhost -D "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org" -w 'JohnPassWord!645987zefdm' "*" -b "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org"
