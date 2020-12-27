@@ -132,7 +132,8 @@ services:
             - "389:389"
             - "636:636"
         depends_on:
-            - acme
+            acme:
+                condition: service_healthy
 
     phpldapadmin:
         image: osixia/phpldapadmin:latest
@@ -172,8 +173,10 @@ services:
         ports:
             - "8080:443"
         depends_on:
-            - openldap
-            - acme
+            openldap:
+                condition: service_healthy
+            acme:
+                condition: service_healthy
     acme:
         image: neilpang/acme.sh:latest
         restart: on-failure:5
@@ -195,9 +198,10 @@ services:
             # CloudFlare
             CF_Key: ${CF_API_KEY}
             CF_Email: ${CF_API_EMAIL}
-            DOMAIN_NAME: "${DOMAIN_NAME}"
+            DOMAIN_NAMES: "${DOMAIN_NAMES}"
             DNS_API: "dns_cf"
             ACME_SH_EMAIL: "williamdes@wdes.fr"
+            ACME_COMMAND_ARGUMENTS: ${ACME_COMMAND_ARGUMENTS:-"--dns dns_cf"}
         command: sh /scripts/acme.sh-docker.sh
         container_name: acme
 

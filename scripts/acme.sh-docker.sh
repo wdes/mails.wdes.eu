@@ -10,10 +10,14 @@ if [ ! -f /acme.sh/account.conf ]; then
     # shellcheck disable=SC2154
     acme.sh --update-account --accountemail "${ACME_SH_EMAIL}"
     echo 'Asking for certificates'
+    CLI_DOMAIN_NAMES=""
+    for domain in "${DOMAIN_NAMES[@]}"; do
+        CLI_DOMAIN_NAMES="${CLI_DOMAIN_NAMES} -d \"${domain}\""
+    done
     # shellcheck disable=SC2086,SC2154
     acme.sh --issue ${ACME_COMMAND_ARGUMENTS} \
-        -d "${DOMAIN_NAME}" -d "*.${DOMAIN_NAME}" \
-        --dns dns_cf --reloadcmd "sh /scripts/acme.sh-success.sh"
+        ${CLI_DOMAIN_NAMES} \
+        --reloadcmd "sh /scripts/acme.sh-success.sh"
 
 fi
 
