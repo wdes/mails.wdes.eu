@@ -84,7 +84,7 @@ services:
             options:
                 max-file: "5"
                 max-size: "1m"
-        image: osixia/openldap:1.4.0
+        build: ./dockers/docker-openldap
         restart: on-failure:5
         container_name: ldap.${DOMAIN_NAME}
         dns_search: ${DOMAIN_NAME}
