@@ -154,7 +154,7 @@ services:
                     "CMD",
                     "php -r \"file_get_contents('https://localhost', false, stream_context_create(['ssl' => ['verify_peer'=> false, 'verify_peer_name'=> true, 'peer_name'=> '${DOMAIN_NAME}', 'peer_fingerprint' => openssl_x509_fingerprint(file_get_contents('/container/service/phpldapadmin/assets/apache2/certs/fullchain.cer')) ]]));\""
                 ]
-            interval: 300s
+            interval: 30s
             timeout: 1s
             retries: 3
         environment:
@@ -191,7 +191,7 @@ services:
         working_dir: /scripts/
         healthcheck:
             test: ["CMD", "sh", "/scripts/healthcheck.sh"]
-            interval: 300s
+            interval: 30s
             timeout: 1s
             retries: 3
         environment:
