@@ -86,7 +86,6 @@ services:
                 max-file: "5"
                 max-size: "1m"
         build: ./dockers/docker-openldap
-        command: --loglevel debug
         restart: on-failure:5
         container_name: ldap.${DOMAIN_NAME}
         dns_search: ${DOMAIN_NAME}
