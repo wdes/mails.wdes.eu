@@ -24,14 +24,19 @@ jobs:
                   cli-args: "up -d"
             - name: Sleep some time
               run: sleep 10
-            - name: docker-compose down
+            - name: docker-compose stop
               uses: sudo-bot/action-docker-compose@latest
               with:
                   # https://docs.docker.com/compose/reference/overview/
-                  cli-args: "down"
+                  cli-args: "stop"
             - name: docker-compose logs
               uses: sudo-bot/action-docker-compose@latest
               with:
                   # https://docs.docker.com/compose/reference/overview/
                   cli-args: "logs"
+            - name: docker-compose down
+              uses: sudo-bot/action-docker-compose@latest
+              with:
+                  # https://docs.docker.com/compose/reference/overview/
+                  cli-args: "down"
 
