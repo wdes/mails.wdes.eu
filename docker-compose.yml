@@ -90,6 +90,15 @@ services:
         dns_search: ${DOMAIN_NAME}
         hostname: ldap.${DOMAIN_NAME}
         domainname: ldap.${DOMAIN_NAME}
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "ldapwhoami -Z -D \"cn=ldap-ro,${LDAP_BASE_DN}\" -w \"${LDAP_READONLY_PASSWORD}\""
+                ]
+            interval: 30s
+            timeout: 1s
+            retries: 3
         networks:
             mail_infra_network:
                 aliases:
