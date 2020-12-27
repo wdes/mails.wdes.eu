@@ -185,6 +185,7 @@ services:
         volumes:
             - ./scripts:/scripts:ro
             - ${ACME_HOME_DIR}:/acme.sh
+        working_dir: /scripts/
         healthcheck:
             test: ["CMD", "sh", "/scripts/healthcheck.sh"]
             interval: 300s
@@ -197,7 +198,7 @@ services:
             DOMAIN_NAME: "${DOMAIN_NAME}"
             DNS_API: "dns_cf"
             ACME_SH_EMAIL: "williamdes@wdes.fr"
-        command: sh ./scripts/acme.sh-docker.sh
+        command: sh /scripts/acme.sh-docker.sh
         container_name: acme
 
 networks:
