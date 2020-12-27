@@ -100,7 +100,7 @@ services:
         networks:
             mail_infra_network:
                 aliases:
-                    - ldap-admin.${DOMAIN_NAME}
+                    - ldap.${DOMAIN_NAME}
         environment:
             # 256 to enable debug
             # See: https://www.openldap.org/doc/admin24/slapdconf2.html
