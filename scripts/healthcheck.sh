@@ -8,7 +8,7 @@ if [ -f /tmp/system.lock ]; then
 fi
 
 # shellcheck disable=SC2154
-if [ ! -f "/acme.sh/${DOMAIN_NAME}-mirror3/dhparam.pem" ]; then
+if [ ! -f "/acme.sh/${DOMAIN_NAME}-mirror3/fullchain.cer" ]; then
     echo 'Not ready';
     exit 1;
 fi
