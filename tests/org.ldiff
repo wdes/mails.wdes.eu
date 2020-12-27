@@ -1,0 +1,4 @@
+dn: ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
+objectclass: organizationalUnit
+objectclass: top
+ou: people

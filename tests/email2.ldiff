@@ -1,0 +1,17 @@
+dn: cn=Cyrielle Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
+cn: Cyrielle Pondu
+givenname: cyrielle
+mail: cyrielle@mail.williamdes.eu.org
+mailalias: cyrielle.pondu@mail.williamdes.eu.org
+mailenabled: TRUE
+mailgidnumber: 5000
+mailhomedirectory: /var/mail/mail.williamdes.eu.org/cyrielle/
+mailstoragedirectory: maildir:/var/mail/mail.williamdes.eu.org/cyrielle/
+mailuidnumber: 5000
+objectclass: inetOrgPerson
+objectclass: top
+objectclass: PostfixBookMailAccount
+sn: Pondu
+uid: cyrielle
+userpassword: {SHA512-CRYPT}$6$9RV48FGsR$dtoR2IjK4BuyAgGeqNzL5Vr4ujxDsmHWxgrz5No.eLowPpZeN9e37cIhc1kgtjjpzvzybiDC6GcRg0Gc044LA.
+userpassword: PassCyrielle!ILoveDogs
