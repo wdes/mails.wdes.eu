@@ -9,9 +9,27 @@ jobs:
             - name: run shellcheck
               uses: sudo-bot/action-shellcheck@latest
               with:
-                  cli-args: "--severity=info --enable=all scripts/*.sh"
+                  cli-args: "--format=checkstyle --severity=info --enable=all scripts/*.sh"
             - name: docker-compose build
               uses: sudo-bot/action-docker-compose@latest
               with:
                   # https://docs.docker.com/compose/reference/overview/
                   cli-args: "build"
+            - name: docker-compose up
+              uses: sudo-bot/action-docker-compose@latest
+              with:
+                  # https://docs.docker.com/compose/reference/overview/
+                  cli-args: "up -d"
+            - name: Sleep some time
+              run: sleep 10
+            - name: docker-compose down
+              uses: sudo-bot/action-docker-compose@latest
+              with:
+                  # https://docs.docker.com/compose/reference/overview/
+                  cli-args: "down"
+            - name: docker-compose logs
+              uses: sudo-bot/action-docker-compose@latest
+              with:
+                  # https://docs.docker.com/compose/reference/overview/
+                  cli-args: "logs"
+
