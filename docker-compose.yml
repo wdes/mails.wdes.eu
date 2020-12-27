@@ -198,11 +198,13 @@ services:
             # CloudFlare
             CF_Key: ${CF_API_KEY}
             CF_Email: ${CF_API_EMAIL}
+            DOMAIN_NAME: ${DOMAIN_NAME}
             DOMAIN_NAMES: "${DOMAIN_NAMES}"
             DNS_API: "dns_cf"
             ACME_SH_EMAIL: "williamdes@wdes.fr"
             ACME_COMMAND_ARGUMENTS: ${ACME_COMMAND_ARGUMENTS:-"--dns dns_cf"}
-        command: sh /scripts/acme.sh-docker.sh
+        entrypoint: /bin/sh
+        command: /scripts/acme.sh-docker.sh
         container_name: acme
 
 networks:
