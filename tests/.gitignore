@@ -1,3 +1,9 @@
 /acme.sh/account.conf
 /acme.sh/http.header
 /acme.sh/ca/*
+/mailstate
+/maillogs
+/maildata
+/mailconfig
+/ldapdata
+/slapd

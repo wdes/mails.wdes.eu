@@ -85,19 +85,17 @@ services:
                 max-file: "5"
                 max-size: "1m"
         build: ./dockers/docker-openldap
+        command: --loglevel debug
         restart: on-failure:5
         container_name: ldap.${DOMAIN_NAME}
         dns_search: ${DOMAIN_NAME}
         hostname: ldap.${DOMAIN_NAME}
         domainname: ldap.${DOMAIN_NAME}
         healthcheck:
-            test:
-                [
-                    "CMD",
-                    "ldapwhoami -Z -D \"cn=ldap-ro,${LDAP_BASE_DN}\" -w \"${LDAP_READONLY_PASSWORD}\""
-                ]
+            test: 'ldapwhoami -Z -D "cn=$${LDAP_READONLY_USER_USERNAME},$${LDAP_BASE_DN}" -w "$${LDAP_READONLY_USER_PASSWORD}"'
+            start_period: 10s
             interval: 30s
-            timeout: 1s
+            timeout: 5s
             retries: 3
         networks:
             mail_infra_network:
@@ -125,7 +123,7 @@ services:
             LDAP_READONLY_USER_USERNAME: "ldap-ro"
             LDAP_READONLY_USER_PASSWORD: ${LDAP_READONLY_PASSWORD}
             LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
-            LDAP_SEED_INTERNAL_LDIF_PATH: "/tmp/ldap-custom-ldif"
+            # LDAP_SEED_INTERNAL_LDIF_PATH: "/tmp/ldap-custom-ldif"
             LDAP_SEED_INTERNAL_SCHEMA_PATH: "/tmp/ldap-custom-schema"
         tty: true
         stdin_open: true
@@ -136,7 +134,7 @@ services:
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/fullchain.cer:/container/service/slapd/assets/certs/${DOMAIN_NAME}.cer
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/${DOMAIN_NAME}.key
             - ${LDAP_CUSTOM_SCHEMA_DIR:-./data/ldap-custom-schema}:/tmp/ldap-custom-schema
-            - ${LDAP_CUSTOM_LDIF_DIR:-./data/ldap-custom-ldif}:/tmp/ldap-custom-ldif
+            # - ${LDAP_CUSTOM_LDIF_DIR:-./data/ldap-custom-ldif}:/tmp/ldap-custom-ldif
         ports:
             - "389:389"
             - "636:636"
@@ -158,13 +156,9 @@ services:
                 aliases:
                     - ldap-admin.${DOMAIN_NAME}
         healthcheck:
-            test:
-                [
-                    "CMD",
-                    "php -r \"file_get_contents('https://localhost', false, stream_context_create(['ssl' => ['verify_peer'=> false, 'verify_peer_name'=> true, 'peer_name'=> '${DOMAIN_NAME}', 'peer_fingerprint' => openssl_x509_fingerprint(file_get_contents('/container/service/phpldapadmin/assets/apache2/certs/fullchain.cer')) ]]));\""
-                ]
+            test: 'php -r ''$$c = is_string(file_get_contents("https://localhost?ping=pong", false, stream_context_create(["ssl" => ["verify_peer"=> false, "verify_peer_name"=> true, "peer_name"=> "${DOMAIN_NAME}", "peer_fingerprint" => openssl_x509_fingerprint(file_get_contents("/container/service/phpldapadmin/assets/apache2/certs/fullchain.cer")) ]]))); echo $$c; exit($$c === true ? 0 : 1);'''
             interval: 30s
-            timeout: 1s
+            timeout: 3s
             retries: 3
         environment:
             PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.${DOMAIN_NAME}': [{'server': [{'tls': True}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
@@ -200,6 +194,7 @@ services:
         working_dir: /scripts/
         healthcheck:
             test: ["CMD", "sh", "/scripts/healthcheck.sh"]
+            start_period: 10s
             interval: 30s
             timeout: 1s
             retries: 3
