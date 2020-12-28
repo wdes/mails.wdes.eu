@@ -36,3 +36,6 @@ LDAPTLS_REQCERT=never ldapsearch -LLL -Z -h localhost -D "cn=John Pondu,ou=peopl
 
 
 LDAPTLS_REQCERT=never ldapsearch -Z -h localhost -D "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org" -w 'JohnPassWord!645987zefdm' "*" -b "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org"
+
+
+mutt -R -f 'imaps://cyrielle@mail.williamdes.eu.org:PassCyrielle!ILoveDogs@localhost:993/INBOX'

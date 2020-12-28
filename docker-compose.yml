@@ -30,6 +30,7 @@ services:
             - ${MAIL_STATE_DIR}:/var/mail-state
             - ${MAIL_LOGS_DIR}:/var/log/mail
             - ${MAIL_CONFIGS_DIR}:/tmp/docker-mailserver/
+            - ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror3:/acme.sh/${DOMAIN_NAME}/
         environment:
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
@@ -68,6 +69,10 @@ services:
             POSTMASTER_ADDRESS: "postmaster@${DOMAIN_NAME}"
             POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
             DOVECOT_TLS: "yes"
+            DOVECOT_TLS_CACERT_FILE: "/acme.sh/${DOMAIN_NAME}/ca.cer"
+            DOVECOT_TLS_CERT_FILE: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"
+            DOVECOT_TLS_KEY_FILE: "/acme.sh/${DOMAIN_NAME}/${DOMAIN_NAME}.key"
+            DOVECOT_TLS_VERIFY_CLIENT: "allow"
             LDAP_START_TLS: "yes"
             SSL_TYPE: "manual"
             SSL_CERT_PATH: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"
