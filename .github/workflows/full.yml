@@ -22,10 +22,12 @@ jobs:
               run: docker-compose up -d
             - name: Sleep some time
               run: sleep 10
+            - name: Seed ldap test users
+              run: tests/php/seed-ldap.sh
             - name: Build phpunit test suite
               run: docker-compose -f tests/php/docker-compose.yml build
             - name: Run phpunit test suite
-              run: docker-compose -f tests/php/docker-compose.yml up --build
+              run: docker-compose -f tests/php/docker-compose.yml up --build --exit-code-from run-tests
             - name: docker-compose stop
               run: docker-compose stop
             - name: docker-compose logs
