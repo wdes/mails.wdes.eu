@@ -1,0 +1,13 @@
+version: "3"
+services:
+    run-tests:
+        build: ./docker/
+        volumes:
+          - ./tests:/tests
+        working_dir: /tests
+        command: --no-configuration /tests
+
+networks:
+    default:
+        external:
+            name: infrastructure_mail_infra_network
