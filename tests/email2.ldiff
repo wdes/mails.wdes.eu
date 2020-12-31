@@ -13,5 +13,5 @@ objectclass: top
 objectclass: PostfixBookMailAccount
 sn: Pondu
 uid: cyrielle
+sasluserpassword: {SSHA}9G97R8KdmN+7R980tIQ4tA3e+piq17av
 userpassword: {SHA512-CRYPT}$6$9RV48FGsR$dtoR2IjK4BuyAgGeqNzL5Vr4ujxDsmHWxgrz5No.eLowPpZeN9e37cIhc1kgtjjpzvzybiDC6GcRg0Gc044LA.
-userpassword: PassCyrielle!ILoveDogs

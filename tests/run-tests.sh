@@ -31,6 +31,8 @@ swaks --to cyrielle@mail.williamdes.eu.org --server localhost --from john@mail.w
 
 swaks --port 587 --tls --auth PLAIN --server localhost --to cyrielle@mail.williamdes.eu.org --auth-user john@mail.williamdes.eu.org --auth-password 'JohnPassWord!645987zefdm' --header "Subject: A test email" --body "Hi\n:)\nBye" --from "John <john@mail.williamdes.eu.org>"
 
+swaks --port 587 --tls --auth PLAIN --server localhost --to cyrielle@mail.williamdes.eu.org --auth-user cyrielle@mail.williamdes.eu.org --auth-password 'PassCyrielle!ILoveDogs' --header "Subject: A test email" --body "Hi\n:)\nBye" --from "John <john@mail.williamdes.eu.org>"
+
 
 LDAPTLS_REQCERT=never ldapsearch -LLL -Z -h localhost -D "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org" -w 'JohnPassWord!645987zefdm' "*" -b "dc=mail,dc=williamdes,dc=eu,dc=org"
 
@@ -42,3 +44,55 @@ mutt -R -f 'imaps://cyrielle@mail.williamdes.eu.org:PassCyrielle!ILoveDogs@local
 
 
 mutt -n -F .muttrc -R -f 'imaps://john@mail.williamdes.eu.org:JohnPassWord!645987zefdm@localhost:993/INBOX'
+
+
+
+docker exec -i ldap.mail.williamdes.eu.org ldapmodify -Z -h localhost -D "cn=admin,dc=mail,dc=williamdes,dc=eu,dc=org" -w PasswordLdapAdmin <<EOF
+dn: cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
+changetype: modify
+replace: userPassword
+userpassword: {SHA512-CRYPT}$6$cOMeAcso8M$leU6Peukc.poeeE.ld5Ks2Ey4VHuLSXjDJW3T41T3MxdKoyEVZq1MI1Q9hokcbtMjl6rFkNQjaIuoifwbMTRG/
+
+EOF
+
+# https://www.openldap.org/faq/data/cache/418.html
+# slappasswd -h {SHA} -s secret
+# Woking schemes: MD5, SMD5, SHA, SSHA, CRYPT
+
+docker exec -i ldap.mail.williamdes.eu.org ldapmodify -Z -h localhost -D "cn=admin,dc=mail,dc=williamdes,dc=eu,dc=org" -w PasswordLdapAdmin <<EOF
+dn: cn=Cyrielle Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
+changetype: modify
+replace: sasluserpassword
+sasluserpassword: {MD5}Xr4ilOzQ4PCOq3aQ0qbuaQ==
+
+EOF
+
+docker exec -i ldap.mail.williamdes.eu.org ldapmodify -Z -h localhost -D "cn=admin,dc=mail,dc=williamdes,dc=eu,dc=org" -w PasswordLdapAdmin <<EOF
+dn: cn=Cyrielle Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
+changetype: modify
+replace: sasluserpassword
+sasluserpassword: {SMD5}mc0uWpXVVe5747A4pKhGJXNhbHQ=
+
+EOF
+
+
+docker exec -i ldap.mail.williamdes.eu.org ldapmodify -Z -h localhost -D "cn=admin,dc=mail,dc=williamdes,dc=eu,dc=org" -w PasswordLdapAdmin <<EOF
+dn: cn=Cyrielle Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
+changetype: modify
+replace: sasluserpassword
+sasluserpassword: {SSHA}nly9LqB9vFSfpemuUCSFLnQZyZlzaD2v
+
+EOF
+
+docker exec -i ldap.mail.williamdes.eu.org ldapmodify -Z -h localhost -D "cn=admin,dc=mail,dc=williamdes,dc=eu,dc=org" -w PasswordLdapAdmin <<EOF
+dn: cn=Cyrielle Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
+changetype: modify
+replace: sasluserpassword
+sasluserpassword: {CRYPT}HDWcdMgiW4DpE
+
+EOF
+
+testsaslauthd -u john@mail.williamdes.eu.org -p 'JohnPassWord!645987zefdm'
+
+
+printf "{CRYPT}%s" "$(openssl passwd -2 -stdin <<< "secret")"

@@ -66,6 +66,8 @@ services:
             SASLAUTHD_LDAP_PASSWORD: ${LDAP_ADMIN_PASSWORD}
             SASLAUTHD_LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
             SASLAUTHD_LDAP_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%U@${DOMAIN_NAME}))"
+            SASLAUTHD_LDAP_AUTH_METHOD: "custom"
+            SASLAUTHD_LDAP_PASSWORD_ATTR: "saslUserPassword"
             POSTMASTER_ADDRESS: "postmaster@${DOMAIN_NAME}"
             POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
             DOVECOT_TLS: "yes"
