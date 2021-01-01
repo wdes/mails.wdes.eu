@@ -65,7 +65,9 @@ services:
             SASLAUTHD_LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
             SASLAUTHD_LDAP_PASSWORD: ${LDAP_ADMIN_PASSWORD}
             SASLAUTHD_LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
-            SASLAUTHD_LDAP_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%U@%d))"
+            # For some odd reason %d is empty and %r containts the domain
+            # See: https://campus.barracuda.com/solution/50160000000GYmFAAW
+            SASLAUTHD_LDAP_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%U@%r))"
             SASLAUTHD_LDAP_AUTH_METHOD: "custom"
             SASLAUTHD_LDAP_PASSWORD_ATTR: "saslUserPassword"
             POSTMASTER_ADDRESS: "postmaster@${DOMAIN_NAME}"
