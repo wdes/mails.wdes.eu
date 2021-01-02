@@ -16,4 +16,7 @@ printf '\ntls_ca_cert_file = %s\ntls_cert_file = %s\ntls_key_file = %s\ntls_requ
 # shellcheck disable=SC2016
 sed -i 's|mydestination = $myhostname, |mydestination = |' /etc/postfix/main.cf
 
+# shellcheck disable=SC2016
+sed -i 's|smtpd_sasl_local_domain = $mydomain||' /etc/postfix/main.cf
+
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
