@@ -13,4 +13,7 @@ printf '\ntls_ca_cert_file = %s\ntls_cert_file = %s\ntls_key_file = %s\ntls_requ
     "${DOVECOT_TLS_KEY_FILE}" \
     "${DOVECOT_TLS_VERIFY_CLIENT}" >> /etc/dovecot/dovecot-ldap.conf.ext
 
+# shellcheck disable=SC2016
+sed -i 's|mydestination = $myhostname, |mydestination = |' /etc/postfix/main.cf
+
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
