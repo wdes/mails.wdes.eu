@@ -213,6 +213,54 @@ class SendAndReceiveTest extends TestCase
         $this->assertTrue($sent, 'A non TLS mail');
     }
 
+    /**
+     * This test sends an email from the user primary email to the user alias
+     * @depends testImapConnectEmails
+     */
+    public function testExternalDomainSendFromInternal(): void
+    {
+        $userName = 'cyrielle';
+
+        [$sent, $messageId] = $this->sendMail(
+            true,
+            self::USERS[$userName]['username'],
+            self::USERS[$userName]['password'],
+            self::USERS[$userName]['username'],
+            self::USERS[$userName]['aliases'][1],
+            'Mail to myself using TLS',
+            'Just a mail to myself. Sent via TLS'
+        );
+        sleep(2);
+        $mailFound = $this->getMailById($userName, $messageId);
+
+        $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
+        $this->assertTrue($sent, 'A TLS mail');
+    }
+
+    /**
+     * This test sends an email from the user alias to the user alias
+     * @depends testImapConnectEmails
+     */
+    public function testExternalDomainSendFromInternalToSendExternalInternal(): void
+    {
+        $userName = 'cyrielle';
+
+        [$sent, $messageId] = $this->sendMail(
+            true,
+            self::USERS[$userName]['username'],
+            self::USERS[$userName]['password'],
+            self::USERS[$userName]['aliases'][1],
+            self::USERS[$userName]['aliases'][1],
+            'Mail to myself using TLS',
+            'Just a mail to myself. Sent via TLS'
+        );
+        sleep(2);
+        $mailFound = $this->getMailById($userName, $messageId);
+
+        $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
+        $this->assertTrue($sent, 'A TLS mail');
+    }
+
     private function sendMail(
         bool $useTLS,
         string $username, string $password,
