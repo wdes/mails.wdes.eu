@@ -261,6 +261,27 @@ class SendAndReceiveTest extends TestCase
         $this->assertTrue($sent, 'A TLS mail');
     }
 
+    /**
+     * This test sends an email from an external server to an internal email but not the primary domain
+     * @depends testImapConnectEmails
+     */
+    public function testFromExternalToInternalAlias(): void
+    {
+        $userName = 'cyrielle';
+
+        [$sent, $messageId] = $this->sendNoSmtpMail(
+            'contact@external-domain.org',
+            self::USERS[$userName]['aliases'][1],
+            'Mail to myself using TLS',
+            'Just a mail to myself. Sent via TLS'
+        );
+        sleep(2);
+        $mailFound = $this->getMailById($userName, $messageId);
+
+        $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
+        $this->assertTrue($sent, 'A TLS mail');
+    }
+
     private function sendMail(
         bool $useTLS,
         string $username, string $password,
@@ -292,6 +313,24 @@ class SendAndReceiveTest extends TestCase
                 ]
             ];
 
+            $mail->setFrom($from);
+            $mail->addAddress($to);
+            $mail->Subject = $object;
+            $mail->Body    = $body;
+
+            return [$mail->send(), $mail->GetLastMessageID()];
+        } catch (Exception $e) {
+            $this->fail('Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
+        }
+    }
+
+    private function sendNoSmtpMail(
+        string $from, string $to,
+        string $object, string $body): array
+    {
+        $mail = new PHPMailer(true);
+
+        try {
             $mail->setFrom($from);
             $mail->addAddress($to);
             $mail->Subject = $object;
