@@ -6,7 +6,7 @@ services:
         volumes:
           - ./tests:/tests
         working_dir: /tests
-        command: --no-configuration /tests
+        command: --no-configuration /tests --debug --verbose
 
 networks:
     default:

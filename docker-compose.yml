@@ -43,6 +43,7 @@ services:
             ONE_DIR: "1"
             DMS_DEBUG: "0"
             ENABLE_LDAP: "1"
+            POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
             LDAP_SERVER_HOST: "ldap.${DOMAIN_NAME}"
             LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
             LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"

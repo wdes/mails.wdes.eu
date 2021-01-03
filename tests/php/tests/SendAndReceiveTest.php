@@ -268,17 +268,35 @@ class SendAndReceiveTest extends TestCase
     public function testFromExternalToInternalAlias(): void
     {
         $userName = 'cyrielle';
-
         [$sent, $messageId] = $this->sendNoSmtpMail(
+            true,
             'contact@external-domain.org',
             self::USERS[$userName]['aliases'][1],
-            'Mail to myself using TLS',
-            'Just a mail to myself. Sent via TLS'
+            'Mail to myself, postgreydelay',
+            'Just a mail to myself. postgreydelay.'
         );
         sleep(2);
         $mailFound = $this->getMailById($userName, $messageId);
-
-        $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
+        if ($mailFound) {
+            // This will mark this test as risky, the mail should be greylisted
+            // Maybe this is a test re-run
+            return;
+        }
+        sleep(10);// wait for POSTGREY_DELAY + some time
+        $mailFound = $this->getMailById($userName, $messageId);
+        $this->assertNull($mailFound, 'The mail should not be found !');
+        sleep(10);// Sleep again
+        [$sent, $messageId] = $this->sendNoSmtpMail(
+            true,
+            'contact@external-domain.org',
+            self::USERS[$userName]['aliases'][1],
+            'Mail to myself passing postgrey',
+            'Just a mail to myself. postgrey pass.'
+        );
+        sleep(10);// Sleep again and hope
+        $mailFound = $this->getMailById($userName, $messageId);
+        $this->assertNotNull($mailFound, 'The mail should be found !');
+        $this->assertSame('Mail to myself passing postgrey', $mailFound->headers->subject);
         $this->assertTrue($sent, 'A TLS mail');
     }
 
@@ -325,6 +343,7 @@ class SendAndReceiveTest extends TestCase
     }
 
     private function sendNoSmtpMail(
+        bool $skipFailure,
         string $from, string $to,
         string $object, string $body): array
     {
@@ -335,10 +354,12 @@ class SendAndReceiveTest extends TestCase
             $mail->addAddress($to);
             $mail->Subject = $object;
             $mail->Body    = $body;
-
             return [$mail->send(), $mail->GetLastMessageID()];
         } catch (Exception $e) {
-            $this->fail('Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
+            if (! $skipFailure) {
+                $this->fail('Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
+            }
+            return [null, $mail->GetLastMessageID()];
         }
     }
 }
