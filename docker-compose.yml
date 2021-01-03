@@ -72,6 +72,7 @@ services:
             SASLAUTHD_LDAP_PASSWORD_ATTR: "saslUserPassword"
             POSTMASTER_ADDRESS: "postmaster@${DOMAIN_NAME}"
             POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
+            POSTFIX_VIRTUAL_ALIAS_DOMAINS: "${POSTFIX_VIRTUAL_ALIAS_DOMAINS}"
             DOVECOT_TLS: "yes"
             DOVECOT_TLS_CACERT_FILE: "/acme.sh/${DOMAIN_NAME}/ca.cer"
             DOVECOT_TLS_CERT_FILE: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"

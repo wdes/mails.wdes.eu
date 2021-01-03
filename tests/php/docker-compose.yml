@@ -1,6 +1,7 @@
 version: "3"
 services:
     run-tests:
+        hostname: another-domain.com
         build: ./docker/
         volumes:
           - ./tests:/tests

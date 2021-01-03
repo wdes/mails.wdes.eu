@@ -19,4 +19,6 @@ sed -i 's|mydestination = $myhostname, |mydestination = |' /etc/postfix/main.cf
 # shellcheck disable=SC2016
 sed -i 's|smtpd_sasl_local_domain = $mydomain||' /etc/postfix/main.cf
 
+printf '\nvirtual_alias_domains = %s\n' "${POSTFIX_VIRTUAL_ALIAS_DOMAINS}" >> /etc/postfix/main.cf
+
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
