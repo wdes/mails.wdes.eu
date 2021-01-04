@@ -26,6 +26,4 @@ sed -i '/^smtpd_sasl_local_domain =/d' /etc/postfix/main.cf
 printf '\nmydomain = %s\n' "localhost" >> /etc/postfix/main.cf
 printf '\nmydestination = %s\n' "localhost" >> /etc/postfix/main.cf
 
-printf '\nvirtual_alias_domains = %s\n' "${POSTFIX_VIRTUAL_ALIAS_DOMAINS}" >> /etc/postfix/main.cf
-
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
