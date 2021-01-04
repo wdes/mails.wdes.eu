@@ -20,8 +20,8 @@ sed -d '/^mydestination =/d' /etc/postfix/main.cf
 # Delete this value to default as empty default
 sed -d '/^smtpd_sasl_local_domain =/d' /etc/postfix/main.cf
 
-printf '\mydomain = %s\n' "localhost" >> /etc/postfix/main.cf
-printf '\mydestination = %s\n' "localhost" >> /etc/postfix/main.cf
+printf '\nmydomain = %s\n' "localhost" >> /etc/postfix/main.cf
+printf '\nmydestination = %s\n' "localhost" >> /etc/postfix/main.cf
 
 printf '\nvirtual_alias_domains = %s\n' "${POSTFIX_VIRTUAL_ALIAS_DOMAINS}" >> /etc/postfix/main.cf
 
