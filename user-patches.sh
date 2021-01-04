@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e
+
 ##
 # This user script will be executed between configuration and starting daemons
 # To enable it you must save it in your config directory as "user-patches.sh"
@@ -14,11 +17,11 @@ printf '\ntls_ca_cert_file = %s\ntls_cert_file = %s\ntls_key_file = %s\ntls_requ
     "${DOVECOT_TLS_VERIFY_CLIENT}" >> /etc/dovecot/dovecot-ldap.conf.ext
 
 # Delete before set to localhost
-sed -d '/^mydomain =/d' /etc/postfix/main.cf
-sed -d '/^mydestination =/d' /etc/postfix/main.cf
+sed -i '/^mydomain =/d' /etc/postfix/main.cf
+sed -i '/^mydestination =/d' /etc/postfix/main.cf
 
 # Delete this value to default as empty default
-sed -d '/^smtpd_sasl_local_domain =/d' /etc/postfix/main.cf
+sed -i '/^smtpd_sasl_local_domain =/d' /etc/postfix/main.cf
 
 printf '\nmydomain = %s\n' "localhost" >> /etc/postfix/main.cf
 printf '\nmydestination = %s\n' "localhost" >> /etc/postfix/main.cf
