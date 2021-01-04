@@ -26,10 +26,4 @@ sed -i '/^smtpd_sasl_local_domain =/d' /etc/postfix/main.cf
 printf '\nmydomain = %s\n' "localhost" >> /etc/postfix/main.cf
 printf '\nmydestination = %s\n' "localhost" >> /etc/postfix/main.cf
 
-sed -i '/^result_attribute =/d' /etc/postfix/ldap-domains.cf
-printf '\nresult_attribute = %s\n' "mail, mailalias" >> /etc/postfix/ldap-domains.cf
-
-sed -i '/^result_attribute =/d' /etc/postfix/ldap-aliases.cf
-printf '\nresult_attribute = %s\n' "mail, mailalias" >> /etc/postfix/ldap-aliases.cf
-
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
