@@ -50,8 +50,8 @@ services:
             LDAP_BIND_PW: ${LDAP_ADMIN_PASSWORD}
             LDAP_QUERY_FILTER_USER: "(&(mail=%s)(mailEnabled=TRUE))"
             LDAP_QUERY_FILTER_GROUP: "(&(mailGroupMember=%s)(mailEnabled=TRUE))"
-            LDAP_QUERY_FILTER_ALIAS: "(|(&(mailAlias=%s)(objectClass=PostfixBookMailForward))(&(mailAlias=%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE)))"
-            LDAP_QUERY_FILTER_DOMAIN: "(|(&(mail=*@%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE))(&(mailGroupMember=*@%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE))(&(mailalias=*@%s)(objectClass=PostfixBookMailForward)))"
+            LDAP_QUERY_FILTER_ALIAS: "(|(&(mailAlias=%s)(objectClass=PostfixBookMailAccount))(&(mailAlias=%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE)))"
+            LDAP_QUERY_FILTER_DOMAIN: "(|(&(mail=*@%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE))(&(mailGroupMember=*@%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE))(&(mailalias=*@%s)(objectClass=PostfixBookMailAccount)))"
             DOVECOT_PASS_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%n@%d))"
             DOVECOT_USER_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%n@%d))"
             DOVECOT_DEFAULT_PASS_SCHEME: "SSHA256"
