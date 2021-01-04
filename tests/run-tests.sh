@@ -96,3 +96,8 @@ testsaslauthd -u john@mail.williamdes.eu.org -p 'JohnPassWord!645987zefdm'
 
 
 printf "{CRYPT}%s" "$(openssl passwd -2 -stdin <<< "secret")"
+
+
+LDAP_BASE_DN="dc=mail,dc=williamdes,dc=eu,dc=org"
+
+LDAPTLS_REQCERT=never ldapsearch -LLL -Z -h localhost -D "${LDAP_BIND_DN}" -w "${LDAP_BIND_PW}" "(mail=*)" -b "${LDAP_BASE_DN}" mail mailAlias | sed -n 's/^[ \t]*\(mail\|mailAlias\):[ \t]*.*@\(.*\)/\2/p'
