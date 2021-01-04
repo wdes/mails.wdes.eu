@@ -13,11 +13,15 @@ printf '\ntls_ca_cert_file = %s\ntls_cert_file = %s\ntls_key_file = %s\ntls_requ
     "${DOVECOT_TLS_KEY_FILE}" \
     "${DOVECOT_TLS_VERIFY_CLIENT}" >> /etc/dovecot/dovecot-ldap.conf.ext
 
-# shellcheck disable=SC2016
-sed -i 's|mydestination = $myhostname, |mydestination = |' /etc/postfix/main.cf
+# Delete before set to localhost
+sed -d '/^mydomain =/d' /etc/postfix/main.cf
+sed -d '/^mydestination =/d' /etc/postfix/main.cf
 
-# shellcheck disable=SC2016
-sed -i 's|smtpd_sasl_local_domain = $mydomain||' /etc/postfix/main.cf
+# Delete this value to default as empty default
+sed -d '/^smtpd_sasl_local_domain =/d' /etc/postfix/main.cf
+
+printf '\mydomain = %s\n' "localhost" >> /etc/postfix/main.cf
+printf '\mydestination = %s\n' "localhost" >> /etc/postfix/main.cf
 
 printf '\nvirtual_alias_domains = %s\n' "${POSTFIX_VIRTUAL_ALIAS_DOMAINS}" >> /etc/postfix/main.cf
 
