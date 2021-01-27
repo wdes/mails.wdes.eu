@@ -233,6 +233,7 @@ class SendAndReceiveTest extends TestCase
         sleep(2);
         $mailFound = $this->getMailById($userName, $messageId);
 
+        $this->assertNotNull($mailFound, 'Mail should be found');
         $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
         $this->assertTrue($sent, 'A TLS mail');
     }
@@ -257,6 +258,7 @@ class SendAndReceiveTest extends TestCase
         sleep(2);
         $mailFound = $this->getMailById($userName, $messageId);
 
+        $this->assertNotNull($mailFound, 'Mail should be found');
         $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
         $this->assertTrue($sent, 'A TLS mail');
     }
