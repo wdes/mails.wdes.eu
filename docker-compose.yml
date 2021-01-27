@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
     mail:
-        image: tvial/docker-mailserver:latest
+        image: tvial/docker-mailserver:edge
         restart: on-failure:40
         logging:
             driver: "json-file"
