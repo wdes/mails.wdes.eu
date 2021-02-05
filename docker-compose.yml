@@ -25,6 +25,7 @@ services:
             - "993:993" # IMAP4
             - "110:110" # POP3
             - "995:995" # POP3
+            - "4190:4190" # Sieve filters
         volumes:
             - ${MAIL_DATA_DIR}:/var/mail
             - ${MAIL_STATE_DIR}:/var/mail-state
@@ -40,6 +41,7 @@ services:
             ENABLE_FAIL2BAN: "0"
             ENABLE_POSTGREY: "1"
             ENABLE_POP3: "1"
+            ENABLE_MANAGESIEVE: "1"
             ONE_DIR: "1"
             DMS_DEBUG: "0"
             ENABLE_LDAP: "1"
@@ -216,7 +218,7 @@ services:
             DOMAIN_NAMES: "${DOMAIN_NAMES}"
             DNS_API: "dns_cf"
             ACME_SH_EMAIL: "williamdes@wdes.fr"
-            ACME_COMMAND_ARGUMENTS: ${ACME_COMMAND_ARGUMENTS:-"--dns dns_cf"}
+            ACME_COMMAND_ARGUMENTS: ${ACME_COMMAND_ARGUMENTS:---dns dns_cf}
         entrypoint: /bin/sh
         command: /scripts/acme.sh-docker.sh
         container_name: acme
