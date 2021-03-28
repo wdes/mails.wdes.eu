@@ -38,6 +38,7 @@ services:
             ENABLE_SPAMASSASSIN: "1"
             SPAMASSASSIN_SPAM_TO_INBOX: "1"
             ENABLE_CLAMAV: "1"
+            ENABLE_AMAVIS: "1"
             ENABLE_FAIL2BAN: "0"
             ENABLE_POSTGREY: "1"
             ENABLE_POP3: "1"
