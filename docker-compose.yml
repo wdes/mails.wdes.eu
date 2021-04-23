@@ -17,6 +17,10 @@ services:
             mail_infra_network:
                 aliases:
                     - mail-server.${DOMAIN_NAME}
+                    - imap.${DOMAIN_NAME}
+                    - smtp.${DOMAIN_NAME}
+                    - ldap.${DOMAIN_NAME}
+                    - pop.${DOMAIN_NAME}
         ports:
             - "25:25" # SMTP
             - "587:587" # ESMTP
