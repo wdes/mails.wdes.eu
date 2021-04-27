@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-namespace Desportes\Infrastructure\tests;
+namespace Datacenters\Infrastructure\tests;
 
 require_once '/composer/autoload.php';
 
