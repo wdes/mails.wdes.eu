@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
     mail:
-        image: mailserver/docker-mailserver:stable
+        image: mailserver/docker-mailserver:9.1.0
         restart: on-failure:40
         logging:
             driver: "json-file"
