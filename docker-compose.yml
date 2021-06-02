@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-    mail:
-        image: mailserver/docker-mailserver:9.1.0
+    mailserver:
+        image: mailserver/docker-mailserver:10.0.0
         restart: on-failure:40
         logging:
             driver: "json-file"
@@ -13,6 +13,7 @@ services:
         domainname: ${DOMAIN_NAME}
         container_name: mail-server.${DOMAIN_NAME}
         dns: 1.1.1.1
+        stop_grace_period: 1m
         networks:
             mail_infra_network:
                 aliases:
@@ -22,11 +23,11 @@ services:
                     - ldap.${DOMAIN_NAME}
                     - pop.${DOMAIN_NAME}
         ports:
-            - "25:25" # SMTP
-            - "587:587" # ESMTP
-            - "465:465" # ESMTP
-            - "143:143" # IMAP4
-            - "993:993" # IMAP4
+            - "25:25"    # SMTP  (explicit TLS => STARTTLS)
+            - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
+            - "465:465"  # ESMTP (implicit TLS)
+            - "587:587"  # ESMTP (explicit TLS => STARTTLS)
+            - "993:993"  # IMAP4 (implicit TLS)
             - "110:110" # POP3
             - "995:995" # POP3
             - "4190:4190" # Sieve filters
@@ -64,7 +65,6 @@ services:
             DOVECOT_DEFAULT_PASS_SCHEME: "SSHA256"
             TLS_LEVEL: "intermediate"
             SASLAUTHD_LDAP_START_TLS: "no"
-            SASLAUTHD_LDAP_SSL: "1"
             SASLAUTHD_LDAP_TLS_CHECK_PEER: "yes"
             SASLAUTHD_LDAP_TLS_CACERT_FILE: "/acme.sh/${DOMAIN_NAME}/ca.cer"
             ENABLE_SASLAUTHD: "1"
