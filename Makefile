@@ -21,10 +21,10 @@ setup:
 	$(TEMP_DIR)/dockerl down || echo 'maybe already down'
 	# Bring up
 	$(TEMP_DIR)/dockerl up -d || $(TEMP_DIR)/dockerl up -d
-	# Sleep some time
-	sleep 10
+	# Sleep 10 sec
+	@sleep 10
 	# Seed ldap test users
-	./tests/seeding/seed-ldap.sh
+	$(TEMP_DIR)/tests/seeding/seed-ldap.sh
 	# Build phpunit test suite
 	$(TEMP_DIR)/dockerl -f tests/php/docker-compose.yml build
 

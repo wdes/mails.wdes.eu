@@ -8,6 +8,9 @@ cd "${ROOT_DIR}/../../"
 
 printf 'Running in: %s\n' ${PWD}
 
+./dockerl ps
+
+echo 'Get the container Id'
 CONTAINER_ID="$(NO_VERBOSE=1 ./dockerl ps -q openldap)"
 
 echo 'Checking LDAP access'
