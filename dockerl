@@ -2,6 +2,11 @@
 
 ME=$(realpath $(dirname $0))
 
+if [ ! -f $ME/.env ]; then
+    printf 'Missing env file at: %s/.env\n' "${ME}"
+    exit 1
+fi
+
 # Load up .env
 set -o allexport
 [[ -f $ME/.env ]] && source $ME/.env
@@ -10,7 +15,7 @@ set +o allexport
 cd $ME
 
 if [ -z "${NO_VERBOSE:-}" ]; then
-    printf 'Running in: %s\n' ${DOCKER_PROJECT_NAME}
+    printf 'Running in: %s\n' "${DOCKER_PROJECT_NAME}"
 fi
 
 docker-compose -p ${DOCKER_PROJECT_NAME} $@
