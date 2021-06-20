@@ -14,24 +14,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - name: copy the test env
-              run: cp tests/.env.test1 .env
-            - name: docker-compose build
-              run: docker-compose build
-            - name: docker-compose up
-              run: docker-compose up -d
-            - name: Sleep some time
-              run: sleep 10
-            - name: Seed ldap test users
-              run: tests/php/seed-ldap.sh
-            - name: Build phpunit test suite
-              run: docker-compose -f tests/php/docker-compose.yml build
-            - name: Run phpunit test suite
-              run: docker-compose -f tests/php/docker-compose.yml up --build --exit-code-from run-tests
-            - name: docker-compose stop
-              run: docker-compose stop
-            - name: docker-compose logs
-              run: docker-compose logs
-            - name: docker-compose down
-              run: docker-compose down
-
+            - name: setup for tests
+              run: make setup
+            - name: run tests
+              run: make test
+            - name: teardown tests
+              run: make teardown
