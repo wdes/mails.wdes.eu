@@ -199,7 +199,9 @@ class SendAndReceiveTest extends TestCase
         );
         sleep(2);
         $this->assertTrue($sent, 'A TLS mail');
-        $this->assertSame('Mail to myself using TLS', $this->getMailById($userName, $messageId)->headers->subject);
+        $mailFound = $this->getMailById($userName, $messageId);
+        $this->assertNotNull($mailFound, 'Mail should be found');
+        $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
     }
 
     /**
@@ -217,6 +219,7 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself using RAW:25',
             'Just a mail to myself. Sent via RAW:25'
         );
+        sleep(10);
         $this->assertTrue($sent, 'A non TLS mail');
         $mailFound = $this->getMailById($userName, $messageId);
         $this->assertNotNull($mailFound, 'Mail should be found');
@@ -238,6 +241,7 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself using SMTPS',
             'Just a mail to myself. Sent via SMTPS'
         );
+        sleep(10);
         $this->assertTrue($sent, 'A non TLS mail');
         $mailFound = $this->getMailById($userName, $messageId);
         $this->assertNotNull($mailFound, 'Mail should be found');
@@ -261,12 +265,11 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself using TLS',
             'Just a mail to myself. Sent via TLS'
         );
-        sleep(2);
+        sleep(10);
+        $this->assertTrue($sent, 'A TLS mail');
         $mailFound = $this->getMailById($userName, $messageId);
-
         $this->assertNotNull($mailFound, 'Mail should be found');
         $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
-        $this->assertTrue($sent, 'A TLS mail');
     }
 
     /**
@@ -287,11 +290,10 @@ class SendAndReceiveTest extends TestCase
             'Just a mail to myself. Sent via TLS'
         );
         sleep(2);
+        $this->assertTrue($sent, 'A TLS mail');
         $mailFound = $this->getMailById($userName, $messageId);
-
         $this->assertNotNull($mailFound, 'Mail should be found');
         $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
-        $this->assertTrue($sent, 'A TLS mail');
     }
 
     /**

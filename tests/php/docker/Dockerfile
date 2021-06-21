@@ -10,6 +10,6 @@ RUN set -xe && \
         ssmtp && \
     (docker-php-ext-configure imap --with-kerberos --with-imap-ssl) && \
     (docker-php-ext-install imap > /dev/null) && \
-    php -m | grep -F 'imap' && apk add --update --no-cache composer && composer global require phpmailer/phpmailer && ln -s $(composer global config vendor-dir --absolute --quiet) /composer && ls -lah /composer
+    php -m | grep -F 'imap' && apk add --update --no-cache composer && composer self-update --2 && composer global require phpmailer/phpmailer && ln -s $(composer global config vendor-dir --absolute --quiet) /composer && ls -lah /composer
 
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
