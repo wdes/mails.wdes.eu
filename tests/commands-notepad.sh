@@ -33,10 +33,10 @@ swaks --port 587 --tls --auth PLAIN --server localhost --to cyrielle@mail.willia
 
 swaks --port 587 --tls --auth PLAIN --server localhost --to cyrielle@mail.williamdes.eu.org --auth-user cyrielle@mail.williamdes.eu.org --auth-password 'PassCyrielle!ILoveDogs' --header "Subject: A test email" --body "Hi\n:)\nBye" --from "John <john@mail.williamdes.eu.org>"
 
-
+# No such object
 LDAPTLS_REQCERT=never ldapsearch -LLL -Z -h localhost -D "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org" -w 'JohnPassWord!645987zefdm' "*" -b "dc=mail,dc=williamdes,dc=eu,dc=org"
 
-
+# Works
 LDAPTLS_REQCERT=never ldapsearch -Z -h localhost -D "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org" -w 'JohnPassWord!645987zefdm' "*" -b "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org"
 
 
