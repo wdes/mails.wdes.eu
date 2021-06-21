@@ -218,7 +218,9 @@ class SendAndReceiveTest extends TestCase
             'Just a mail to myself. Sent via RAW:25'
         );
         $this->assertTrue($sent, 'A non TLS mail');
-        $this->assertSame('Mail to myself using RAW:25', $this->getMailById($userName, $messageId)->headers->subject);
+        $mailFound = $this->getMailById($userName, $messageId);
+        $this->assertNotNull($mailFound, 'Mail should be found');
+        $this->assertSame('Mail to myself using RAW:25', $mailFound->headers->subject);
     }
 
     /**
@@ -237,7 +239,9 @@ class SendAndReceiveTest extends TestCase
             'Just a mail to myself. Sent via SMTPS'
         );
         $this->assertTrue($sent, 'A non TLS mail');
-        $this->assertSame('Mail to myself using SMTPS', $this->getMailById($userName, $messageId)->headers->subject);
+        $mailFound = $this->getMailById($userName, $messageId);
+        $this->assertNotNull($mailFound, 'Mail should be found');
+        $this->assertSame('Mail to myself using SMTPS', $mailFound->headers->subject);
     }
 
     /**
@@ -353,13 +357,14 @@ class SendAndReceiveTest extends TestCase
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = 587;
             }
+            // Check it is in sync with the cert in the acme.sh dir
+            $fingerprint = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'mail.williamdes.eu.org.cer');
+            $this->assertNotFalse($fingerprint, 'Cert should be found');
             $mail->SMTPOptions = [
                 'ssl' => [
                     'verify_peer' => false,
                     'verify_peer_name' => true,
-                    'peer_fingerprint'  => openssl_x509_fingerprint(
-                        file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'mail.williamdes.eu.org.cer')
-                    ),
+                    'peer_fingerprint'  => openssl_x509_fingerprint($fingerprint),
                 ]
             ];
 
