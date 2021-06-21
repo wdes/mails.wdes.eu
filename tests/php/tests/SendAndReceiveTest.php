@@ -186,7 +186,7 @@ class SendAndReceiveTest extends TestCase
      * @dataProvider dataProviderEmails
      * @depends testImapConnectEmails
      */
-    public function testImapConnectSendEmails(string $userName): void
+    public function testImapConnectSendEmailsTls(string $userName): void
     {
         [$sent, $messageId] = $this->sendMail(
             true,
@@ -198,9 +198,35 @@ class SendAndReceiveTest extends TestCase
             'Just a mail to myself. Sent via TLS'
         );
         sleep(2);
-        $this->assertSame('Mail to myself using TLS', $this->getMailById($userName, $messageId)->headers->subject);
         $this->assertTrue($sent, 'A TLS mail');
+        $this->assertSame('Mail to myself using TLS', $this->getMailById($userName, $messageId)->headers->subject);
+    }
 
+    /**
+     * @dataProvider dataProviderEmails
+     * @depends testImapConnectEmails
+     */
+    public function testImapConnectSendEmailsUnsecure(string $userName): void
+    {
+        [$sent, $messageId] = $this->sendMail(
+            null,
+            self::USERS[$userName]['username'],
+            self::USERS[$userName]['password'],
+            self::USERS[$userName]['username'],
+            self::USERS[$userName]['username'],
+            'Mail to myself using RAW:25',
+            'Just a mail to myself. Sent via RAW:25'
+        );
+        $this->assertTrue($sent, 'A non TLS mail');
+        $this->assertSame('Mail to myself using RAW:25', $this->getMailById($userName, $messageId)->headers->subject);
+    }
+
+    /**
+     * @dataProvider dataProviderEmails
+     * @depends testImapConnectEmails
+     */
+    public function testImapConnectSendEmailsSmtps(string $userName): void
+    {
         [$sent, $messageId] = $this->sendMail(
             false,
             self::USERS[$userName]['username'],
@@ -211,6 +237,7 @@ class SendAndReceiveTest extends TestCase
             'Just a mail to myself. Sent via SMTPS'
         );
         $this->assertTrue($sent, 'A non TLS mail');
+        $this->assertSame('Mail to myself using SMTPS', $this->getMailById($userName, $messageId)->headers->subject);
     }
 
     /**
@@ -302,8 +329,11 @@ class SendAndReceiveTest extends TestCase
         $this->assertTrue($sent, 'A TLS mail');
     }
 
+    /**
+     * @param bool|null $useTLS
+     */
     private function sendMail(
-        bool $useTLS,
+        $useTLS,
         string $username, string $password,
         string $from, string $to,
         string $object, string $body): array
@@ -311,7 +341,7 @@ class SendAndReceiveTest extends TestCase
         $mail = new PHPMailer(true);
 
         try {
-            //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            //$mail->SMTPDebug = \PHPMailer\PHPMailer\SMTP::DEBUG_SERVER;
             $mail->isSMTP();
             $mail->Host       = self::MAIL_HOST;
             $mail->SMTPAuth   = true;
@@ -319,7 +349,7 @@ class SendAndReceiveTest extends TestCase
             $mail->Password   = $password;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $mail->Port       = 465;
-            if ($useTLS) {
+            if ($useTLS === true) {
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = 587;
             }
@@ -332,6 +362,13 @@ class SendAndReceiveTest extends TestCase
                     ),
                 ]
             ];
+
+            if ($useTLS === null) {
+                $mail->Port        = 25;
+                $mail->SMTPOptions = [];
+                $mail->SMTPAutoTLS = false;
+                $mail->SMTPSecure  = false;
+            }
 
             $mail->setFrom($from);
             $mail->addAddress($to);

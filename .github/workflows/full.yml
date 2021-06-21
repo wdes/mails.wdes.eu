@@ -14,6 +14,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
+            - name: create temp folder
+              run: make create-temp-env
             - name: setup for tests
               run: make setup
             - name: run tests
