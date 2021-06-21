@@ -48,5 +48,5 @@ teardown:
 	# Destroy
 	$(TEMP_DIR)/dockerl down
 	# Cleanup
-	rm -rf $(TEMP_DIR)
 	rm /tmp/current-temp-env
+	sudo rm -rf $(TEMP_DIR)
