@@ -32,6 +32,7 @@ services:
             - "110:110" # POP3
             - "995:995" # POP3
             - "4190:4190" # Sieve filters
+            - "4177:4177" # Dovecot replication
         volumes:
             - ${MAIL_DATA_DIR}:/var/mail
             - ${MAIL_STATE_DIR}:/var/mail-state
@@ -86,6 +87,8 @@ services:
             DOVECOT_TLS_CERT_FILE: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"
             DOVECOT_TLS_KEY_FILE: "/acme.sh/${DOMAIN_NAME}/${DOMAIN_NAME}.key"
             DOVECOT_TLS_VERIFY_CLIENT: "allow"
+            DOVECOT_ADM_PASS: "${DOVECOT_ADM_PASS}"
+            DOVECOT_REPLICA_SERVER: "${DOVECOT_REPLICA_SERVER}"
             LDAP_START_TLS: "yes"
             SSL_TYPE: "manual"
             SSL_CERT_PATH: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"

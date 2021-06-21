@@ -26,4 +26,49 @@ sed -i '/^smtpd_sasl_local_domain =/d' /etc/postfix/main.cf
 printf '\nmydomain = %s\n' "localhost" >> /etc/postfix/main.cf
 printf '\nmydestination = %s\n' "localhost" >> /etc/postfix/main.cf
 
+echo 'Enabling replication'
+
+sed -i '/^iterate_filter =/d' /etc/dovecot/dovecot-ldap.conf.ext
+sed -i '/^iterate_attrs =/d' /etc/dovecot/dovecot-ldap.conf.ext
+
+printf '\niterate_filter = (objectClass=PostfixBookMailAccount)\n' >> /etc/dovecot/dovecot-ldap.conf.ext
+printf '\niterate_attrs = mail=user\n' >> /etc/dovecot/dovecot-ldap.conf.ext
+
+sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins notify replication/' /etc/dovecot/conf.d/10-mail.conf
+
+cat <<EOF > /etc/dovecot/conf.d/10-replication.conf
+service doveadm {
+	inet_listener {
+		port = 4177
+		ssl = yes
+	}
+}
+doveadm_port = 4177
+doveadm_password = ${DOVECOT_ADM_PASS}
+service replicator {
+	process_min_avail = 1
+	unix_listener replicator-doveadm {
+		mode = 0600
+	}
+}
+service aggregator {
+	fifo_listener replication-notify-fifo {
+		user = dovecot
+	}
+	unix_listener replication-notify {
+		user = dovecot
+	}
+}
+EOF
+
+# Check if configured
+if [ -n "${DOVECOT_REPLICA_SERVER}" ]; then
+    # Open the config
+    sed -i '/^}/d' /etc/dovecot/conf.d/90-plugin.conf
+    # Remove a possible old value of mail_replica
+    sed -i '/^mail_replica/d' /etc/dovecot/conf.d/90-plugin.conf
+    # Insert the config and close it back
+    printf '\nmail_replica = tcps:%s\n}\n' "${DOVECOT_REPLICA_SERVER}" >> /etc/dovecot/conf.d/90-plugin.conf
+fi
+
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
