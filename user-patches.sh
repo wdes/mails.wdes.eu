@@ -36,7 +36,6 @@ printf '\niterate_attrs = mail=user\n' >> /etc/dovecot/dovecot-ldap.conf.ext
 
 sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins notify replication/' /etc/dovecot/conf.d/10-mail.conf
 
-SSL_CA_DIR="$(dirname $DOVECOT_TLS_CACERT_FILE)"
 cat <<EOF > /etc/dovecot/conf.d/10-replication.conf
 service doveadm {
 	inet_listener {
@@ -47,10 +46,10 @@ service doveadm {
 ssl = required
 ssl_verify_client_cert = no
 auth_ssl_require_client_cert = no
-ssl_cert = <$DOVECOT_TLS_CACERT_FILE
-ssl_key = <${DOVECOT_TLS_KEY_FILE}
+ssl_cert = <${SSL_CERT_PATH}
+ssl_key = <${SSL_KEY_PATH}
 ssl_client_ca_file = <${DOVECOT_TLS_CACERT_FILE}
-ssl_client_ca_dir = ${SSL_CA_DIR}
+ssl_client_ca_dir = /etc/ssl/certs/
 doveadm_port = 4177
 doveadm_password = ${DOVECOT_ADM_PASS}
 service replicator {
