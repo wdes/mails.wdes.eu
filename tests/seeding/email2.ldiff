@@ -15,4 +15,4 @@ objectclass: PostfixBookMailAccount
 sn: Pondu
 uid: cyrielle
 sasluserpassword: {SSHA}xnOeSdW8sN8BT2avtwbMgOvin0CChK1t
-userpassword: {SHA512-CRYPT}$6$MWyAVf1XPvJXHkgu$E0gfDETOHKR0AXVk8nePGZEZETq/b2BRlPHBjfiO4naqty14yeJJ39tVnstAiPMkL3KVw0Gec5KhTL8EfAHAL1
+userpassword: {SSHA}G7/G3oIWxlbxqm878q6A+NZAmGqi+pUI

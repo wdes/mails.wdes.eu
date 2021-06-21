@@ -101,3 +101,20 @@ printf "{CRYPT}%s" "$(openssl passwd -2 -stdin <<< "secret")"
 LDAP_BASE_DN="dc=mail,dc=williamdes,dc=eu,dc=org"
 
 LDAPTLS_REQCERT=never ldapsearch -LLL -Z -h localhost -D "${LDAP_BIND_DN}" -w "${LDAP_BIND_PW}" "(mail=*)" -b "${LDAP_BASE_DN}" mail mailAlias | sed -n 's/^[ \t]*\(mail\|mailAlias\):[ \t]*.*@\(.*\)/\2/p'
+
+
+# slappasswd -h {CRYPT} -s public
+# slappasswd -h {SSHA} -s public
+
+ldapmodify -Z -h localhost -D "cn=admin,dc=mail,dc=williamdes,dc=eu,dc=org" -w PasswordLdapAdmin <<EOF
+dn: cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
+changetype: modify
+replace: userPassword
+userpassword: {CRYPT}lhmbbdbF0NefQ
+
+EOF
+
+
+# Saves as SSHA
+ldappasswd -Z -h localhost -x -D "cn=admin,dc=mail,dc=williamdes,dc=eu,dc=org" -w PasswordLdapAdmin -S "cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org" -s public
+

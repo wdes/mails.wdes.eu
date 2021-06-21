@@ -14,4 +14,4 @@ objectclass: PostfixBookMailAccount
 sn: Pondu
 uid: john
 sasluserpassword: {SSHA}QZc7w6vLnfcL7UYmG5J8mPkxkq2e71HI
-userpassword: {SHA512-CRYPT}$6$5G3yR2rYSuvDbq6e$tq1bG6Lz0nUwSugxCsZSiHbdNZ.wXIZVGBreAvAfyE5Bl6CtnTGDJi.X8ItVvuQYDtptHT3bqsCDIm1VIdnIT1
+userpassword: {CRYPT}.mh2DdDDZZwIQ
