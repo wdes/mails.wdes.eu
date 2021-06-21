@@ -3,6 +3,8 @@ version: "3.8"
 services:
     mailserver:
         image: mailserver/docker-mailserver:10.0.0
+        mem_limit: 4G
+        mem_reservation: 2G
         restart: on-failure:40
         logging:
             driver: "json-file"
@@ -96,13 +98,15 @@ services:
             - acme
 
     openldap:
+        build: ./dockers/docker-openldap
+        restart: on-failure:5
+        mem_limit: 2G
+        mem_reservation: 100M
         logging:
             driver: "json-file"
             options:
                 max-file: "5"
                 max-size: "1m"
-        build: ./dockers/docker-openldap
-        restart: on-failure:5
         dns_search: ${DOMAIN_NAME}
         hostname: ldap.${DOMAIN_NAME}
         domainname: ldap.${DOMAIN_NAME}
@@ -159,6 +163,8 @@ services:
 
     phpldapadmin:
         image: osixia/phpldapadmin:latest
+        mem_limit: 512M
+        mem_reservation: 100M
         restart: on-failure:5
         logging:
             driver: "json-file"
