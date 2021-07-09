@@ -6,9 +6,9 @@ touch /tmp/system.lock
 # https://hub.docker.com/r/neilpang/acme.sh/dockerfile
 if [ ! -f /acme.sh/account.conf ]; then
     echo 'First startup'
-    acme.sh --register-account
+    acme.sh --register-account --server letsencrypt
     # shellcheck disable=SC2154
-    acme.sh --update-account --accountemail "${ACME_SH_EMAIL}"
+    acme.sh  --server letsencrypt --update-account --accountemail "${ACME_SH_EMAIL}"
 fi
 
 # shellcheck disable=SC2154
@@ -23,7 +23,7 @@ if [ ! -f "/acme.sh/${DOMAIN_NAME}/fullchain.cer" ]; then
     done
 
     # shellcheck disable=SC2086,SC2154,SC2090
-    acme.sh --issue ${ACME_COMMAND_ARGUMENTS} \
+    acme.sh --server letsencrypt --issue ${ACME_COMMAND_ARGUMENTS} \
         ${CLI_DOMAIN_NAMES} \
         --reloadcmd "sh /scripts/acme.sh-success.sh"
 
