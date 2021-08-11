@@ -29,6 +29,11 @@ printf '\nmydestination = %s\n' "localhost" >> /etc/postfix/main.cf
 sed -i '/^smtp_helo_name =/d' /etc/postfix/main.cf
 printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
+echo 'Add spam check header to all emails'
+
+# http://blog.dmitryleskov.com/small-hacks/forcing-spamassassin-to-add-the-x-spam-status-header-to-ham-for-debugging/
+sed -i 's/^\$sa_tag_level_deflt =.*/\$sa_tag_level_deflt = -9999; # always add spam info headers/'  /etc/amavis/conf.d/20-debian_defaults
+
 echo 'Enabling replication'
 
 sed -i '/^iterate_filter =/d' /etc/dovecot/dovecot-ldap.conf.ext
