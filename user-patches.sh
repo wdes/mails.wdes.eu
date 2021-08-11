@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -exu
+set -eu
 
 ##
 # This user script will be executed between configuration and starting daemons
