@@ -58,15 +58,21 @@ doveadm_password = ${DOVECOT_ADM_PASS}
 service replicator {
 	process_min_avail = 1
 	unix_listener replicator-doveadm {
-		mode = 0600
+		user = dovecot
+        group = dovecot
+		mode = 0666
 	}
 }
 service aggregator {
 	fifo_listener replication-notify-fifo {
 		user = dovecot
+        group = dovecot
+        mode = 0666
 	}
 	unix_listener replication-notify {
 		user = dovecot
+        group = dovecot
+        mode = 0666
 	}
 }
 EOF
