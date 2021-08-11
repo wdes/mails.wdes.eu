@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-set -e
+set -exu
 
 ##
 # This user script will be executed between configuration and starting daemons
@@ -81,8 +81,10 @@ if [ -n "${DOVECOT_REPLICA_SERVER}" ]; then
     printf '\nmail_replica = tcps:%s\n}\n' "${DOVECOT_REPLICA_SERVER}" >> /etc/dovecot/conf.d/90-plugin.conf
 fi
 
-echo 'Changing owner of /var/run/dovecot'
-chown dovecot:postfix /var/run/dovecot
+if [ -d /var/run/dovecot ]; then
+    echo 'Changing owner of /var/run/dovecot'
+    chown dovecot:postfix /var/run/dovecot
+fi
 
 if [ -f /var/run/dovecot/replication-notify-fifo ]; then
     echo 'Changing permissions of replication-notify-fifo'
