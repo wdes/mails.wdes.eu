@@ -54,6 +54,16 @@ use strict;
 1;  # ensure a defined return
 EOF
 
+echo 'Tweak spamassassin'
+
+# Remove the possible line
+sed -i '/^add_header all Report _REPORT_$/d' /etc/spamassassin/local.cf
+# Add it back
+printf '\nadd_header all Report _REPORT_\n' >> /etc/spamassassin/local.cf
+
+echo 'Lint spamassassin'
+spamassassin --lint
+
 echo 'Enabling replication'
 
 sed -i '/^iterate_filter =/d' /etc/dovecot/dovecot-ldap.conf.ext
