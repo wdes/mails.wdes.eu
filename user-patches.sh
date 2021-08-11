@@ -42,6 +42,8 @@ use strict;
 # the directives you can use in this file
 #
 
+@local_domains_acl = ( "." );
+
 \$sa_tag_level_deflt = -9999; # always add spam info headers
 
 \$enable_dkim_verification = 1; # Check DKIM
@@ -63,6 +65,10 @@ printf '\nadd_header all Report _REPORT_\n' >> /etc/spamassassin/local.cf
 
 echo 'Lint spamassassin'
 spamassassin --lint
+
+echo 'Run spamassassin'
+service spamassassin start
+sa-update -v
 
 echo 'Enabling replication'
 
