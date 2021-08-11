@@ -29,10 +29,30 @@ printf '\nmydestination = %s\n' "localhost" >> /etc/postfix/main.cf
 sed -i '/^smtp_helo_name =/d' /etc/postfix/main.cf
 printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
-echo 'Add spam check header to all emails'
+echo 'Add spam check config'
 
-# http://blog.dmitryleskov.com/small-hacks/forcing-spamassassin-to-add-the-x-spam-status-header-to-ham-for-debugging/
-sed -i 's/^\$sa_tag_level_deflt =.*/\$sa_tag_level_deflt = -9999; # always add spam info headers/'  /etc/amavis/conf.d/20-debian_defaults
+cat <<EOF > /etc/amavis/conf.d/50-user
+use strict;
+
+#
+# Place your configuration directives here.  They will override those in
+# earlier files.
+#
+# See /usr/share/doc/amavisd-new/ for documentation and examples of
+# the directives you can use in this file
+#
+
+\$sa_tag_level_deflt = -9999; # always add spam info headers
+
+\$enable_dkim_verification = 1; # Check DKIM
+
+\$virus_admin = "${VIRUS_ADMIN_EMAIL}";
+
+\$X_HEADER_LINE = "${VIRUS_X_HEADER_LINE}";
+
+#------------ Do not modify anything below this line -------------
+1;  # ensure a defined return
+EOF
 
 echo 'Enabling replication'
 
