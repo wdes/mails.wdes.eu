@@ -9,7 +9,7 @@ fi
 
 # Load up .env
 set -o allexport
-[[ -f $ME/.env ]] && source $ME/.env
+source $ME/.env
 set +o allexport
 
 cd $ME
