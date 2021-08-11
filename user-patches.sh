@@ -44,6 +44,11 @@ use strict;
 
 @local_domains_acl = ( "." );
 
+@spam_scanners = ( ['SpamAssassin', 'Amavis::SpamControl::SpamAssassin'] );
+
+# @bypass_virus_checks_maps = (1);
+# @bypass_spam_checks_maps = (1);
+
 \$sa_tag_level_deflt = -9999; # always add spam info headers
 
 \$enable_dkim_verification = 1; # Check DKIM
