@@ -3,13 +3,14 @@
 ME=$(realpath $(dirname $0))
 
 if [ ! -f $ME/.env ]; then
-    printf 'Missing env file at: %s/.env\n' "${ME}"
+    echo "Missing env: $ME/.env"
     exit 1
 fi
 
 # Load up .env
 set -o allexport
-source $ME/.env
+# Source the file
+. $ME/.env
 set +o allexport
 
 cd $ME
