@@ -93,6 +93,12 @@ services:
             SSL_TYPE: "manual"
             SSL_CERT_PATH: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"
             SSL_KEY_PATH: "/acme.sh/${DOMAIN_NAME}/${DOMAIN_NAME}.key"
+            # Daily report & reporting
+            POSTMASTER_ADDRESS: "${POSTMASTER_ADDRESS}"
+            PFLOGSUMM_RECIPIENT: "${PFLOGSUMM_RECIPIENT}"
+            PFLOGSUMM_TRIGGER: daily_cron
+            LOGWATCH_INTERVAL: daily
+            LOGWATCH_RECIPIENT: "${LOGWATCH_RECIPIENT}"
         cap_add:
             - NET_ADMIN
             - SYS_PTRACE
