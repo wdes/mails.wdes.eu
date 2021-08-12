@@ -43,11 +43,15 @@ use strict;
 #
 
 @local_domains_acl = ( "." );
+@local_domains_maps = ( "." );
 
 @spam_scanners = ( ['SpamAssassin', 'Amavis::SpamControl::SpamAssassin'] );
 
-# @bypass_virus_checks_maps = (1);
-# @bypass_spam_checks_maps = (1);
+# To disable virus or spam checks, uncomment the following:
+#
+# @bypass_virus_checks_maps = (1);  # controls running of anti-virus code
+# @bypass_spam_checks_maps  = (1);  # controls running of anti-spam code
+# $bypass_decode_parts = 1;         # controls running of decoders & dearchivers
 
 \$sa_tag_level_deflt = -9999; # always add spam info headers
 
@@ -73,6 +77,7 @@ spamassassin --lint
 
 echo 'Run spamassassin'
 service spamassassin start
+sleep 2
 sa-update -v
 
 echo 'Enabling replication'
