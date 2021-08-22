@@ -80,6 +80,53 @@ service spamassassin start
 sleep 2
 sa-update -v
 
+echo 'Tweak fail2ban config'
+
+cat <<EOF > /etc/fail2ban/jail.d/user-jail.local
+[DEFAULT]
+
+# "bantime" is the number of seconds that a host is banned.
+# 86400s = 1 day
+bantime  = 86400s
+
+# A host is banned if it has generated "maxretry" during the last "findtime"
+# seconds.
+#findtime  = 10m
+
+# "maxretry" is the number of failures before a host get banned.
+#maxretry = 5
+
+# "ignoreip" can be a list of IP addresses, CIDR masks or DNS hosts. Fail2ban
+# will not ban a host which matches an address in this list. Several addresses
+# can be defined using space (and/or comma) separator.
+ignoreip = ${FAIL2BAN_IGNORE_IPS}
+
+# Default ban action
+# iptables-multiport:	block IP only on affected port
+# iptables-allports:	block IP on all ports
+#banaction = iptables-allports
+
+# Email settings
+
+destemail = ${FAIL2BAN_DST_EMAIL}
+sender = ${FAIL2BAN_SENDER_EMAIL}
+sendername = ${FAIL2BAN_SENDER_NAME}
+mta = sendmail
+
+# to ban & send an e-mail with whois report to the destemail.
+#action = %(action_mw)s
+
+# same as action_mw but also send relevant log lines
+action = %(action_mwl)s
+
+[recidive]
+enabled = true
+banaction = %(banaction_allports)s
+bantime  = 1w
+findtime = 1h
+
+EOF
+
 echo 'Enabling replication'
 
 sed -i '/^iterate_filter =/d' /etc/dovecot/dovecot-ldap.conf.ext
