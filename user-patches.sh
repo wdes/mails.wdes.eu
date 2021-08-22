@@ -77,8 +77,6 @@ spamassassin --lint
 
 echo 'Run spamassassin'
 service spamassassin start
-sleep 2
-sa-update -v
 
 echo 'Tweak fail2ban config'
 
