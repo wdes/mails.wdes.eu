@@ -101,6 +101,11 @@ services:
             PFLOGSUMM_TRIGGER: daily_cron
             LOGWATCH_INTERVAL: daily
             LOGWATCH_RECIPIENT: "${LOGWATCH_RECIPIENT}"
+            # Fail2ban config to allow IPs to make failed attempts
+            FAIL2BAN_IGNORE_IPS: "${FAIL2BAN_IGNORE_IPS}"
+            FAIL2BAN_DST_EMAIL: "${FAIL2BAN_DST_EMAIL}"
+            FAIL2BAN_SENDER_EMAIL: "${FAIL2BAN_SENDER_EMAIL}"
+            FAIL2BAN_SENDER_NAME: "${FAIL2BAN_SENDER_NAME}"
         cap_add:
             - NET_ADMIN
             - SYS_PTRACE
