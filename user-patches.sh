@@ -51,7 +51,7 @@ use strict;
 #
 # @bypass_virus_checks_maps = (1);  # controls running of anti-virus code
 # @bypass_spam_checks_maps  = (1);  # controls running of anti-spam code
-# $bypass_decode_parts = 1;         # controls running of decoders & dearchivers
+# \$bypass_decode_parts = 1;         # controls running of decoders & dearchivers
 
 \$sa_tag_level_deflt = -9999; # always add spam info headers
 
