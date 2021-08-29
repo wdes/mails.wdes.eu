@@ -42,8 +42,8 @@ use strict;
 # the directives you can use in this file
 #
 
-@local_domains_acl = ( "." );
-@local_domains_maps = ( "." );
+@local_domains_acl = ([qw(mail.${DOMAIN_NAME} .localhost .mail . )]);
+@local_domains_maps = ([qw(mail.${DOMAIN_NAME} .localhost .mail . )]);
 
 @spam_scanners = ( ['SpamAssassin', 'Amavis::SpamControl::SpamAssassin'] );
 
