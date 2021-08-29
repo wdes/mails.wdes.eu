@@ -31,6 +31,8 @@ printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
 echo 'Add spam check config'
 
+DOMAIN_NAME="$(domainname)"
+
 cat <<EOF > /etc/amavis/conf.d/50-user
 use strict;
 
@@ -42,8 +44,8 @@ use strict;
 # the directives you can use in this file
 #
 
-@local_domains_acl = ([qw(mail.${DOMAIN_NAME} .localhost .mail . )]);
-@local_domains_maps = ([qw(mail.${DOMAIN_NAME} .localhost .mail . )]);
+@local_domains_acl = ([qw(mail.${DOMAIN_NAME} ${OVERRIDE_HOSTNAME} .localhost .mail . )]);
+@local_domains_maps = ([qw(mail.${DOMAIN_NAME} ${OVERRIDE_HOSTNAME} .localhost .mail . )]);
 
 @spam_scanners = ( ['SpamAssassin', 'Amavis::SpamControl::SpamAssassin'] );
 
