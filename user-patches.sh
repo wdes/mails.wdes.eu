@@ -44,8 +44,8 @@ use strict;
 # the directives you can use in this file
 #
 
-@local_domains_acl = ([qw(mail.${DOMAIN_NAME} ${OVERRIDE_HOSTNAME} .localhost .mail . )]);
-@local_domains_maps = ([qw(mail.${DOMAIN_NAME} ${OVERRIDE_HOSTNAME} .localhost .mail . )]);
+@local_domains_acl = (); # default is empty list, no recip. considered local
+@local_domains_maps = (); # default is empty list, no recip. considered local
 
 @spam_scanners = ( ['SpamAssassin', 'Amavis::SpamControl::SpamAssassin'] );
 
