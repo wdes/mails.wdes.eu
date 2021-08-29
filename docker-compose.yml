@@ -40,7 +40,6 @@ services:
             - ${MAIL_CONFIGS_DIR}:/tmp/docker-mailserver/
             - ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror3:/acme.sh/${DOMAIN_NAME}/
-            - ${FAIL2BAN_DB_FILE}:/var/lib/fail2ban/fail2ban.sqlite3
         environment:
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
             ENABLE_SPAMASSASSIN: "1"

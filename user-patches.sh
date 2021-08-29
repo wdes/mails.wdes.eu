@@ -183,15 +183,4 @@ if [ -n "${DOVECOT_REPLICA_SERVER}" ]; then
     printf '\nmail_replica = tcps:%s\n}\n' "${DOVECOT_REPLICA_SERVER}" >> /etc/dovecot/conf.d/90-plugin.conf
 fi
 
-if [ -d /var/run/dovecot ]; then
-    echo 'Changing owner of /var/run/dovecot'
-    chown dovecot:postfix /var/run/dovecot
-fi
-
-if [ -f /var/run/dovecot/replication-notify-fifo ]; then
-    echo 'Changing permissions of replication-notify-fifo'
-    chown dovecot:postfix /var/run/dovecot/replication-notify-fifo
-    chmod 0660 /var/run/dovecot/replication-notify-fifo
-fi
-
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
