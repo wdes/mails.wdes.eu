@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
     mailserver:
-        image: mailserver/docker-mailserver:10.1.2
+        image: mailserver/docker-mailserver:10.2.0
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
