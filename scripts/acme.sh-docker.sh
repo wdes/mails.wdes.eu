@@ -6,6 +6,7 @@ touch /tmp/system.lock
 # https://hub.docker.com/r/neilpang/acme.sh/dockerfile
 if [ ! -f /acme.sh/account.conf ]; then
     echo 'First startup'
+    # shellcheck disable=SC2154
     acme.sh --register-account -m "${ACME_SH_EMAIL}" --server zerossl
     # shellcheck disable=SC2154
     acme.sh  --server zerossl --update-account --accountemail "${ACME_SH_EMAIL}"
