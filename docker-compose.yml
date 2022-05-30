@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
     mailserver:
-        image: mailserver/docker-mailserver:10.5.0
+        image: mailserver/docker-mailserver:11.0.0
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
@@ -42,6 +42,7 @@ services:
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror3:/acme.sh/${DOMAIN_NAME}/
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
         environment:
+            TZ: UTC
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
             ENABLE_SPAMASSASSIN: "1"
             ENABLE_SPAMASSASSIN_KAM: "1"
@@ -53,7 +54,7 @@ services:
             ENABLE_POP3: "1"
             ENABLE_MANAGESIEVE: "1"
             ONE_DIR: "1"
-            DMS_DEBUG: "0"
+            LOG_LEVEL: "${LOG_LEVEL:-warn}"
             ENABLE_LDAP: "1"
             POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
             LDAP_SERVER_HOST: "ldap.${DOMAIN_NAME}"
