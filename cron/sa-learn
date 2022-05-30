@@ -1,0 +1,16 @@
+# This assumes you're having `environment: ONE_DIR=1` in the env-mailserver,
+# with a consolidated config in `/var/mail-state`
+#
+# m h dom mon dow user command
+#
+
+# See: https://docker-mailserver.github.io/docker-mailserver/edge/faq/#how-can-i-make-spamassassin-better-recognize-spam
+
+#
+# Everyday 3:00AM, learn spam from all users of all domains
+# spam: junk directory
+0  3 * * * root  sa-learn --spam /var/mail/*/*/.Junk --dbpath /var/mail-state/lib-amavis/.spamassassin
+# ham: archive directories
+15 3 * * * root  sa-learn --ham /var/mail/*/*/.Archive* --dbpath /var/mail-state/lib-amavis/.spamassassin
+# ham: inbox subdirectories
+30 3 * * * root  sa-learn --ham /var/mail/*/*/cur* --dbpath /var/mail-state/lib-amavis/.spamassassin
