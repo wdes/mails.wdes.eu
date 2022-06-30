@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
     mailserver:
-        image: mailserver/docker-mailserver:11.0.0
+        image: mailserver/docker-mailserver:11.1.0
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
@@ -110,7 +110,10 @@ services:
             FAIL2BAN_SENDER_NAME: "${FAIL2BAN_SENDER_NAME}"
         cap_add:
             - NET_ADMIN
-            - SYS_PTRACE
+        healthcheck:
+            test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+            timeout: 3s
+            retries: 0
         depends_on:
             - openldap
             - acme
