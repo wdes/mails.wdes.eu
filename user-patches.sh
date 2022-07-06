@@ -25,6 +25,8 @@ sed -i '/^smtpd_sasl_local_domain =/d' /etc/postfix/main.cf
 
 printf '\nmydomain = %s\n' "localhost" >> /etc/postfix/main.cf
 printf '\nmydestination = %s\n' "localhost" >> /etc/postfix/main.cf
+# For: https://github.com/GermanCoding/Roundcube_TLS_Icon
+printf '\nsmtpd_tls_received_header = yes\n' "localhost" >> /etc/postfix/main.cf
 
 sed -i '/^smtp_helo_name =/d' /etc/postfix/main.cf
 printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
