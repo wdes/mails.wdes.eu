@@ -41,6 +41,7 @@ services:
             - ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror3:/acme.sh/${DOMAIN_NAME}/
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
+            - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         environment:
             TZ: UTC
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
@@ -57,7 +58,8 @@ services:
             LOG_LEVEL: "${LOG_LEVEL:-warn}"
             ENABLE_LDAP: "1"
             POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
-            LDAP_SERVER_HOST: "ldap.${DOMAIN_NAME}"
+            LDAP_SERVER_HOST: "ldaps://ldap.mail.williamdes.eu.org" # Must match the hostname for SSL verification
+            DOVECOT_URIS: "ldaps://ldap.mail.williamdes.eu.org" # Must match the hostname for SSL verification
             LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
             LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
             LDAP_BIND_PW: ${LDAP_ADMIN_PASSWORD}
@@ -72,7 +74,7 @@ services:
             SASLAUTHD_LDAP_START_TLS: "no"
             SASLAUTHD_LDAP_TLS_CHECK_PEER: "yes"
             SASLAUTHD_LDAP_TLS_CACERT_FILE: "/acme.sh/${DOMAIN_NAME}/ca.cer"
-            ENABLE_SASLAUTHD: "1"
+            ENABLE_SASLAUTHD: "0" # The docker container manages it
             SASLAUTHD_MECHANISMS: "ldap"
             SASLAUTHD_LDAP_SERVER: "ldaps://ldap.${DOMAIN_NAME}"
             SASLAUTHD_LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
@@ -84,14 +86,10 @@ services:
             SASLAUTHD_LDAP_AUTH_METHOD: "custom"
             SASLAUTHD_LDAP_PASSWORD_ATTR: "saslUserPassword"
             POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
-            DOVECOT_TLS: "yes"
             DOVECOT_TLS_CACERT_FILE: "/acme.sh/${DOMAIN_NAME}/ca.cer"
-            DOVECOT_TLS_CERT_FILE: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"
-            DOVECOT_TLS_KEY_FILE: "/acme.sh/${DOMAIN_NAME}/${DOMAIN_NAME}.key"
-            DOVECOT_TLS_VERIFY_CLIENT: "allow"
+            DOVECOT_TLS_VERIFY_CLIENT: "try"
             DOVECOT_ADM_PASS: "${DOVECOT_ADM_PASS}"
             DOVECOT_REPLICA_SERVER: "${DOVECOT_REPLICA_SERVER}"
-            LDAP_START_TLS: "yes"
             SSL_TYPE: "manual"
             SSL_CERT_PATH: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"
             SSL_KEY_PATH: "/acme.sh/${DOMAIN_NAME}/${DOMAIN_NAME}.key"
@@ -119,21 +117,20 @@ services:
             - acme
 
     openldap:
-        build: ./dockers/docker-openldap
+        image: botsudo/docker-openldap
         restart: on-failure:5
-        mem_limit: 2G
+        mem_limit: 1G
         mem_reservation: 100M
         logging:
             driver: "json-file"
             options:
                 max-file: "5"
                 max-size: "1m"
-        dns_search: ${DOMAIN_NAME}
         hostname: ldap.${DOMAIN_NAME}
         domainname: ldap.${DOMAIN_NAME}
         healthcheck:
-            test: 'ldapwhoami -Z -D "cn=$${LDAP_READONLY_USER_USERNAME},$${LDAP_BASE_DN}" -w "$${LDAP_READONLY_USER_PASSWORD}"'
-            start_period: 10s
+            test: 'ldapwhoami -D "cn=$${DOCKER_LDAP_HEALTHCHECK_USERNAME}" -w "$${DOCKER_LDAP_HEALTHCHECK_PASSWORD}"'
+            start_period: 5s
             interval: 30s
             timeout: 5s
             retries: 3
@@ -144,37 +141,31 @@ services:
         environment:
             # 256 to enable debug
             # See: https://www.openldap.org/doc/admin24/slapdconf2.html
-            LDAP_LOG_LEVEL: 0
+            LDAP_LOG_LEVEL: ${LDAP_LOG_LEVEL:-0}
             LDAP_OPENLDAP_GID: 0
             LDAP_OPENLDAP_UID: 0
-            LDAP_TLS: "true"
-            LDAP_TLS_CRT_FILENAME: "${DOMAIN_NAME}.cer"
-            LDAP_TLS_KEY_FILENAME: "${DOMAIN_NAME}.key"
-            LDAP_TLS_CA_CRT_FILENAME: "ca.cer"
-            LDAP_TLS_CIPHER_SUITE: "NORMAL"
-            LDAP_TLS_VERIFY_CLIENT: "allow"
-            LDAP_TLS_ENFORCE: "true"
-            LDAP_ORGANISATION: ${LDAP_ORGANISATION}
-            LDAP_DOMAIN: "${DOMAIN_NAME}"
+            LDAP_TLS_CRT_FILENAME: "/container/service/slapd/assets/certs/server.cer"
+            LDAP_TLS_KEY_FILENAME: "/container/service/slapd/assets/certs/server.key"
+            LDAP_TLS_CA_CRT_FILENAME: "/container/service/slapd/assets/certs/ca.cer"
+            LDAP_TLS_CIPHER_SUITE: "HIGH:MEDIUM:-SSLv2"
+            # never | allow | try | demand
+            LDAP_TLS_VERIFY_CLIENT: "try"
             LDAP_BASE_DN: "${LDAP_BASE_DN}"
+            LDAP_AUTH_BASE_DN: "ou=people,${LDAP_BASE_DN}"
             LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
             LDAP_CONFIG_PASSWORD: ${LDAP_CONFIG_PASSWORD}
-            LDAP_READONLY_USER: "true"
-            LDAP_READONLY_USER_USERNAME: "ldap-ro"
-            LDAP_READONLY_USER_PASSWORD: ${LDAP_READONLY_PASSWORD}
-            LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
-            # LDAP_SEED_INTERNAL_LDIF_PATH: "/tmp/ldap-custom-ldif"
-            LDAP_SEED_INTERNAL_SCHEMA_PATH: "/tmp/ldap-custom-schema"
-        tty: true
-        stdin_open: true
+            LDAP_MONITOR_PASSWORD: ${LDAP_MONITOR_PASSWORD}
+            # Only used by healthcheck command defined above
+            DOCKER_LDAP_HEALTHCHECK_USERNAME: ${DOCKER_LDAP_HEALTHCHECK_USERNAME}
+            DOCKER_LDAP_HEALTHCHECK_PASSWORD: ${DOCKER_LDAP_HEALTHCHECK_PASSWORD}
+            # Add ldaps:/// to SSL listen
+            LDAP_LISTEN_URLS: "ldap:/// ldapi:/// ldaps:///"
         volumes:
             - ${LDAP_DATA_DIR}:/var/lib/ldap
-            - ${LDAP_SLAPD_DIR}:/etc/ldap/slapd.d
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/ca.cer:/container/service/slapd/assets/certs/ca.cer
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/fullchain.cer:/container/service/slapd/assets/certs/${DOMAIN_NAME}.cer
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror2/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/${DOMAIN_NAME}.key
-            - ${LDAP_CUSTOM_SCHEMA_DIR:-./data/ldap-custom-schema}:/tmp/ldap-custom-schema
-            # - ${LDAP_CUSTOM_LDIF_DIR:-./data/ldap-custom-ldif}:/tmp/ldap-custom-ldif
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/slapd/assets/certs/ca.cer:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/container/service/slapd/assets/certs/server.cer:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/server.key:ro
+            - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         ports:
             - "${LDAP_PORT:-389}:389"
             - "${LDAPS_PORT:-636}:636"

@@ -12,9 +12,7 @@ setup:
 	cp docker-compose.yml dockerl user-patches.sh $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
 	cp -rp tests $(TEMP_DIR)
-	cp -rp dockers $(TEMP_DIR)
 	cp -rp scripts $(TEMP_DIR)
-	cp -rp data $(TEMP_DIR)
 	@cd $(TEMP_DIR)
 	@echo "Running in $(PWD)"
 	# Build images
@@ -36,7 +34,7 @@ test:
 	$(eval TEMP_DIR ?= $(shell cat /tmp/current-temp-env))
 	if [ -z "$(TEMP_DIR)" ]; then echo 'Missing TEMP_DIR env !'; exit 1; fi
 	# Run phpunit test suite
-	$(TEMP_DIR)/dockerl -f tests/php/docker-compose.yml up --build --exit-code-from run-tests --abort-on-container-exit
+	BUILDKIT_PROGRESS=plain $(TEMP_DIR)/dockerl -f tests/php/docker-compose.yml up --build --exit-code-from run-tests --abort-on-container-exit
 
 teardown:
 	$(eval TEMP_DIR ?= $(shell cat /tmp/current-temp-env))

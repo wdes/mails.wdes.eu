@@ -6,10 +6,13 @@ touch /tmp/system.lock
 # https://hub.docker.com/r/neilpang/acme.sh/dockerfile
 if [ ! -f /acme.sh/account.conf ]; then
     echo 'First startup'
-    # shellcheck disable=SC2154
-    acme.sh --register-account -m "${ACME_SH_EMAIL}" --server zerossl
-    # shellcheck disable=SC2154
-    acme.sh  --server zerossl --update-account --accountemail "${ACME_SH_EMAIL}"
+    #acme.sh --register-account --server letsencrypt -m "${ACME_SH_EMAIL}"
+    acme.sh --set-default-ca --server zerossl
+    if [ ! -z "${ACME_SH_EMAIL}" ]; then
+        acme.sh --register-account --server zerossl -m "${ACME_SH_EMAIL}"
+    else
+        acme.sh --register-account --server zerossl --eab-kid "${ACME_SH_EAB_KID}" --eab-hmac-key "${ACME_SH_EAB_HMAC}"
+    fi
 fi
 
 # shellcheck disable=SC2154

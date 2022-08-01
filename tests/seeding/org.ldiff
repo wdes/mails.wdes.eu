@@ -1,3 +1,9 @@
+dn: dc=mail,dc=williamdes,dc=eu,dc=org
+objectClass: dcObject
+objectClass: organization
+dc: mail
+o: Mail test
+
 dn: ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
 objectclass: organizationalUnit
 objectclass: top

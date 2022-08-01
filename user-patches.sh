@@ -10,11 +10,17 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>Applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 
 # https://github.com/dovecot/core/blob/941668f5a0ca1733ceceae438092398bc08a7810/doc/example-config/dovecot-ldap.conf.ext#L47
 
-printf '\ntls_ca_cert_file = %s\ntls_cert_file = %s\ntls_key_file = %s\ntls_require_cert = %s\n' \
-    "${DOVECOT_TLS_CACERT_FILE}" \
-    "${DOVECOT_TLS_CERT_FILE}" \
-    "${DOVECOT_TLS_KEY_FILE}" \
-    "${DOVECOT_TLS_VERIFY_CLIENT}" >> /etc/dovecot/dovecot-ldap.conf.ext
+#printf '\ntls_ca_cert_file = %s\ntls_cert_file = %s\ntls_key_file = %s\ntls_require_cert = %s\n' \
+#    "${DOVECOT_TLS_CACERT_FILE}" \
+#    "${DOVECOT_TLS_CERT_FILE}" \
+#    "${DOVECOT_TLS_KEY_FILE}" \
+#    "${DOVECOT_TLS_VERIFY_CLIENT}" >> /etc/dovecot/dovecot-ldap.conf.ext
+
+cat >/etc/postfix/sasl/smtpd.conf << EOF
+pwcheck_method: saslauthd
+saslauthd_path: /var/run/saslauthd/mux
+mech_list: PLAIN SRP
+EOF
 
 # Delete before set to localhost
 sed -i '/^mydomain =/d' /etc/postfix/main.cf
