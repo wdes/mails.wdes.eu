@@ -197,7 +197,7 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself using TLS',
             'Just a mail to myself. Sent via TLS'
         );
-        sleep(2);
+        sleep(3);
         $this->assertTrue($sent, 'A TLS mail');
         $mailFound = $this->getMailById($userName, $messageId);
         $this->assertNotNull($mailFound, 'Mail should be found');

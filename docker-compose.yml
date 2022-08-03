@@ -54,6 +54,7 @@ services:
             ENABLE_POSTGREY: "1"
             ENABLE_POP3: "1"
             ENABLE_MANAGESIEVE: "1"
+            ENABLE_SASLAUTHD: "0" # The docker container manages it
             ONE_DIR: "1"
             LOG_LEVEL: "${LOG_LEVEL:-warn}"
             ENABLE_LDAP: "1"
@@ -71,7 +72,6 @@ services:
             DOVECOT_USER_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%n@%d))"
             DOVECOT_DEFAULT_PASS_SCHEME: "SSHA256"
             TLS_LEVEL: "intermediate"
-            ENABLE_SASLAUTHD: "0" # The docker container manages it
             POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
             DOVECOT_TLS_CACERT_FILE: "/acme.sh/${DOMAIN_NAME}/ca.cer"
             DOVECOT_TLS_VERIFY_CLIENT: "try"
@@ -93,8 +93,6 @@ services:
             FAIL2BAN_DST_EMAIL: "${FAIL2BAN_DST_EMAIL}"
             FAIL2BAN_SENDER_EMAIL: "${FAIL2BAN_SENDER_EMAIL}"
             FAIL2BAN_SENDER_NAME: "${FAIL2BAN_SENDER_NAME}"
-        cap_add:
-            - NET_ADMIN
         healthcheck:
             test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
             timeout: 3s
@@ -102,6 +100,13 @@ services:
         depends_on:
             - openldap
             - acme
+        cap_add:
+            - NET_ADMIN # fail2ban
+            #- CAP_CHOWN # supervisor uses sockchown
+        security_opt:
+          - no-new-privileges:true
+        #cap_drop:
+        #    - ALL
 
     openldap:
         image: botsudo/docker-openldap
@@ -159,6 +164,8 @@ services:
         depends_on:
             acme:
                 condition: service_healthy
+        security_opt:
+          - no-new-privileges:true
 
     phpldapadmin:
         image: osixia/phpldapadmin:latest
@@ -176,6 +183,7 @@ services:
                     - ldap-admin.${DOMAIN_NAME}
         healthcheck:
             test: 'php -r ''$$c = is_string(file_get_contents("https://localhost?ping=pong", false, stream_context_create(["ssl" => ["verify_peer"=> false, "verify_peer_name"=> true, "peer_name"=> "${DOMAIN_NAME}", "peer_fingerprint" => openssl_x509_fingerprint(file_get_contents("/container/service/phpldapadmin/assets/apache2/certs/fullchain.cer")) ]]))); echo $$c; exit($$c === true ? 0 : 1);'''
+            start_period: 15s
             interval: 30s
             timeout: 3s
             retries: 3
@@ -199,6 +207,8 @@ services:
                 condition: service_healthy
             acme:
                 condition: service_healthy
+        security_opt:
+          - no-new-privileges:true
     acme:
         image: neilpang/acme.sh:latest
         mem_limit: 512M
@@ -230,7 +240,8 @@ services:
             ACME_COMMAND_ARGUMENTS: ${ACME_COMMAND_ARGUMENTS:---dns dns_cf}
         entrypoint: /bin/sh
         command: /scripts/acme.sh-docker.sh
-
+        security_opt:
+          - no-new-privileges:true
 networks:
     mail_infra_network:
         driver: bridge
