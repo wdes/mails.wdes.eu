@@ -71,20 +71,7 @@ services:
             DOVECOT_USER_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%n@%d))"
             DOVECOT_DEFAULT_PASS_SCHEME: "SSHA256"
             TLS_LEVEL: "intermediate"
-            SASLAUTHD_LDAP_START_TLS: "no"
-            SASLAUTHD_LDAP_TLS_CHECK_PEER: "yes"
-            SASLAUTHD_LDAP_TLS_CACERT_FILE: "/acme.sh/${DOMAIN_NAME}/ca.cer"
             ENABLE_SASLAUTHD: "0" # The docker container manages it
-            SASLAUTHD_MECHANISMS: "ldap"
-            SASLAUTHD_LDAP_SERVER: "ldaps://ldap.${DOMAIN_NAME}"
-            SASLAUTHD_LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
-            SASLAUTHD_LDAP_PASSWORD: ${LDAP_ADMIN_PASSWORD}
-            SASLAUTHD_LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
-            # For some odd reason %d is empty and %r containts the domain
-            # See: https://campus.barracuda.com/solution/50160000000GYmFAAW
-            SASLAUTHD_LDAP_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%U@%r))"
-            SASLAUTHD_LDAP_AUTH_METHOD: "custom"
-            SASLAUTHD_LDAP_PASSWORD_ATTR: "saslUserPassword"
             POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
             DOVECOT_TLS_CACERT_FILE: "/acme.sh/${DOMAIN_NAME}/ca.cer"
             DOVECOT_TLS_VERIFY_CLIENT: "try"
