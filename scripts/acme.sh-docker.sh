@@ -11,6 +11,7 @@ if [ ! -f /acme.sh/account.conf ]; then
     if [ ! -z "${ACME_SH_EMAIL}" ]; then
         acme.sh --register-account --server zerossl -m "${ACME_SH_EMAIL}"
     else
+        # shellcheck disable=SC2154
         acme.sh --register-account --server zerossl --eab-kid "${ACME_SH_EAB_KID}" --eab-hmac-key "${ACME_SH_EAB_HMAC}"
     fi
 fi
