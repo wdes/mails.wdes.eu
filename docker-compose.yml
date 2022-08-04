@@ -192,11 +192,7 @@ services:
             PHPLDAPADMIN_HTTPS_CRT_FILENAME: "fullchain.cer"
             PHPLDAPADMIN_HTTPS_KEY_FILENAME: "${DOMAIN_NAME}.key"
             PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: "ca.cer"
-            PHPLDAPADMIN_LDAP_CLIENT_TLS_REQCERT: "try"
-            PHPLDAPADMIN_LDAP_CLIENT_TLS: "true"
             PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME: "ca.cer"
-            PHPLDAPADMIN_LDAP_CLIENT_TLS_CRT_FILENAME: "fullchain.cer"
-            PHPLDAPADMIN_LDAP_CLIENT_TLS_KEY_FILENAME: "${DOMAIN_NAME}.key"
         volumes:
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1:/container/service/phpldapadmin/assets/apache2/certs
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1:/container/service/ldap-client/assets/certs
