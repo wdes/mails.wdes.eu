@@ -59,8 +59,8 @@ services:
             LOG_LEVEL: "${LOG_LEVEL:-warn}"
             ENABLE_LDAP: "1"
             POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
-            LDAP_SERVER_HOST: "ldaps://ldap.mail.williamdes.eu.org" # Must match the hostname for SSL verification
-            DOVECOT_URIS: "ldaps://ldap.mail.williamdes.eu.org" # Must match the hostname for SSL verification
+            LDAP_SERVER_HOST: "ldaps://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
+            DOVECOT_URIS: "ldaps://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
             LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
             LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
             LDAP_BIND_PW: ${LDAP_ADMIN_PASSWORD}
