@@ -24,13 +24,16 @@ if [ ! -f "/acme.sh/${DOMAIN_NAME}/fullchain.cer" ]; then
     # shellcheck disable=SC2154
     for domain in ${DOMAIN_NAMES}; do
         # shellcheck disable=SC2089
-        CLI_DOMAIN_NAMES="${CLI_DOMAIN_NAMES} -d ${domain}"
+        CLI_DOMAIN_NAMES="${CLI_DOMAIN_NAMES} -d ${domain} --challenge-alias no --dns ${DNS_API}"
     done
 
     # shellcheck disable=SC2086,SC2154,SC2090
-    acme.sh --server zerossl --issue ${ACME_COMMAND_ARGUMENTS} \
+    acme.sh --server zerossl \
+        ${ACME_COMMAND_ARGUMENTS} \
+        --reloadcmd "sh /scripts/acme.sh-success.sh" \
+        --issue \
         ${CLI_DOMAIN_NAMES} \
-        --reloadcmd "sh /scripts/acme.sh-success.sh"
+        ${ACME_ISSUE_ARGUMENTS}
 
 fi
 

@@ -153,7 +153,7 @@ services:
             # Add ldaps:/// to SSL listen
             LDAP_LISTEN_URLS: "ldap:/// ldapi:/// ldaps:///"
         volumes:
-            - ${LDAP_DATA_DIR}:/var/lib/ldap
+            - ${LDAP_DATA_DIR}:/var/lib/openldap/openldap-data
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/slapd/assets/certs/ca.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/container/service/slapd/assets/certs/server.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/server.key:ro
@@ -236,8 +236,11 @@ services:
             DOMAIN_NAME: ${DOMAIN_NAME}
             DOMAIN_NAMES: "${DOMAIN_NAMES}"
             DNS_API: "dns_cf"
-            ACME_SH_EMAIL: "williamdes@wdes.fr"
-            ACME_COMMAND_ARGUMENTS: ${ACME_COMMAND_ARGUMENTS:---dns dns_cf}
+            ACME_SH_EMAIL: "${ACME_SH_EMAIL:-}"
+            ACME_SH_EAB_KID: "${ACME_SH_EAB_KID:-}"
+            ACME_SH_EAB_HMAC: "${ACME_SH_EAB_HMAC:-}"
+            ACME_COMMAND_ARGUMENTS: ${ACME_COMMAND_ARGUMENTS:-}
+            ACME_ISSUE_ARGUMENTS: ${ACME_ISSUE_ARGUMENTS:-}
         entrypoint: /bin/sh
         command: /scripts/acme.sh-docker.sh
         security_opt:
