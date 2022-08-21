@@ -10,6 +10,7 @@
 # Everyday 3:00AM, learn spam from all users of all domains
 # spam: junk directory
 0  3 * * * root  sa-learn --spam /var/mail/*/*/.Junk --dbpath /var/mail-state/lib-amavis/.spamassassin
+0  3 * * * root  sa-learn --spam /var/mail/*/*/".Courrier ind&AOk-sirable" --dbpath /var/mail-state/lib-amavis/.spamassassin
 # ham: archive directories
 15 3 * * * root  sa-learn --ham /var/mail/*/*/.Archive* --dbpath /var/mail-state/lib-amavis/.spamassassin
 # ham: inbox subdirectories
