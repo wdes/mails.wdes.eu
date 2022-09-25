@@ -9,3 +9,6 @@ insert_final_newline = true
 
 [Makefile]
 indent_style = tab
+
+[templates/dns/zone.txt.tera]
+indent_style = tab
