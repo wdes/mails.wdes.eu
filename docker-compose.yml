@@ -13,7 +13,7 @@ services:
                 max-size: "5m"
         hostname: mail
         domainname: ${DOMAIN_NAME}
-        dns: 1.1.1.1
+        dns: ${DNS_SERVER:-1.1.1.1}
         stop_grace_period: 1m
         networks:
             mail_infra_network:
