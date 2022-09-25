@@ -149,6 +149,7 @@ cat <<EOF > /etc/dovecot/conf.d/10-replication.conf
 service doveadm {
 	inet_listener {
 		port = 4177
+        ssl = no
 	}
 }
 doveadm_port = 4177
