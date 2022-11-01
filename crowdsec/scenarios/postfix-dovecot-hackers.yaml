@@ -6,7 +6,7 @@ groupby: evt.Meta.source_ip
 blackhole: 1m
 labels:
  service: postfix
- type: probing
+ type: http-scan
  remediation: true
 ---
 type: leaky
@@ -15,9 +15,9 @@ description: "Detect user finding"
 filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Meta.dovecot_login_message == 'unknown user'"
 groupby: evt.Meta.source_ip
 # Will overflow after 2 attempts counted one each 1 second
-leakspeed: "1s"
+distinct: evt.Meta.dovecot_user
 capacity: 2
 labels:
- service: postfix
- type: probing
+ service: dovecot
+ type: user-bf
  remediation: true
