@@ -246,7 +246,7 @@ services:
         image: crowdsecurity/crowdsec
         restart: always
         environment:
-            DISABLE_LOCAL_API: true
+            DISABLE_LOCAL_API: "true"
             AGENT_USERNAME: "${CROWDSEC_AGENT_USERNAME}"
             AGENT_PASSWORD: "${CROWDSEC_AGENT_PASSWORD}"
             LOCAL_API_URL: "${CROWDSEC_AGENT_LOCAL_API_URL}"
