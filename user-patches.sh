@@ -88,9 +88,6 @@ printf '\nadd_header all Report _REPORT_\n' >> /etc/spamassassin/local.cf
 echo 'Lint spamassassin'
 spamassassin --lint
 
-echo 'Run spamassassin'
-service spamassassin start
-
 echo 'Tweak fail2ban config'
 
 cat <<EOF > /etc/fail2ban/jail.d/user-jail.local
