@@ -247,6 +247,7 @@ services:
         restart: always
         environment:
             DISABLE_LOCAL_API: "true"
+            DISABLE_SCENARIOS: "crowdsecurity/ssh-bf crowdsecurity/ssh-slow-bf"
             AGENT_USERNAME: "${CROWDSEC_AGENT_USERNAME}"
             AGENT_PASSWORD: "${CROWDSEC_AGENT_PASSWORD}"
             LOCAL_API_URL: "${CROWDSEC_AGENT_LOCAL_API_URL}"
