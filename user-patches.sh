@@ -199,3 +199,6 @@ if [ -n "${DOVECOT_REPLICA_SERVER}" ]; then
 fi
 
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+sleep 2
+service spamassassin start
+echo ">>>>>>>>>>>>>>>>>>>>>>>Finished starting services<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
