@@ -199,6 +199,7 @@ if [ -n "${DOVECOT_REPLICA_SERVER}" ]; then
 fi
 
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+service rsyslog start
 sleep 2
 service spamassassin start
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished starting services<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
