@@ -90,29 +90,40 @@ spamassassin --lint
 
 echo 'Tweak fail2ban config'
 
+# Source: https://github.com/docker-mailserver/docker-mailserver/blob/v11.2.0/target/fail2ban/jail.local
 cat <<EOF > /etc/fail2ban/jail.d/user-jail.local
 [DEFAULT]
 
 # "bantime" is the number of seconds that a host is banned.
 # 86400s = 1 day
 bantime  = 86400s
+port = smtp,pop3,pop3s,imap,imaps,submission,submissions,sieve
 
 # A host is banned if it has generated "maxretry" during the last "findtime"
 # seconds.
-#findtime  = 10m
+findtime = 10m
 
 # "maxretry" is the number of failures before a host get banned.
-#maxretry = 5
+maxretry = 3
 
 # "ignoreip" can be a list of IP addresses, CIDR masks or DNS hosts. Fail2ban
 # will not ban a host which matches an address in this list. Several addresses
 # can be defined using space (and/or comma) separator.
 ignoreip = ${FAIL2BAN_IGNORE_IPS}
 
-# Default ban action
-# iptables-multiport:	block IP only on affected port
-# iptables-allports:	block IP on all ports
-#banaction = iptables-allports
+# default ban action
+# nftables-multiport: block IP only on affected port
+# nftables-allports:  block IP on all ports
+banaction = nftables-allports
+
+[dovecot]
+enabled = true
+
+[postfix]
+enabled = true
+
+[postfix-sasl]
+enabled = true
 
 # Email settings
 
@@ -121,18 +132,12 @@ sender = ${FAIL2BAN_SENDER_EMAIL}
 sendername = ${FAIL2BAN_SENDER_NAME}
 mta = sendmail
 
-# to ban & send an e-mail with whois report to the destemail.
-#action = %(action_mw)s
-
-# same as action_mw but also send relevant log lines
-action = %(action_mwl)s
-
-[recidive]
+# This jail is used for manual bans.
+# To ban an IP address use: setup.sh fail2ban ban <IP>
+[custom]
 enabled = true
-banaction = %(banaction_allports)s
-bantime  = 1w
-findtime = 1h
-
+bantime = 180d
+port = smtp,pop3,pop3s,imap,imaps,submission,submissions,sieve
 EOF
 
 echo 'Enabling replication'
