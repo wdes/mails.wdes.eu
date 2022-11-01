@@ -277,6 +277,9 @@ services:
             - "${MAILS_LOG_DIR}:/var/log/mails:ro"
             - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
             - ./crowdsec/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
+            - ./crowdsec/scenarios/postfix-dovecot-hackers.yaml:/etc/crowdsec/scenarios/postfix-dovecot-hackers.yaml:ro
+            - ./crowdsec/parsers/postfix-extended.yaml:/etc/crowdsec/parsers/s01-parse/postfix-extended.yaml:ro
+            - ./crowdsec/parsers/dovecot-extended.yaml:/etc/crowdsec/parsers/s01-parse/dovecot-extended.yaml:ro
         networks:
             mail_infra_network:
 

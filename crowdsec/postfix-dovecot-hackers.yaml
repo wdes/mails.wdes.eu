@@ -1,0 +1,23 @@
+type: trigger
+name: wdes/postfix-hackers
+description: "Detect spammers"
+filter: "evt.Meta.log_type == 'postfix' && evt.Meta.log_type_enh == 'non-SMTP-command-HTTP'"
+groupby: evt.Meta.source_ip
+blackhole: 1m
+labels:
+ service: postfix
+ type: probing
+ remediation: true
+---
+type: leaky
+name: wdes/dovecot-hackers
+description: "Detect user finding"
+filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Meta.dovecot_login_message == 'unknown user'"
+groupby: evt.Meta.source_ip
+# Will overflow after 2 attempts counted one each 1 second
+leakspeed: "1s"
+capacity: 2
+labels:
+ service: postfix
+ type: probing
+ remediation: true

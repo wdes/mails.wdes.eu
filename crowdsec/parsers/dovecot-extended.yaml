@@ -1,0 +1,22 @@
+#contribution by @ltsich and @williamdes
+onsuccess: next_stage
+debug: false
+filter: "evt.Parsed.program == 'dovecot'"
+name: wdes/dovecot-logs-extended
+description: "Parse dovecot logs (extended)"
+nodes:
+  - grok:
+      pattern: "auth: ldap\\(%{DATA:dovecot_user},%{IP:dovecot_remote_ip},?%{DATA}\\): %{DATA:dovecot_login_message} \\(%{GREEDYDATA:mail_address}\\)"
+      apply_on: message
+
+statics:
+    - meta: log_type
+      value: dovecot_logs
+    - meta: source_ip
+      expression: "evt.Parsed.dovecot_remote_ip"
+    - meta: dovecot_login_message
+      expression: "evt.Parsed.dovecot_login_message"
+    - meta: dovecot_user
+      expression: "evt.Parsed.dovecot_user"
+    - meta: dovecot_login_result
+      expression: "any(['Authentication failure', 'password mismatch', 'auth failed', 'unknown user'], {evt.Parsed.dovecot_login_message contains #}) ? 'auth_failed' : ''"

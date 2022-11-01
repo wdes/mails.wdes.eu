@@ -1,4 +1,4 @@
 filenames:
- - /var/log/mails/mail.warn
+ - /var/log/mails/mail.log
 labels:
   type: syslog
