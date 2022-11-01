@@ -100,14 +100,29 @@ services:
         depends_on:
             - openldap
             - acme
+        # netcap: https://stackoverflow.com/a/35485119/5155484
+        # getpcaps <pid>
+        # https://book.hacktricks.xyz/linux-hardening/privilege-escalation/linux-capabilities
         cap_add:
-            - NET_ADMIN # fail2ban
-            - NET_BIND_SERVICE # postfix/smtpd (Milter service)
-            - NET_RAW # postfix/smtpd (Milter service)
-            #- CAP_CHOWN # supervisor uses sockchown
-        #security_opt:
-          # - no-new-privileges:true
-
+            - NET_ADMIN # fail2ban, spamd
+            - NET_RAW # spamd
+            - NET_BIND_SERVICE # dovecot, spamd
+            - CHOWN # dovecot, spamd
+            - DAC_OVERRIDE # dovecot, spamd
+            - SYS_CHROOT # dovecot, spamd
+            - SETUID # dovecot, spamd
+            - SETGID # dovecot, spamd
+            - KILL # dovecot, spamd
+            - FOWNER # spamd
+            - FSETID # spamd
+            - SETPCAP # spamd
+            - MKNOD # spamd
+            - AUDIT_WRITE # spamd
+            - SETFCAP # spamd
+        security_opt:
+          - no-new-privileges:true
+        cap_drop:
+            - ALL
 
     openldap:
         image: botsudo/docker-openldap
