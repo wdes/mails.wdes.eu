@@ -102,8 +102,7 @@ services:
             - acme
         cap_add:
             - NET_ADMIN # fail2ban
-            - NET_BIND_SERVICE
-            - NET_RAW
+            - NET_BIND_SERVICE # <--- postfix/smtpd (Milter service)
             #- CAP_CHOWN # supervisor uses sockchown
         security_opt:
           - no-new-privileges:true
