@@ -276,6 +276,7 @@ services:
             - ${CROWDSEC_CONFIG_DIR}:/etc/crowdsec/
             - "${MAILS_LOG_DIR}:/var/log/mails:ro"
             - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+            - ./crowdsec/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
         networks:
             mail_infra_network:
 
