@@ -73,7 +73,10 @@ use strict;
 1;  # ensure a defined return
 EOF
 
-rm /etc/amavis/conf.d/60-dms_default_config
+if [ -f /etc/amavis/conf.d/60-dms_default_config ]; then
+    echo 'Removed to fix (https://github.com/docker-mailserver/docker-mailserver/issues/2123)'
+    rm /etc/amavis/conf.d/60-dms_default_config
+fi
 
 echo 'Tweak spamassassin'
 
