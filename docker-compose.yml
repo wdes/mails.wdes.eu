@@ -57,7 +57,7 @@ services:
             ENABLE_SASLAUTHD: "0" # The docker container manages it
             ONE_DIR: "1"
             LOG_LEVEL: "${LOG_LEVEL:-warn}"
-            ENABLE_LDAP: "1"
+            ACCOUNT_PROVISIONER: "LDAP"
             POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
             LDAP_SERVER_HOST: "ldaps://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
             DOVECOT_URIS: "ldaps://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
