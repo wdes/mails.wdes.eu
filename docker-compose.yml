@@ -274,6 +274,7 @@ services:
         volumes:
             - ${CROWDSEC_DB_DIR}:/var/lib/crowdsec/data/
             - ${CROWDSEC_CONFIG_DIR}:/etc/crowdsec/
+            - "${MAILS_LOG_DIR}:/var/log/mails:ro"
         networks:
             mail_infra_network:
 
