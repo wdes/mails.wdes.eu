@@ -12,11 +12,12 @@ labels:
 type: leaky
 name: wdes/dovecot-hackers
 description: "Detect user finding"
-filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Meta.dovecot_login_message == 'unknown user'"
-groupby: evt.Meta.source_ip
+filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Meta.dovecot_login_message == 'unknown user' && evt.Meta.IsoCode != 'FR'"
+# Group by IP range
+groupby: evt.Meta.SourceRange
 # Will overflow after 2 attempts counted one each 1 second
 distinct: evt.Meta.dovecot_user
-capacity: 2
+capacity: 4
 labels:
  service: dovecot
  type: user-bf
