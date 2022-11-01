@@ -241,6 +241,25 @@ services:
         command: /scripts/acme.sh-docker.sh
         security_opt:
           - no-new-privileges:true
+
+    crowdsec:
+        image: crowdsecurity/crowdsec
+        restart: always
+        environment:
+            DISABLE_LOCAL_API: true
+            AGENT_USERNAME: "${CROWDSEC_AGENT_USERNAME}"
+            AGENT_PASSWORD: "${CROWDSEC_AGENT_PASSWORD}"
+            LOCAL_API_URL: "${CROWDSEC_AGENT_LOCAL_API_URL}"
+            CUSTOM_HOSTNAME: emails
+        depends_on:
+            mailserver:
+                condition: service_healthy
+        volumes:
+            - ${CROWDSEC_DB_DIR}:/var/lib/crowdsec/data/
+            - ${CROWDSEC_CONFIG_DIR}:/etc/crowdsec/
+        networks:
+            mail_infra_network:
+
 networks:
     mail_infra_network:
         driver: bridge
