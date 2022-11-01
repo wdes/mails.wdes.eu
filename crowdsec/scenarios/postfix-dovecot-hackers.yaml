@@ -25,7 +25,7 @@ labels:
  remediation: true
 ---
 type: leaky
-name: wdes/dovecot-hackers
+name: wdes/dovecot-hackers-ip
 description: "Detect user finding"
 filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Meta.dovecot_login_message == 'unknown user' && evt.Meta.IsoCode != 'FR'"
 leakspeed: 5m
