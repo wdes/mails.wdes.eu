@@ -23,6 +23,9 @@ labels:
  service: dovecot
  type: user-bf
  remediation: true
+scope:
+ type: Range
+ expression: evt.Meta.SourceRange
 ---
 type: leaky
 name: wdes/dovecot-hackers-ip
