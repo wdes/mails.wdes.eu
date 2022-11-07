@@ -9,7 +9,7 @@ nodes:
       pattern: "auth: ldap\\(%{DATA:dovecot_user},%{IP:dovecot_remote_ip},?%{DATA}\\): %{DATA:dovecot_login_message} \\(%{GREEDYDATA:mail_address}\\)"
       apply_on: message
   - grok:
-      pattern: "auth: ldap\\(%{DATA:dovecot_user},%{IP:dovecot_remote_ip},?%{DATA}\\): %{DATA:dovecot_login_message}"
+      pattern: "auth: (ldap|plain)\\(%{DATA:dovecot_user},%{IP:dovecot_remote_ip},?%{DATA}\\): %{DATA:dovecot_login_message}"
       apply_on: message
 
 statics:
