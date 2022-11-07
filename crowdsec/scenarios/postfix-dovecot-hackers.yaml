@@ -12,7 +12,7 @@ labels:
 type: leaky
 name: wdes/dovecot-hackers
 description: "Detect user finding"
-filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Meta.dovecot_login_message == 'unknown user' && evt.Meta.IsoCode != 'FR'"
+filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Parsed.dovecot_login_message == 'unknown user' && evt.Meta.IsoCode != 'FR'"
 leakspeed: 10m
 # Group by IP range
 groupby: evt.Meta.SourceRange
@@ -27,7 +27,7 @@ labels:
 type: leaky
 name: wdes/dovecot-hackers-ip
 description: "Detect user finding"
-filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Meta.dovecot_login_message == 'unknown user' && evt.Meta.IsoCode != 'FR'"
+filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Parsed.dovecot_login_message == 'unknown user' && evt.Meta.IsoCode != 'FR'"
 leakspeed: 5m
 # Group by IP range
 groupby: evt.Meta.source_ip
@@ -42,7 +42,7 @@ labels:
 type: leaky
 name: wdes/dovecot-pop3-plain-login
 description: "Detect POP3 plain login auth hack"
-filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Meta.dovecot_login_message == 'Login failed: Plaintext authentication disabled' && evt.Meta.IsoCode != 'FR'"
+filter: "evt.Meta.log_type == 'dovecot_logs' && evt.Parsed.dovecot_login_message == 'Login failed: Plaintext authentication disabled' && evt.Meta.IsoCode != 'FR'"
 leakspeed: 5m
 # Group by IP range
 groupby: evt.Meta.source_ip
