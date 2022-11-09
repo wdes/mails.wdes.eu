@@ -7,7 +7,7 @@ log_level: info
 group_wait: 30s       # Time to wait collecting alerts before relaying a message to this plugin, eg "30s"
 group_threshold: 5    # Amount of alerts that triggers a message before <group_wait> has expired, eg "10"
 max_retry: 4          # Number of attempts to relay messages to plugins in case of error
-timeout: 1s           # Time to wait for response from the plugin before considering the attempt a failure, eg "10s"
+timeout: 4s           # Time to wait for response from the plugin before considering the attempt a failure, eg "10s"
 
 format: |
   {
