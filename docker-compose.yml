@@ -259,7 +259,7 @@ services:
           - no-new-privileges:true
 
     crowdsec:
-        image: crowdsecurity/crowdsec:v1.4.2-rc5
+        image: crowdsecurity/crowdsec:v1.4.2
         restart: always
         environment:
             DISABLE_LOCAL_API: "true"
