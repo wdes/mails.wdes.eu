@@ -39,7 +39,9 @@ services:
             - ${MAIL_LOGS_DIR}:/var/log/mail
             - ${MAIL_CONFIGS_DIR}:/tmp/docker-mailserver/
             - ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1:/acme.sh/${DOMAIN_NAME}/
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1/ca.cer:/etc/ssl/mail-server/ca.cer
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1/fullchain.cer:/etc/ssl/mail-server/server.cer
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         environment:
@@ -75,13 +77,13 @@ services:
             DOVECOT_DEFAULT_PASS_SCHEME: "SSHA256"
             TLS_LEVEL: "intermediate"
             POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
-            DOVECOT_TLS_CACERT_FILE: "/acme.sh/${DOMAIN_NAME}/ca.cer"
+            DOVECOT_TLS_CACERT_FILE: "/etc/ssl/mail-server/ca.cer"
             DOVECOT_TLS_VERIFY_CLIENT: "try"
             DOVECOT_ADM_PASS: "${DOVECOT_ADM_PASS}"
             DOVECOT_REPLICA_SERVER: "${DOVECOT_REPLICA_SERVER}"
             SSL_TYPE: "manual"
-            SSL_CERT_PATH: "/acme.sh/${DOMAIN_NAME}/fullchain.cer"
-            SSL_KEY_PATH: "/acme.sh/${DOMAIN_NAME}/${DOMAIN_NAME}.key"
+            SSL_CERT_PATH: "/etc/ssl/mail-server/server.cer"
+            SSL_KEY_PATH: "/etc/ssl/mail-server/server.key"
             # Daily report & reporting
             POSTMASTER_ADDRESS: "${POSTMASTER_ADDRESS}"
             VIRUS_ADMIN_EMAIL: "${VIRUS_ADMIN_EMAIL}"
