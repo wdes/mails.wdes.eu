@@ -55,6 +55,7 @@ services:
             ENABLE_POP3: "1"
             ENABLE_MANAGESIEVE: "1"
             ENABLE_SASLAUTHD: "0" # The docker container manages it
+            SPOOF_PROTECTION: "1"
             ONE_DIR: "1"
             LOG_LEVEL: "${LOG_LEVEL:-warn}"
             ACCOUNT_PROVISIONER: "LDAP"
