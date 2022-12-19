@@ -207,13 +207,15 @@ services:
             retries: 3
         environment:
             PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.${DOMAIN_NAME}': [{'server': [{'tls': True}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
-            PHPLDAPADMIN_HTTPS_CRT_FILENAME: "fullchain.cer"
-            PHPLDAPADMIN_HTTPS_KEY_FILENAME: "${DOMAIN_NAME}.key"
-            PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: "ca.cer"
+            PHPLDAPADMIN_HTTPS_CRT_FILENAME: "phpldapadmin-certificate.crt"
+            PHPLDAPADMIN_HTTPS_KEY_FILENAME: "phpldapadmin-certificate.key"
+            PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: "${PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME:-phpldapadmin-ca.crt}"
             PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME: "ca.cer"
         volumes:
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1:/container/service/phpldapadmin/assets/apache2/certs
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1:/container/service/ldap-client/assets/certs
+            # web UI (phpldapadmin-ca.crt, phpldapadmin-certificate.key, phpldapadmin-certificate.crt)
+            - ${PHP_LDAP_ADMIN_CERTS_DIR}:/container/service/phpldapadmin/assets/apache2/certs
+            # LDAP client
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
         ports:
             - "${PHPLDAPADMIN_SSL_PORT:-8080}:443"
         depends_on:

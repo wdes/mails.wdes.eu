@@ -15,6 +15,10 @@ setup:
 	cp -rp scripts $(TEMP_DIR)
 	@cd $(TEMP_DIR)
 	@echo "Running in $(PWD)"
+	mkdir -p ./tests/data/phpldapadmin
+	openssl req -nodes -x509 -newkey rsa:4096 -keyout ./tests/data/phpldapadmin/phpldapadmin-certificate.key \
+    -out ./tests/data/phpldapadmin/phpldapadmin-certificate.crt -days 1 \
+    -subj "/C=FR/O=Wdes SAS/OU=Test/CN=phpldapadmin/emailAddress=williamdes@wdes.fr"
 	# Build images
 	$(TEMP_DIR)/dockerl build
 	# Build images
