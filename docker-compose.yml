@@ -39,7 +39,7 @@ services:
             - ${MAIL_LOGS_DIR}:/var/log/mail
             - ${MAIL_CONFIGS_DIR}:/tmp/docker-mailserver/
             - ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror3:/acme.sh/${DOMAIN_NAME}/
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1:/acme.sh/${DOMAIN_NAME}/
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         environment:
