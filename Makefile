@@ -13,6 +13,8 @@ setup:
 	cp tests/.env.test1 $(TEMP_DIR)/.env
 	cp -rp tests $(TEMP_DIR)
 	cp -rp scripts $(TEMP_DIR)
+	# rxrxrx
+	chmod 555 -R tests/data/acme.sh
 	@cd $(TEMP_DIR)
 	@echo "Running in $(PWD)"
 	mkdir -p ./tests/data/phpldapadmin

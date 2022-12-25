@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
     mailserver:
-        image: mailserver/docker-mailserver:11.3.0
+        image: mailserver/docker-mailserver:11.3.1
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
@@ -39,9 +39,9 @@ services:
             - ${MAIL_LOGS_DIR}:/var/log/mail
             - ${MAIL_CONFIGS_DIR}:/tmp/docker-mailserver/
             - ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1/ca.cer:/etc/ssl/mail-server/ca.cer
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1/fullchain.cer:/etc/ssl/mail-server/server.cer
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}-mirror1/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/mail-server/ca.cer:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/mail-server/server.cer:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key:ro
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         environment:
@@ -100,7 +100,8 @@ services:
         healthcheck:
             test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
             timeout: 3s
-            retries: 0
+            retries: 10
+            start_period: 20s
         depends_on:
             - openldap
             - acme
@@ -215,6 +216,9 @@ services:
             PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME: "ca.cer"
         volumes:
             # web UI (phpldapadmin-ca.crt, phpldapadmin-certificate.key, phpldapadmin-certificate.crt)
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/server-certificate/ca.cer:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/server-certificate/server.cer:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/server-certificate/server.key:ro
             - ${PHP_LDAP_ADMIN_CERTS_DIR}:/container/service/phpldapadmin/assets/apache2/certs
             # LDAP client
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
