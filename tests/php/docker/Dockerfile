@@ -1,6 +1,6 @@
 FROM botsudo/phpunit:9
 
-COPY --from=composer:2.3 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Source: https://github.com/docker-library/php/issues/120#issuecomment-752125194
 # ssmtp is for sendmail to work with php
