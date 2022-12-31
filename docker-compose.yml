@@ -217,7 +217,7 @@ services:
             # LDAP client
             #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
         ports:
-            - "${PHPLDAPADMIN_SSL_PORT:-8080}:443"
+            - "${PHPLDAPADMIN_SSL_PORT:-8080}:80"
         depends_on:
             openldap:
                 condition: service_healthy
