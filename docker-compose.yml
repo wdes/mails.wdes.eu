@@ -189,7 +189,7 @@ services:
           - no-new-privileges:true
 
     phpldapadmin:
-        image: osixia/phpldapadmin:latest
+        image: ghcr.io/sudo-bot/docker-phpldapadmin/docker-phpldapadmin:latest
         mem_limit: 512M
         mem_reservation: 100M
         restart: on-failure:5
@@ -202,26 +202,20 @@ services:
             mail_infra_network:
                 aliases:
                     - ldap-admin.${DOMAIN_NAME}
-        healthcheck:
-            test: 'php -r ''$$c = is_string(file_get_contents("https://localhost?ping=pong", false, stream_context_create(["ssl" => ["verify_peer"=> false, "verify_peer_name"=> true, "peer_name"=> "${DOMAIN_NAME}", "peer_fingerprint" => openssl_x509_fingerprint(file_get_contents("/container/service/phpldapadmin/assets/apache2/certs/fullchain.cer")) ]]))); echo $$c; exit($$c === true ? 0 : 1);'''
-            start_period: 15s
-            interval: 30s
-            timeout: 3s
-            retries: 3
         environment:
             PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.${DOMAIN_NAME}': [{'server': [{'tls': True}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
-            PHPLDAPADMIN_HTTPS_CRT_FILENAME: "phpldapadmin-certificate.crt"
-            PHPLDAPADMIN_HTTPS_KEY_FILENAME: "phpldapadmin-certificate.key"
-            PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: "${PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME:-phpldapadmin-ca.crt}"
-            PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME: "ca.cer"
-        volumes:
+            #PHPLDAPADMIN_HTTPS_CRT_FILENAME: "phpldapadmin-certificate.crt"
+            #PHPLDAPADMIN_HTTPS_KEY_FILENAME: "phpldapadmin-certificate.key"
+            #PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: "${PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME:-phpldapadmin-ca.crt}"
+            #PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME: "ca.cer"
+        #volumes:
             # web UI (phpldapadmin-ca.crt, phpldapadmin-certificate.key, phpldapadmin-certificate.crt)
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/server-certificate/ca.cer:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/server-certificate/server.cer:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/server-certificate/server.key:ro
-            - ${PHP_LDAP_ADMIN_CERTS_DIR}:/container/service/phpldapadmin/assets/apache2/certs
+            #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/server-certificate/ca.cer:ro
+            #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/server-certificate/server.cer:ro
+            #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/server-certificate/server.key:ro
+            #- ${PHP_LDAP_ADMIN_CERTS_DIR}:/container/service/phpldapadmin/assets/apache2/certs
             # LDAP client
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
+            #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
         ports:
             - "${PHPLDAPADMIN_SSL_PORT:-8080}:443"
         depends_on:
