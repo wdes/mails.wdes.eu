@@ -179,6 +179,7 @@ services:
             # Add ldaps:/// to SSL listen
             LDAP_LISTEN_URLS: "ldap:/// ldapi:/// ldaps:///"
         volumes:
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/certs/ca-certificates.crt:ro
             - ${LDAP_DATA_DIR}:/var/lib/openldap/openldap-data
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/slapd/assets/certs/ca.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/container/service/slapd/assets/certs/server.cer:ro

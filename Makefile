@@ -15,9 +15,10 @@ setup:
 	rm -vf tests/data/acme.sh/*/ca.*
 	cp -rp tests $(TEMP_DIR)
 	cp -rp scripts $(TEMP_DIR)
+	chmod 777 -R $(TEMP_DIR)/tests/data/acme.sh
 	$(TEMP_DIR)/tests/make-certs.sh
 	# rxrxrx
-	chmod 555 -R tests/data/acme.sh
+	chmod 555 -R $(TEMP_DIR)/tests/data/acme.sh
 	@cd $(TEMP_DIR)
 	@echo "Running in $(PWD)"
 	mkdir -p ./tests/data/phpldapadmin
