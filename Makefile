@@ -11,9 +11,11 @@ setup:
 	set -eu
 	cp docker-compose.yml dockerl user-patches.sh $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
+	rm -vf tests/data/acme.sh/*/*.cer
+	rm -vf tests/data/acme.sh/*/ca.*
 	cp -rp tests $(TEMP_DIR)
 	cp -rp scripts $(TEMP_DIR)
-	./tests/make-certs.sh
+	$(TEMP_DIR)/tests/make-certs.sh
 	# rxrxrx
 	chmod 555 -R tests/data/acme.sh
 	@cd $(TEMP_DIR)
