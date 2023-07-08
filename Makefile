@@ -13,11 +13,11 @@ setup:
 	cp tests/.env.test1 $(TEMP_DIR)/.env
 	cp -rp tests $(TEMP_DIR)
 	cp -rp scripts $(TEMP_DIR)
+	./tests/make-certs.sh
 	# rxrxrx
 	chmod 555 -R tests/data/acme.sh
 	@cd $(TEMP_DIR)
 	@echo "Running in $(PWD)"
-	./tests/make-certs.sh
 	mkdir -p ./tests/data/phpldapadmin
 	openssl req -nodes -x509 -newkey rsa:4096 -keyout ./tests/data/phpldapadmin/phpldapadmin-certificate.key \
     -out ./tests/data/phpldapadmin/phpldapadmin-certificate.crt -days 15 \
