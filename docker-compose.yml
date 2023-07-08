@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
     mailserver:
-        image: mailserver/docker-mailserver:11.3.1
+        image: mailserver/docker-mailserver:12.1.0
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
@@ -46,13 +46,12 @@ services:
         environment:
             TZ: UTC
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
-            ENABLE_SPAMASSASSIN: "1"
-            ENABLE_SPAMASSASSIN_KAM: "1"
-            SPAMASSASSIN_SPAM_TO_INBOX: "1"
+            ENABLE_RSPAMD: "1"
+            ENABLE_RSPAMD_REDIS: "1"
             ENABLE_CLAMAV: "1"
             ENABLE_AMAVIS: "1"
             ENABLE_FAIL2BAN: "1"
-            ENABLE_POSTGREY: "1"
+            ENABLE_POSTGREY: "0"
             ENABLE_POP3: "1"
             ENABLE_MANAGESIEVE: "1"
             ENABLE_SASLAUTHD: "0" # The docker container manages it
@@ -60,8 +59,12 @@ services:
             ONE_DIR: "1"
             LOG_LEVEL: "${LOG_LEVEL:-warn}"
             ACCOUNT_PROVISIONER: "LDAP"
-            POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
-            POSTGREY_AUTO_WHITELIST_CLIENTS: "1" # Defaults to 5
+            RSPAMD_LEARN: "1"
+            RSPAMD_GREYLISTING: "1"
+            MOVE_SPAM_TO_JUNK: "1"
+            # Now it's up to RSPAMD_GREYLISTING to greylist
+            # POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
+            # POSTGREY_AUTO_WHITELIST_CLIENTS: "1" # Defaults to 5
             LDAP_SERVER_HOST: "ldaps://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
             DOVECOT_URIS: "ldaps://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
             LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"

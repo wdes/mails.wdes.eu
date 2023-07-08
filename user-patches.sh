@@ -45,14 +45,7 @@ use strict;
 @local_domains_acl = ( ["."] );
 @local_domains_maps = ( ["."] );
 
-@spam_scanners = ( ['SpamAssassin', 'Amavis::SpamControl::SpamAssassin'] );
-
-# To disable virus or spam checks, uncomment the following:
-#
-# @bypass_virus_checks_maps = (1);  # controls running of anti-virus code
-# @bypass_spam_checks_maps  = (1);  # controls running of anti-spam code
-# \$bypass_decode_parts = 1;         # controls running of decoders & dearchivers
-
+# add spam info headers if at, or above that level
 \$sa_tag_level_deflt = -9999; # always add spam info headers
 
 \$enable_dkim_verification = 1; # Check DKIM
@@ -69,16 +62,6 @@ if [ -f /etc/amavis/conf.d/60-dms_default_config ]; then
     echo 'Removed to fix (https://github.com/docker-mailserver/docker-mailserver/issues/2123)'
     rm /etc/amavis/conf.d/60-dms_default_config
 fi
-
-echo 'Tweak spamassassin'
-
-# Remove the possible line
-sed -i '/^add_header all Report _REPORT_$/d' /etc/spamassassin/local.cf
-# Add it back
-printf '\nadd_header all Report _REPORT_\n' >> /etc/spamassassin/local.cf
-
-echo 'Lint spamassassin'
-spamassassin --lint
 
 echo 'Tweak fail2ban config'
 
