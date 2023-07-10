@@ -185,5 +185,4 @@ else
 fi
 
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-service spamassassin start
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished starting services<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
