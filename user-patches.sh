@@ -155,7 +155,6 @@ service doveadm {
 	}
 }
 protocol doveadm {
-    ssl_verify_client_cert = yes
     ssl_cert = <${DOVECOT_REPLICATION_SSL_CERT_FILE}
     ssl_key = <${DOVECOT_REPLICATION_SSL_KEY_FILE}
     ssl_client_ca_file = ${DOVECOT_REPLICATION_SSL_CA_FILE}
