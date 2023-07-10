@@ -127,8 +127,9 @@ printf '\niterate_attrs = mail=user\n' >> /etc/dovecot/dovecot-ldap.conf.ext
 if [ "${DOVECOT_REPLICATION_SERVER:-}" != "" ]; then
 
     echo 'Enabling replication'
+    echo 'Hint: doveadm replicator status'
 
-    sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins notify replication/' /etc/dovecot/conf.d/10-mail.conf
+    sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins quota notify replication/' /etc/dovecot/conf.d/10-mail.conf
 
     cat <<EOF > /etc/dovecot/conf.d/10-replication.conf
 service doveadm {
@@ -182,7 +183,7 @@ else
     # Remove a possible old value of mail_replica
     sed -i '/^mail_replica/d' /etc/dovecot/conf.d/90-plugin.conf
     rm -fv /etc/dovecot/conf.d/10-replication.conf
-    sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins notify/' /etc/dovecot/conf.d/10-mail.conf
+    sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins quota notify/' /etc/dovecot/conf.d/10-mail.conf
 fi
 
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
