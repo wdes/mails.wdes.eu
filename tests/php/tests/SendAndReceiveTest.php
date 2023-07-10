@@ -360,7 +360,7 @@ class SendAndReceiveTest extends TestCase
                 $mail->Port       = 587;
             }
             // Check it is in sync with the cert in the acme.sh dir
-            $fingerprint = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'mail.williamdes.eu.org.cer');
+            $fingerprint = file_get_contents('/etc/ssl/mail.williamdes.eu.org.cer');
             $this->assertNotFalse($fingerprint, 'Cert should be found');
             $mail->SMTPOptions = [
                 'ssl' => [

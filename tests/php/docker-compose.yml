@@ -5,6 +5,8 @@ services:
         build: ./docker/
         volumes:
           - ./tests:/tests
+          # For tests
+          - ../data/acme.sh/mail.williamdes.eu.org/mail.williamdes.eu.org.cer:/etc/ssl/mail.williamdes.eu.org.cer:ro
         working_dir: /tests
         command: --no-configuration /tests --debug --verbose
 

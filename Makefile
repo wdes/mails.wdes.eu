@@ -11,15 +11,19 @@ setup:
 	set -eu
 	cp docker-compose.yml dockerl user-patches.sh $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
+	rm -vf tests/data/acme.sh/*/*.cer
+	rm -vf tests/data/acme.sh/*/ca.*
 	cp -rp tests $(TEMP_DIR)
 	cp -rp scripts $(TEMP_DIR)
+	chmod 777 -R $(TEMP_DIR)/tests/data/acme.sh
+	$(TEMP_DIR)/tests/make-certs.sh
 	# rxrxrx
-	chmod 555 -R tests/data/acme.sh
+	chmod 555 -R $(TEMP_DIR)/tests/data/acme.sh
 	@cd $(TEMP_DIR)
 	@echo "Running in $(PWD)"
 	mkdir -p ./tests/data/phpldapadmin
 	openssl req -nodes -x509 -newkey rsa:4096 -keyout ./tests/data/phpldapadmin/phpldapadmin-certificate.key \
-    -out ./tests/data/phpldapadmin/phpldapadmin-certificate.crt -days 1 \
+    -out ./tests/data/phpldapadmin/phpldapadmin-certificate.crt -days 15 \
     -subj "/C=FR/O=Wdes SAS/OU=Test/CN=phpldapadmin/emailAddress=williamdes@wdes.fr"
 	# Build images
 	$(TEMP_DIR)/dockerl build

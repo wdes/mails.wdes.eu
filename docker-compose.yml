@@ -21,7 +21,6 @@ services:
                     - mail-server.${DOMAIN_NAME}
                     - imap.${DOMAIN_NAME}
                     - smtp.${DOMAIN_NAME}
-                    - ldap.${DOMAIN_NAME}
                     - pop.${DOMAIN_NAME}
         ports:
             - "25:25"    # SMTP  (explicit TLS => STARTTLS)
@@ -176,6 +175,7 @@ services:
             # Add ldaps:/// to SSL listen
             LDAP_LISTEN_URLS: "ldap:/// ldapi:/// ldaps:///"
         volumes:
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/certs/ca-certificates.crt:ro
             - ${LDAP_DATA_DIR}:/var/lib/openldap/openldap-data
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/slapd/assets/certs/ca.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/container/service/slapd/assets/certs/server.cer:ro
@@ -244,7 +244,7 @@ services:
         healthcheck:
             test: ["CMD", "sh", "/scripts/healthcheck.sh"]
             start_period: 10s
-            interval: 30s
+            interval: ${ACME_INTERVAL:-30s}
             timeout: 2s
             retries: 30
         environment:
@@ -259,6 +259,7 @@ services:
             ACME_SH_EAB_HMAC: "${ACME_SH_EAB_HMAC:-}"
             ACME_COMMAND_ARGUMENTS: ${ACME_COMMAND_ARGUMENTS:-}
             ACME_ISSUE_ARGUMENTS: ${ACME_ISSUE_ARGUMENTS:-}
+            ACTIVATE_VOLSWAGEN: ${ACTIVATE_VOLSWAGEN:-}
         entrypoint: /bin/sh
         command: /scripts/acme.sh-docker.sh
         security_opt:
