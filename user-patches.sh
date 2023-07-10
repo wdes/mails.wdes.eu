@@ -154,13 +154,16 @@ service doveadm {
 		ssl = yes
 	}
 }
-ssl = required
-ssl_verify_client_cert = yes
-auth_ssl_require_client_cert = yes
-ssl_cert = <${DOVECOT_REPLICATION_SSL_CERT_FILE}
-ssl_key = <${DOVECOT_REPLICATION_SSL_KEY_FILE}
-ssl_client_ca_file = ${DOVECOT_REPLICATION_SSL_CA_FILE}
-ssl_client_ca_dir = ${DOVECOT_REPLICATION_SSL_CA_DIR}
+protocol doveadm {
+    ssl_verify_client_cert = yes
+    auth_ssl_require_client_cert = yes
+    ssl_cert = <${DOVECOT_REPLICATION_SSL_CERT_FILE}
+    ssl_key = <${DOVECOT_REPLICATION_SSL_KEY_FILE}
+    ssl_client_ca_file = ${DOVECOT_REPLICATION_SSL_CA_FILE}
+    ssl_client_ca_dir = ${DOVECOT_REPLICATION_SSL_CA_DIR}
+}
+instance_name = ${OVERRIDE_HOSTNAME}
+doveadm_ssl = ssl
 doveadm_port = 4177
 doveadm_password = ${DOVECOT_REPLICATION_ADM_PASS}
 service replicator {
