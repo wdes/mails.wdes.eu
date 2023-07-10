@@ -42,7 +42,7 @@ services:
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key:ro
             - ${DOVECOT_REPLICATION_SSL_VOLUME:-./empty-volume}:/etc/ssl/replication/:ro
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
-            - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
+            #- ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         environment:
             TZ: UTC
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
@@ -54,7 +54,7 @@ services:
             ENABLE_POSTGREY: "0"
             ENABLE_POP3: "1"
             ENABLE_MANAGESIEVE: "1"
-            ENABLE_SASLAUTHD: "0" # The docker container manages it
+            ENABLE_SASLAUTHD: "1" # The docker container manages it
             SPOOF_PROTECTION: "1"
             ONE_DIR: "1"
             LOG_LEVEL: "${LOG_LEVEL:-warn}"

@@ -8,11 +8,11 @@ set -eu
 ##
 echo ">>>>>>>>>>>>>>>>>>>>>>>Applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 
-cat >/etc/postfix/sasl/smtpd.conf << EOF
-pwcheck_method: saslauthd
-saslauthd_path: /var/run/saslauthd/mux
-mech_list: PLAIN SRP
-EOF
+#cat >/etc/postfix/sasl/smtpd.conf << EOF
+#pwcheck_method: saslauthd
+#saslauthd_path: /var/run/saslauthd/mux
+#mech_list: PLAIN SRP
+#EOF
 
 # Delete before set to localhost
 sed -i '/^mydomain =/d' /etc/postfix/main.cf
