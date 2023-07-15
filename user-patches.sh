@@ -145,8 +145,8 @@ mta = sendmail
 #
 # See the IMPORTANT note in action.d/blocklist_de.conf for when to use this action.
 # Specify expected parameters in file action.d/blocklist_de.local or if the interpolation
-# `action_blocklist_de` used for the action, set value of `blocklist_de_apikey`
-# in your `jail.local` globally (section [DEFAULT]) or per specific jail section (resp. in
+# "action_blocklist_de" used for the action, set value of "blocklist_de_apikey"
+# in your "jail.local" globally (section [DEFAULT]) or per specific jail section (resp. in
 # corresponding jail.d/my-jail.local file).
 #
 action_blocklist_de  = blocklist_de[email="%(sender)s", service="%(__name__)s", apikey="%(blocklist_de_apikey)s", agent="%(fail2ban_agent)s"]
@@ -188,7 +188,7 @@ if [ "${DOVECOT_REPLICATION_SERVER:-}" != "" ]; then
 
     echo 'Enabling replication'
     echo 'Hint: doveadm replicator status'
-    echo 'Hint: doveadm user \'*\''
+    echo "Hint: doveadm user '*'"
     echo 'Hint: doveadm replicator dsync-status'
 
     sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins quota notify replication/' /etc/dovecot/conf.d/10-mail.conf
