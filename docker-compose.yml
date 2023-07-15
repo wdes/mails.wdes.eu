@@ -82,6 +82,8 @@ services:
             POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
 
             # Replication
+            DOVECOT_ITERATE_ATTRS: "mail=user"
+            DOVECOT_ITERATE_FILTER: "(objectClass=PostfixBookMailAccount)"
             # Custom ENVS: DOVECOT_REPLICATION_
             DOVECOT_REPLICATION_SERVER: "${DOVECOT_REPLICATION_SERVER}"
             DOVECOT_REPLICATION_ADM_PASS: "${DOVECOT_REPLICATION_ADM_PASS}"

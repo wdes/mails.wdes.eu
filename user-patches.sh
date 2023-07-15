@@ -115,14 +115,6 @@ bantime = 180d
 port = smtp,pop3,pop3s,imap,imaps,submission,submissions,sieve
 EOF
 
-echo 'Adjusting LDAP for replication'
-
-sed -i '/^iterate_filter =/d' /etc/dovecot/dovecot-ldap.conf.ext
-sed -i '/^iterate_attrs =/d' /etc/dovecot/dovecot-ldap.conf.ext
-
-printf '\niterate_filter = (objectClass=PostfixBookMailAccount)\n' >> /etc/dovecot/dovecot-ldap.conf.ext
-printf '\niterate_attrs = mail=user\n' >> /etc/dovecot/dovecot-ldap.conf.ext
-
 # Check if configured
 if [ "${DOVECOT_REPLICATION_SERVER:-}" != "" ]; then
 
