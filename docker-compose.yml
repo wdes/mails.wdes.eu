@@ -108,6 +108,14 @@ services:
             FAIL2BAN_DST_EMAIL: "${FAIL2BAN_DST_EMAIL}"
             FAIL2BAN_SENDER_EMAIL: "${FAIL2BAN_SENDER_EMAIL}"
             FAIL2BAN_SENDER_NAME: "${FAIL2BAN_SENDER_NAME}"
+
+            # Fail2ban reporting
+            FAIL2BAN_BLOCKLIST_DE_API_KEY: "${FAIL2BAN_BLOCKLIST_DE_API_KEY:-}"
+            FAIL2BAN_BLOCKLIST_DE_EMAIL: "${FAIL2BAN_BLOCKLIST_DE_EMAIL:-}"
+            FAIL2BAN_IPTHREAT_API_KEY: "${FAIL2BAN_IPTHREAT_API_KEY:-}"
+            FAIL2BAN_IPTHREAT_SYSTEM_NAME: "${FAIL2BAN_IPTHREAT_SYSTEM_NAME:-}"
+            FAIL2BAN_ABUSEIPDB_API_KEY: "${FAIL2BAN_ABUSEIPDB_API_KEY:-}"
+
         healthcheck:
             test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
             timeout: 3s

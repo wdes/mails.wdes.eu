@@ -65,7 +65,50 @@ fi
 
 echo 'Tweak fail2ban config'
 
-# Source: https://github.com/docker-mailserver/docker-mailserver/blob/v11.2.0/target/fail2ban/jail.local
+# Check if configured
+if [ "${FAIL2BAN_BLOCKLIST_DE_API_KEY:-}" != "" ]; then
+    sed -i '/^apikey =/d' /etc/fail2ban/action.d/blocklist_de.conf
+    printf '\napikey = %s\n' "${FAIL2BAN_BLOCKLIST_DE_API_KEY}" >> /etc/fail2ban/action.d/blocklist_de.conf
+else
+    sed -i '/^apikey =/d' /etc/fail2ban/action.d/blocklist_de.conf
+fi
+
+# Check if configured
+if [ "${FAIL2BAN_BLOCKLIST_DE_EMAIL:-}" != "" ]; then
+    sed -i '/^email =/d' /etc/fail2ban/action.d/blocklist_de.conf
+    printf '\nemail = %s\n' "${FAIL2BAN_BLOCKLIST_DE_EMAIL}" >> /etc/fail2ban/action.d/blocklist_de.conf
+else
+    sed -i '/^email =/d' /etc/fail2ban/action.d/blocklist_de.conf
+fi
+
+# Check if configured
+if [ "${FAIL2BAN_IPTHREAT_API_KEY:-}" != "" ]; then
+    sed -i '/^ipthreat_apikey =/d' /etc/fail2ban/action.d/ipthreat.conf
+    printf '\nipthreat_apikey = %s\n' "${FAIL2BAN_IPTHREAT_API_KEY}" >> /etc/fail2ban/action.d/ipthreat.conf
+else
+    sed -i '/^ipthreat_apikey =/d' /etc/fail2ban/action.d/ipthreat.conf
+fi
+
+# Check if configured
+if [ "${FAIL2BAN_IPTHREAT_SYSTEM_NAME:-}" != "" ]; then
+    sed -i '/^ipthreat_system =/d' /etc/fail2ban/action.d/ipthreat.conf
+    printf '\nipthreat_system = %s\n' "${FAIL2BAN_IPTHREAT_SYSTEM_NAME}" >> /etc/fail2ban/action.d/ipthreat.conf
+else
+    sed -i '/^ipthreat_system =/d' /etc/fail2ban/action.d/ipthreat.conf
+fi
+
+# Check if configured
+if [ "${FAIL2BAN_ABUSEIPDB_API_KEY:-}" != "" ]; then
+    sed -i '/^abuseipdb_apikey =/d' /etc/fail2ban/action.d/abuseipdb.conf
+    printf '\nabuseipdb_apikey = %s\n' "${FAIL2BAN_ABUSEIPDB_API_KEY}" >> /etc/fail2ban/action.d/abuseipdb.conf
+else
+    sed -i '/^abuseipdb_apikey =/d' /etc/fail2ban/action.d/abuseipdb.conf
+fi
+
+# Check if configured
+if [ "${FAIL2BAN_IGNORE_IPS:-}" != "" ]; then
+
+# Source: https://github.com/docker-mailserver/docker-mailserver/blob/v12.1.0/target/fail2ban/jail.local
 cat <<EOF > /etc/fail2ban/jail.d/user-jail.local
 [DEFAULT]
 
@@ -91,21 +134,45 @@ ignoreip = ${FAIL2BAN_IGNORE_IPS}
 # nftables-allports:  block IP on all ports
 banaction = nftables-allports
 
-[dovecot]
-enabled = true
-
-[postfix]
-enabled = true
-
-[postfix-sasl]
-enabled = true
-
 # Email settings
 
 destemail = ${FAIL2BAN_DST_EMAIL}
 sender = ${FAIL2BAN_SENDER_EMAIL}
 sendername = ${FAIL2BAN_SENDER_NAME}
 mta = sendmail
+
+# Report block via blocklist.de fail2ban reporting service API
+#
+# See the IMPORTANT note in action.d/blocklist_de.conf for when to use this action.
+# Specify expected parameters in file action.d/blocklist_de.local or if the interpolation
+# `action_blocklist_de` used for the action, set value of `blocklist_de_apikey`
+# in your `jail.local` globally (section [DEFAULT]) or per specific jail section (resp. in
+# corresponding jail.d/my-jail.local file).
+#
+action_blocklist_de  = blocklist_de[email="%(sender)s", service="%(__name__)s", apikey="%(blocklist_de_apikey)s", agent="%(fail2ban_agent)s"]
+
+# Report ban via abuseipdb.com.
+#
+# See action.d/abuseipdb.conf for usage example and details.
+#
+action_abuseipdb = abuseipdb
+
+# Ban IP and report to AbuseIPDB for Brute-Forcing
+action = %(action_)s
+         %(action_abuseipdb)s[abuseipdb_apikey="%(abuseipdb_apikey)s", abuseipdb_category="18"]
+         ipthreat[]
+
+[dovecot]
+enabled = true
+
+[postfix]
+enabled = true
+# For a reference on why this mode was chose, see
+# https://github.com/docker-mailserver/docker-mailserver/issues/3256#issuecomment-1511188760
+mode = extra
+
+[postfix-sasl]
+enabled = true
 
 # This jail is used for manual bans.
 # To ban an IP address use: setup.sh fail2ban ban <IP>
@@ -114,6 +181,7 @@ enabled = true
 bantime = 180d
 port = smtp,pop3,pop3s,imap,imaps,submission,submissions,sieve
 EOF
+fi
 
 # Check if configured
 if [ "${DOVECOT_REPLICATION_SERVER:-}" != "" ]; then
