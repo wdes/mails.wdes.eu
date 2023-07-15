@@ -159,7 +159,7 @@ action_abuseipdb = abuseipdb
 
 # Ban IP and report to AbuseIPDB for Brute-Forcing
 action = %(action_)s
-         %(action_abuseipdb)s[abuseipdb_apikey="%(abuseipdb_apikey)s", abuseipdb_category="18"]
+         %(action_abuseipdb)s[abuseipdb_category="18"]
          ipthreat[]
 
 [dovecot]
