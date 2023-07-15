@@ -41,6 +41,8 @@ services:
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/mail-server/server.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key:ro
             - ${DOVECOT_REPLICATION_SSL_VOLUME:-./empty-volume}:/etc/ssl/replication/:ro
+            - ./rspamd/local.d/phishing.conf:/etc/rspamd/local.d/phishing.conf:ro
+            - ./rspamd/local.d/mx_check.conf:/etc/rspamd/local.d/mx_check.conf:ro
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
             - ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
