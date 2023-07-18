@@ -190,6 +190,7 @@ if [ "${DOVECOT_REPLICATION_SERVER:-}" != "" ]; then
     echo 'Hint: doveadm replicator status'
     echo "Hint: doveadm user '*'"
     echo 'Hint: doveadm replicator dsync-status'
+    echo 'Hint: rspamc uptime'
 
     sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins quota notify replication/' /etc/dovecot/conf.d/10-mail.conf
 
