@@ -43,6 +43,8 @@ services:
             - ${DOVECOT_REPLICATION_SSL_VOLUME:-./empty-volume}:/etc/ssl/replication/:ro
             - ./rspamd/local.d/phishing.conf:/etc/rspamd/local.d/phishing.conf:ro
             - ./rspamd/local.d/mx_check.conf:/etc/rspamd/local.d/mx_check.conf:ro
+            # See: https://github.com/docker-mailserver/docker-mailserver/issues/2636
+            - ./rspamd/local.d/dmarc-reports.conf:/etc/rspamd/local.d/dmarc-reports.conf:ro
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
             - ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
