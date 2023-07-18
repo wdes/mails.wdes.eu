@@ -45,6 +45,8 @@ services:
             - ./rspamd/local.d/mx_check.conf:/etc/rspamd/local.d/mx_check.conf:ro
             # See: https://github.com/docker-mailserver/docker-mailserver/issues/2636
             - ./rspamd/local.d/dmarc-reports.conf:/etc/rspamd/local.d/dmarc-reports.conf:ro
+            - ./rspamd/local.d/actions.conf:/etc/rspamd/local.d/actions.conf:ro
+            - ./rspamd/local.d/milter_headers.conf:/etc/rspamd/local.d/milter_headers.conf:ro
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
             - ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
