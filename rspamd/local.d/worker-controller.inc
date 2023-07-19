@@ -1,1 +1,2 @@
 password = "$2$7paz48p74pknbgst8tfn89nfkudiopmy$6xxmery4isbqrwzgf545q51jozti6wfck6paai9my8qen5xdis9y";
+enable_password = "$2$7paz48p74pknbgst8tfn89nfkudiopmy$6xxmery4isbqrwzgf545q51jozti6wfck6paai9my8qen5xdis9y";
