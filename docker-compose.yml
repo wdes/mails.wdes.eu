@@ -51,6 +51,7 @@ services:
             - ./rspamd/local.d/milter_headers.conf:/etc/rspamd/local.d/milter_headers.conf:ro
             - ./rspamd/local.d/groups.conf:/etc/rspamd/local.d/groups.conf:ro
             - ./rspamd/local.d/multimap.conf:/etc/rspamd/local.d/multimap.conf:ro
+            - ./rspamd/local.d/worker-controller.inc:/etc/rspamd/local.d/worker-controller.inc:ro
             # maps
             - ./rspamd/maps.d/mx_whitelist.inc:/etc/rspamd/maps.d/mx_whitelist.inc:ro
             - ./rspamd/maps.d/local_wl_domain.map:/etc/rspamd/maps.d/local_wl_domain.map:ro
