@@ -32,6 +32,8 @@ services:
             - "995:995"  # POP3 (with TLS)
             - "4190:4190" # Sieve filters
             - "4177:4177" # Dovecot replication
+            - "11334:11334" # Rspamd UI
+            - "11332:11332" # Rspamd proxy worker
         volumes:
             - ${MAIL_DATA_DIR}:/var/mail
             - ${MAIL_STATE_DIR}:/var/mail-state
