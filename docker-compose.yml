@@ -47,6 +47,12 @@ services:
             - ./rspamd/local.d/dmarc-reports.conf:/etc/rspamd/local.d/dmarc-reports.conf:ro
             - ./rspamd/local.d/actions.conf:/etc/rspamd/local.d/actions.conf:ro
             - ./rspamd/local.d/milter_headers.conf:/etc/rspamd/local.d/milter_headers.conf:ro
+            - ./rspamd/local.d/groups.conf:/etc/rspamd/local.d/groups.conf:ro
+            - ./rspamd/local.d/multimap.conf:/etc/rspamd/local.d/multimap.conf:ro
+            # maps
+            - ./rspamd/maps.d/mx_whitelist.inc:/etc/rspamd/maps.d/mx_whitelist.inc:ro
+            - ./rspamd/maps.d/local_wl_domain.map:/etc/rspamd/maps.d/local_wl_domain.map:ro
+            - ./rspamd/maps.d/local_wl_from.map:/etc/rspamd/maps.d/local_wl_from.map:ro
             - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
             - ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
