@@ -6,6 +6,9 @@
 
 # See: https://docker-mailserver.github.io/docker-mailserver/edge/faq/#how-can-i-make-spamassassin-better-recognize-spam
 
+MAILFROM="$CRON_MAILFROM"
+MAILTO="$CRON_MAILTO"
+
 #
 # Everyday 3:00AM, learn spam from all users of all domains
 # spam: junk directory
