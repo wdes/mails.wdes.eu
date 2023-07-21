@@ -15,3 +15,5 @@
 15 3 * * * root  sa-learn --ham /var/mail/*/*/.Archive* --dbpath /var/mail-state/lib-amavis/.spamassassin
 # ham: inbox subdirectories
 30 3 * * * root  sa-learn --ham /var/mail/*/*/cur* --dbpath /var/mail-state/lib-amavis/.spamassassin
+# ham: Sent subdirectory
+30 4 * * * root  sa-learn --ham /var/mail/*/*/.Sent --dbpath /var/mail-state/lib-amavis/.spamassassin

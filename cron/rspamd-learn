@@ -9,9 +9,11 @@
 #
 # Everyday 4:00AM, learn spam from all users of all domains
 # spam: junk directory
-0  4 * * * root  rspamc learn_spam /var/mail/*/*/.Junk/cur
-0  4 * * * root  rspamc learn_spam /var/mail/*/*/".Courrier ind&AOk-sirable"/cur
+0  4 * * * root  rspamc learn_spam --header 'Learn-Type: bulk' /var/mail/*/*/.Junk/cur
+0  4 * * * root  rspamc learn_spam --header 'Learn-Type: bulk' /var/mail/*/*/".Courrier ind&AOk-sirable"/cur
 # ham: archive directories
-15 4 * * * root  rspamc learn_ham /var/mail/*/*/.Archive*/cur
+15 4 * * * root  rspamc learn_ham --header 'Learn-Type: bulk' /var/mail/*/*/.Archive*/cur
 # ham: inbox subdirectories
-30 4 * * * root  rspamc learn_ham /var/mail/*/*/cur
+30 4 * * * root  rspamc learn_ham --header 'Learn-Type: bulk' /var/mail/*/*/cur
+# ham: Sent subdirectory
+30 4 * * * root  rspamc learn_ham --header 'Learn-Type: bulk' /var/mail/*/*/.Sent/cur
