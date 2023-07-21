@@ -59,7 +59,6 @@ services:
             - ./rspamd/maps.d/mx_whitelist.inc:/etc/rspamd/maps.d/mx_whitelist.inc:ro
             - ./rspamd/maps.d/local_wl_domain.map:/etc/rspamd/maps.d/local_wl_domain.map:ro
             - ./rspamd/maps.d/local_wl_from.map:/etc/rspamd/maps.d/local_wl_from.map:ro
-            - ./cron/sa-learn:/etc/cron.d/sa-learn:ro
             - ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         environment:
