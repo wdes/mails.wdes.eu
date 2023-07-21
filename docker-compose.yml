@@ -54,6 +54,7 @@ services:
             - ./rspamd/local.d/worker-controller.inc:/etc/rspamd/local.d/worker-controller.inc:ro
             - ./rspamd/local.d/dkim_signing.conf:/etc/rspamd/local.d/dkim_signing.conf:ro
             - ./rspamd/local.d/history_redis.conf:/etc/rspamd/local.d/history_redis.conf:ro
+            - ./rspamd/local.d/hfilter.conf:/etc/rspamd/local.d/hfilter.conf:ro
             # maps
             - ./rspamd/maps.d/mx_whitelist.inc:/etc/rspamd/maps.d/mx_whitelist.inc:ro
             - ./rspamd/maps.d/local_wl_domain.map:/etc/rspamd/maps.d/local_wl_domain.map:ro
