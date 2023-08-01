@@ -29,13 +29,6 @@ printf '\nsmtpd_tls_received_header = yes\n' "localhost" >> /etc/postfix/main.cf
 sed -i '/^smtp_helo_name =/d' /etc/postfix/main.cf
 printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
-echo 'Tweak cron settings'
-
-sed -i '/^MAILFROM=/d' /etc/default/cron
-echo "MAILFROM=\"$CRON_MAILFROM\"" >> /etc/default/cron
-sed -i '/^MAILTO=/d' /etc/default/cron
-echo "MAILTO=\"$CRON_MAILTO\"" >> /etc/default/cron
-
 echo 'Add spam check config'
 
 cat <<EOF > /etc/amavis/conf.d/50-user

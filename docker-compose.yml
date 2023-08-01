@@ -113,8 +113,9 @@ services:
             SSL_CERT_PATH: "/etc/ssl/mail-server/server.cer"
             SSL_KEY_PATH: "/etc/ssl/mail-server/server.key"
             # Daily report & reporting
-            CRON_MAILFROM: "${CRON_MAILFROM:-$POSTMASTER_ADDRESS}"
-            CRON_MAILTO: "${CRON_MAILTO:-$POSTMASTER_ADDRESS}"
+            # See: https://sources.debian.org/src/cron/3.0pl1-163/debian/patches/features/Add-MAILFROM-environment-variable.patch/?hl=93#L93
+            MAILFROM: "${CRON_MAILFROM:-$POSTMASTER_ADDRESS}"
+            MAILTO: "${CRON_MAILTO:-$POSTMASTER_ADDRESS}"
             POSTMASTER_ADDRESS: "${POSTMASTER_ADDRESS}"
             VIRUS_ADMIN_EMAIL: "${VIRUS_ADMIN_EMAIL}"
             VIRUS_X_HEADER_LINE: "${VIRUS_X_HEADER_LINE}"
