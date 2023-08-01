@@ -11,7 +11,7 @@ services:
             options:
                 max-file: "5"
                 max-size: "5m"
-        hostname: mail
+        hostname: ${OVERRIDE_HOSTNAME}
         domainname: ${DOMAIN_NAME}
         dns: ${DNS_SERVER:-1.1.1.1}
         stop_grace_period: 1m
