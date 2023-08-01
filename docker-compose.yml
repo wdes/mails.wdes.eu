@@ -63,6 +63,8 @@ services:
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         environment:
             TZ: UTC
+            # See: https://unix.stackexchange.com/a/218177/155610
+            PS1: "mail@${OVERRIDE_HOSTNAME}#"
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
             ENABLE_RSPAMD: "1"
             ENABLE_RSPAMD_REDIS: "1"
