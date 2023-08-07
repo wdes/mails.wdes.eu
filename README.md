@@ -19,3 +19,7 @@ Our Docker-Mailserver infra.
 - Implement email quota: https://github.com/docker-mailserver/docker-mailserver/issues/2957
 - Check why DMARC reports are not sent: https://github.com/docker-mailserver/docker-mailserver/issues/2636
 - Test the fix for: https://github.com/docker-mailserver/docker-mailserver/issues/3323
+
+## Interesting documentations
+
+- https://www.renater.fr/wp-content/uploads/2022/01/article-complet-tordons-le-cou-au-phishing_compresse-1.pdf (in French)
