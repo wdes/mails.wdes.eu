@@ -191,6 +191,7 @@ if [ "${DOVECOT_REPLICATION_SERVER:-}" != "" ]; then
     echo "Hint: doveadm user '*'"
     echo 'Hint: doveadm replicator dsync-status'
     echo 'Hint: doveadm -D sync -u williamdes@example.org -d -N -l 30 -U'
+    echo 'Hint: doveadm mailbox status -u test@wdes.fr all INBOX'
     echo 'Hint: rspamc uptime'
     echo 'Hint: rspamc stat'
     echo 'Hint: rspamadm pw'
