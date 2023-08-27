@@ -13,6 +13,7 @@ services:
                 max-size: "5m"
         hostname: mail
         dns: ${DNS_SERVER:-1.1.1.1}
+        dns_search: ""
         stop_grace_period: 1m
         networks:
             mail_infra_network:
@@ -171,6 +172,7 @@ services:
 
     openldap:
         image: botsudo/docker-openldap
+        dns_search: ""
         restart: on-failure:5
         mem_limit: 1G
         mem_reservation: 100M
@@ -228,6 +230,7 @@ services:
 
     phpldapadmin:
         image: ghcr.io/sudo-bot/docker-phpldapadmin/docker-phpldapadmin:latest
+        dns_search: ""
         hostname: ldap-admin.${DOMAIN_NAME}
         mem_limit: 512M
         mem_reservation: 100M
@@ -264,6 +267,7 @@ services:
           - no-new-privileges:true
     acme:
         image: neilpang/acme.sh:3.0.5
+        dns_search: ""
         mem_limit: 512M
         mem_reservation: 10M
         restart: on-failure:15
@@ -302,6 +306,7 @@ services:
 
     crowdsec:
         image: crowdsecurity/crowdsec:v1.5.2
+        dns_search: ""
         restart: always
         environment:
             DISABLE_LOCAL_API: "true"
