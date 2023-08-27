@@ -12,7 +12,6 @@ services:
                 max-file: "5"
                 max-size: "5m"
         hostname: mail
-        domainname: ${DOMAIN_NAME}
         dns: ${DNS_SERVER:-1.1.1.1}
         stop_grace_period: 1m
         networks:
@@ -181,7 +180,6 @@ services:
                 max-file: "5"
                 max-size: "1m"
         hostname: ldap.${DOMAIN_NAME}
-        domainname: ldap.${DOMAIN_NAME}
         healthcheck:
             test: 'ldapwhoami -D "cn=$${DOCKER_LDAP_HEALTHCHECK_USERNAME}" -w "$${DOCKER_LDAP_HEALTHCHECK_PASSWORD}"'
             start_period: 5s
@@ -190,8 +188,6 @@ services:
             retries: 3
         networks:
             mail_infra_network:
-                aliases:
-                    - ldap.${DOMAIN_NAME}
         environment:
             # 256 to enable debug
             # See: https://www.openldap.org/doc/admin24/slapdconf2.html
@@ -232,6 +228,7 @@ services:
 
     phpldapadmin:
         image: ghcr.io/sudo-bot/docker-phpldapadmin/docker-phpldapadmin:latest
+        hostname: ldap-admin.${DOMAIN_NAME}
         mem_limit: 512M
         mem_reservation: 100M
         restart: on-failure:5
@@ -242,8 +239,6 @@ services:
                 max-size: "200k"
         networks:
             mail_infra_network:
-                aliases:
-                    - ldap-admin.${DOMAIN_NAME}
         environment:
             PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.${DOMAIN_NAME}': [{'server': [{'tls': True}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
             #PHPLDAPADMIN_HTTPS_CRT_FILENAME: "phpldapadmin-certificate.crt"
