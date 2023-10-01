@@ -13,7 +13,12 @@ setup:
 	cp tests/.env.test1 $(TEMP_DIR)/.env
 	rm -vf tests/data/acme.sh/*/*.cer
 	rm -vf tests/data/acme.sh/*/ca.*
-	cp -rp tests $(TEMP_DIR)
+	mkdir $(TEMP_DIR)/tests
+	mkdir -p $(TEMP_DIR)/tests/data/acme.sh/mail.williamdes.eu.org
+	cp tests/make-certs.sh $(TEMP_DIR)/tests/
+	cp -rp tests/php $(TEMP_DIR)/tests/
+	cp -rp tests/seeding $(TEMP_DIR)/tests/
+	cp -rp tests/data/acme.sh/mail.williamdes.eu.org/*.* $(TEMP_DIR)/tests/data/acme.sh/mail.williamdes.eu.org
 	cp -rp scripts $(TEMP_DIR)
 	chmod 777 -R $(TEMP_DIR)/tests/data/acme.sh
 	$(TEMP_DIR)/tests/make-certs.sh
