@@ -15,10 +15,18 @@ setup:
 	rm -vf tests/data/acme.sh/*/ca.*
 	mkdir $(TEMP_DIR)/tests
 	mkdir -p $(TEMP_DIR)/tests/data/acme.sh/mail.williamdes.eu.org
+	mkdir -p $(TEMP_DIR)/tests/data/maildata
+	mkdir $(TEMP_DIR)/tests/data/maildata/queue $(TEMP_DIR)/tests/data/maildata/reports $(TEMP_DIR)/tests/data/maildata/data $(TEMP_DIR)/tests/data/maildata/data/blobs
 	cp tests/make-certs.sh $(TEMP_DIR)/tests/
 	cp -rp tests/php $(TEMP_DIR)/tests/
 	cp -rp tests/seeding $(TEMP_DIR)/tests/
 	cp -rp tests/data/acme.sh/mail.williamdes.eu.org/*.* $(TEMP_DIR)/tests/data/acme.sh/mail.williamdes.eu.org
+
+	# Generate opendkim keys
+	mkdir -p $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/mail.williamdes.eu.org/
+	openssl genrsa -out $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/mail.williamdes.eu.org/mail.private 2048
+	openssl rsa -in $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/mail.williamdes.eu.org/mail.private -pubout -out $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/mail.williamdes.eu.org/mail.txt
+
 	cp -rp scripts $(TEMP_DIR)
 	chmod 777 -R $(TEMP_DIR)/tests/data/acme.sh
 	$(TEMP_DIR)/tests/make-certs.sh
@@ -49,7 +57,7 @@ test:
 	$(eval TEMP_DIR ?= $(shell cat /tmp/current-temp-env))
 	if [ -z "$(TEMP_DIR)" ]; then echo 'Missing TEMP_DIR env !'; exit 1; fi
 	# Run phpunit test suite
-	BUILDKIT_PROGRESS=plain $(TEMP_DIR)/dockerl -f tests/php/docker-compose.yml up --build --exit-code-from run-tests --abort-on-container-exit
+	BUILDKIT_PROGRESS=plain $(TEMP_DIR)/dockerl -f tests/php/docker-compose.yml up --build --exit-code-from sut --abort-on-container-exit
 
 teardown:
 	$(eval TEMP_DIR ?= $(shell cat /tmp/current-temp-env))
