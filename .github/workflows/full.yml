@@ -8,7 +8,7 @@ jobs:
     lint:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: run shellcheck
               uses: sudo-bot/action-shellcheck@latest
               with:
@@ -16,7 +16,7 @@ jobs:
     run-all:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: create temp folder
               run: make create-temp-env
             - name: setup for tests
