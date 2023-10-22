@@ -15,6 +15,7 @@ Our Docker-Mailserver infra.
 - https://www.mailhardener.com/kb/how-to-create-a-dane-tlsa-record-with-openssl
 - https://github.com/internetstandards/toolbox-wiki/blob/main/DANE-for-SMTP-how-to.md
 - https://gist.github.com/buffrr/609285c952e9cb28f76da168ef8c2ca6
+- https://blogs.linux.pizza/deploy-tlsa-records-dane-on-your-email-server-with-lets-encrypt
 
 ### Generate
 
