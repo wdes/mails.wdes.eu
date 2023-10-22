@@ -32,7 +32,7 @@ class SendAndReceiveTest extends TestCase
         ],
     ];
 
-    public function dataProviderEmails(): array
+    public static function dataProviderEmails(): array
     {
         $data = [];
         foreach (array_keys(self::USERS) as $userName) {
