@@ -50,9 +50,9 @@ use strict;
 
 \$enable_dkim_verification = 1; # Check DKIM
 
-\$virus_admin = "${VIRUS_ADMIN_EMAIL}";
+\$virus_admin = '${VIRUS_ADMIN_EMAIL}';
 
-\$X_HEADER_LINE = "${VIRUS_X_HEADER_LINE}";
+\$X_HEADER_LINE = '${VIRUS_X_HEADER_LINE}';
 
 #------------ Do not modify anything below this line -------------
 1;  # ensure a defined return
