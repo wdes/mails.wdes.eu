@@ -1,16 +1,44 @@
-all: create-temp-env setup test teardown
+IMAGE_TAG ?= docker-mailserver
+TEST_ADDR ?= mailserver
+# All: linux/amd64,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64,linux/arm/v7,linux/arm/v6
+PLATFORM ?= linux/amd64
 
-.PHONY: setup test teardown create-temp-env
+ACTION ?= load
+PROGRESS_MODE ?= plain
+
+.PHONY: docker-test run-test cleanup-test test
+
+all: docker-test
+
+docker-test: test
+
+test: setup-test run-test cleanup-test
+setup: setup-test
+
+check-env:
+	$(eval TEMP_DIR ?= $(shell cat /tmp/current-temp-env))
+	if [ -z "$(TEMP_DIR)" ]; then echo 'Missing TEMP_DIR env !'; exit 1; fi
+
+run-test: check-env
+	# Run phpunit test suite
+	IMAGE_TAG="${IMAGE_TAG}" \
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/docker-compose.yml up --build --pull --exit-code-from=sut --abort-on-container-exit
+
+cleanup-test: check-env
+	@echo "Stopping and removing the container"
+	IMAGE_TAG="${IMAGE_TAG}" \
+	$(TEMP_DIR)/dockerl down
+	sudo rm -rf $(TEMP_DIR)
+	rm -v /tmp/current-temp-env
 
 create-temp-env:
 	mktemp -d -t desportes_infra_tests.XXXXXX > /tmp/current-temp-env
 
-setup:
-	$(eval TEMP_DIR ?= $(shell cat /tmp/current-temp-env))
-	if [ -z "$(TEMP_DIR)" ]; then echo 'Missing TEMP_DIR env !'; exit 1; fi
+setup-test-files:
 	set -eu
-	cp docker-compose.yml dockerl user-patches.sh $(TEMP_DIR)
+	cp -rv docker-compose.yml dockerl user-patches.sh $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
+	rm -vf tests/data/acme.sh/*/*.csr
 	rm -vf tests/data/acme.sh/*/*.cer
 	rm -vf tests/data/acme.sh/*/ca.*
 	mkdir $(TEMP_DIR)/tests
@@ -34,10 +62,13 @@ setup:
 	chmod 555 -R $(TEMP_DIR)/tests/data/acme.sh
 	@cd $(TEMP_DIR)
 	@echo "Running in $(PWD)"
-	mkdir -p ./tests/data/phpldapadmin
-	openssl req -nodes -x509 -newkey rsa:4096 -keyout ./tests/data/phpldapadmin/phpldapadmin-certificate.key \
-    -out ./tests/data/phpldapadmin/phpldapadmin-certificate.crt -days 15 \
+	mkdir -p $(TEMP_DIR)/tests/data/phpldapadmin
+	openssl req -nodes -x509 -newkey rsa:4096 -keyout $(TEMP_DIR)/tests/data/phpldapadmin/phpldapadmin-certificate.key \
+    -out $(TEMP_DIR)/tests/data/phpldapadmin/phpldapadmin-certificate.crt -days 15 \
     -subj "/C=FR/O=Wdes SAS/OU=Test/CN=phpldapadmin/emailAddress=williamdes@wdes.fr"
+
+setup-test: create-temp-env check-env setup-test-files
+	set -eu
 	# Build images
 	$(TEMP_DIR)/dockerl build
 	# Build images
@@ -51,23 +82,4 @@ setup:
 	# Seed ldap test users
 	$(TEMP_DIR)/tests/seeding/seed-ldap.sh
 	# Build phpunit test suite
-	$(TEMP_DIR)/dockerl -f tests/php/docker-compose.yml build
-
-test:
-	$(eval TEMP_DIR ?= $(shell cat /tmp/current-temp-env))
-	if [ -z "$(TEMP_DIR)" ]; then echo 'Missing TEMP_DIR env !'; exit 1; fi
-	# Run phpunit test suite
-	BUILDKIT_PROGRESS=plain $(TEMP_DIR)/dockerl -f tests/php/docker-compose.yml up --build --exit-code-from sut --abort-on-container-exit
-
-teardown:
-	$(eval TEMP_DIR ?= $(shell cat /tmp/current-temp-env))
-	if [ -z "$(TEMP_DIR)" ]; then echo 'Missing TEMP_DIR env !'; exit 1; fi
-	# Stop
-	$(TEMP_DIR)/dockerl stop
-	# Show logs
-	$(TEMP_DIR)/dockerl logs
-	# Destroy
-	$(TEMP_DIR)/dockerl down
-	# Cleanup
-	rm /tmp/current-temp-env
-	sudo rm -rf $(TEMP_DIR)
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/docker-compose.yml build

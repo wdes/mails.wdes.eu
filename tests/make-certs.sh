@@ -14,22 +14,27 @@ KEYCERT_PATH="$SSL_PATH/mail.williamdes.eu.org"
 
 # bake the keys
 if [ ! -f $CA_PATH.key ]; then
-    openssl genrsa -out $CA_PATH.key 4096
+    openssl genrsa -out $CA_PATH.key 2048
 fi
 
 if [ ! -f $KEYCERT_PATH.key ]; then
-    openssl genrsa -out $KEYCERT_PATH.key 4096
+    openssl genrsa -out $KEYCERT_PATH.key 2048
 fi
 
 # bake the CA
-openssl req -x509 -config $SSL_PATH/openssl.cnf -new -nodes -key $CA_PATH.key -sha256 -days 15 -out $CA_PATH.cer
+openssl req -x509 -config $SSL_PATH/openssl.cnf -new -nodes -key $CA_PATH.key -sha384 -days 15 -out $CA_PATH.cer
 
 # bake the CSR
-#openssl req -new -config $SSL_PATH/openssl.cnf -key $KEYCERT_PATH.key -out $KEYCERT_PATH.csr
+if [ ! -f $KEYCERT_PATH.csr ]; then
+    openssl req -new -config $KEYCERT_PATH.csr.conf -key $KEYCERT_PATH.key -out $KEYCERT_PATH.csr
+fi
 
 # bake the cert
-openssl x509 -req -in $KEYCERT_PATH.csr -CA $CA_PATH.cer -CAkey $CA_PATH.key \
-    -CAcreateserial -out $KEYCERT_PATH.cer -days 7 -sha256 -extfile $KEYCERT_PATH.csr.conf
+openssl x509 -req -extensions ext_cert -extfile $KEYCERT_PATH.csr.conf -in $KEYCERT_PATH.csr -CA $CA_PATH.cer -CAkey $CA_PATH.key \
+    -CAcreateserial -out $KEYCERT_PATH.cer -days 7 -sha384
+
+openssl req -in $KEYCERT_PATH.csr -noout -text
+openssl x509 -in $KEYCERT_PATH.cer -noout -text
 
 cat $KEYCERT_PATH.cer > $SSL_PATH/fullchain.cer
 cat $CA_PATH.cer >> $SSL_PATH/fullchain.cer

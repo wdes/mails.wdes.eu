@@ -20,8 +20,8 @@ jobs:
             - name: create temp folder
               run: make create-temp-env
             - name: setup for tests
-              run: make setup
-            - name: run tests
-              run: make test
+              run: make setup-test
+            - name: run docker-test
+              run: make run-test
             - name: teardown tests
-              run: make teardown
+              run: make cleanup-test
