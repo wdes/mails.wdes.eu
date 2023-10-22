@@ -34,7 +34,7 @@ cleanup-test: check-env
 create-temp-env:
 	mktemp -d -t desportes_infra_tests.XXXXXX > /tmp/current-temp-env
 
-setup-test-files:
+setup-test-files: check-env
 	set -eu
 	cp -rv docker-compose.yml dockerl user-patches.sh rspamd $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
@@ -43,8 +43,6 @@ setup-test-files:
 	rm -vf tests/data/acme.sh/*/ca.*
 	mkdir $(TEMP_DIR)/tests
 	mkdir -p $(TEMP_DIR)/tests/data/acme.sh/mail.williamdes.eu.org
-	mkdir -p $(TEMP_DIR)/tests/data/maildata
-	mkdir $(TEMP_DIR)/tests/data/maildata/queue $(TEMP_DIR)/tests/data/maildata/reports $(TEMP_DIR)/tests/data/maildata/data $(TEMP_DIR)/tests/data/maildata/data/blobs
 	cp tests/make-certs.sh $(TEMP_DIR)/tests/
 	cp -rp tests/php $(TEMP_DIR)/tests/
 	cp -rp tests/seeding $(TEMP_DIR)/tests/
