@@ -5,7 +5,7 @@ namespace Datacenters\Infrastructure\tests;
 require_once '/composer/autoload.php';
 
 use PHPUnit\Framework\TestCase;
-use function imap_open;
+use function imap2_open;
 use function sprintf;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -47,10 +47,10 @@ class SendAndReceiveTest extends TestCase
     public function testImapConnectEmailsAndClean(string $userName): void
     {
         $mailbox = sprintf(
-            '{%s:993/imap4/ssl/novalidate-cert}',
+            '{%s:993/ssl/novalidate-cert}',
             self::MAIL_HOST
         );
-        $mbox = imap_open(
+        $mbox = imap2_open(
             $mailbox,
             self::USERS[$userName]['username'],
             self::USERS[$userName]['password']
@@ -59,12 +59,12 @@ class SendAndReceiveTest extends TestCase
             $this->fail('The mailbox could not be opened.');
         }
 
-        $headers = imap_check($mbox);
+        $headers = imap2_check($mbox);
         if ($headers->Nmsgs > 0) {
             $this->deleteAllMails($mbox, $userName);
         }
 
-        $this->assertTrue(imap_close($mbox));
+        $this->assertTrue(imap2_close($mbox));
     }
 
     /**
@@ -74,10 +74,10 @@ class SendAndReceiveTest extends TestCase
     public function testImapConnectEmails(string $userName): void
     {
         $mailbox = sprintf(
-            '{%s:993/imap4/ssl/novalidate-cert}',
+            '{%s:993/ssl/novalidate-cert}',
             self::MAIL_HOST
         );
-        $mbox = imap_open(
+        $mbox = imap2_open(
             $mailbox,
             self::USERS[$userName]['username'],
             self::USERS[$userName]['password']
@@ -86,13 +86,13 @@ class SendAndReceiveTest extends TestCase
             $this->fail('The mailbox could not be opened.');
         }
 
-        $headers = imap_check($mbox);
+        $headers = imap2_check($mbox);
         if ($headers->Nmsgs > 0) {
             $this->deleteAllMails($userName);
             sleep(2);
         }
 
-        $folders = imap_listmailbox($mbox, $mailbox, '*');
+        $folders = imap2_listmailbox($mbox, $mailbox, '*');
 
         if ($folders === false) {
             $this->fail('Folder listing failed.');
@@ -108,7 +108,7 @@ class SendAndReceiveTest extends TestCase
             $mailbox . 'Trash',
         ], $folders);
 
-        $headers = imap_headers($mbox);
+        $headers = imap2_headers($mbox);
 
         if ($headers === false) {
             $this->fail('Headers listing failed.');
@@ -116,16 +116,16 @@ class SendAndReceiveTest extends TestCase
 
         $this->assertSame([], $headers);
 
-        imap_close($mbox);
+        imap2_close($mbox);
     }
 
     private function getMailById(string $userName, string $messageId): ?stdClass
     {
         $mailbox = sprintf(
-            '{%s:993/imap4/ssl/novalidate-cert}',
+            '{%s:993/ssl/novalidate-cert}',
             self::MAIL_HOST
         );
-        $mbox = imap_open(
+        $mbox = imap2_open(
             $mailbox,
             self::USERS[$userName]['username'],
             self::USERS[$userName]['password']
@@ -134,12 +134,12 @@ class SendAndReceiveTest extends TestCase
             $this->fail('The mailbox could not be opened.');
         }
 
-        $msgs = imap_sort($mbox, SORTDATE, true, SE_UID);
+        $msgs = imap2_sort($mbox, SORTDATE, true, SE_UID);
         $foundMessage = null;
         foreach ($msgs as $msguid) {
-            $msgno = imap_msgno($mbox, $msguid);
-            $headers = imap_headerinfo($mbox, $msgno);
-            $structure = imap_fetchstructure($mbox, $msguid, FT_UID);
+            $msgno = imap2_msgno($mbox, $msguid);
+            $headers = imap2_headerinfo($mbox, $msgno);
+            $structure = imap2_fetchstructure($mbox, $msguid, FT_UID);
             if ($headers->message_id === $messageId) {
                 $foundMessage = (object) [
                     'headers' => $headers,
@@ -149,23 +149,23 @@ class SendAndReceiveTest extends TestCase
             }
         }
 
-        imap_close($mbox);
+        imap2_close($mbox);
         return $foundMessage;
     }
 
     private function deleteAllMails($mbox, string $userName): void
     {
-        imap_delete($mbox, '1:*');
-        imap_expunge($mbox);
+        imap2_delete($mbox, '1:*');
+        imap2_expunge($mbox);
     }
 
     private function deleteMailById(string $userName, string $msgNumber): bool
     {
         $mailbox = sprintf(
-            '{%s:993/imap4/ssl/novalidate-cert}',
+            '{%s:993/ssl/novalidate-cert}',
             self::MAIL_HOST
         );
-        $mbox = imap_open(
+        $mbox = imap2_open(
             $mailbox,
             self::USERS[$userName]['username'],
             self::USERS[$userName]['password']
@@ -174,11 +174,11 @@ class SendAndReceiveTest extends TestCase
             $this->fail('The mailbox could not be opened.');
         }
 
-        $del = imap_delete($mbox, $msgNumber);
+        $del = imap2_delete($mbox, $msgNumber);
 
-        imap_expunge($mbox);
+        imap2_expunge($mbox);
 
-        imap_close($mbox);
+        imap2_close($mbox);
         return $del;
     }
 
