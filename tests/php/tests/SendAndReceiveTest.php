@@ -27,7 +27,7 @@ class SendAndReceiveTest extends TestCase
             'password' => 'PassCyrielle!ILoveDogs',
             'aliases' => [
                 'cyrielle.pondu@mail.williamdes.eu.org',
-                'contact@another-domain.com',
+                'contact@another-domain.intranet',
             ],
         ],
     ];
