@@ -3,7 +3,7 @@ cn: Cyrielle Pondu
 givenname: cyrielle
 mail: cyrielle@mail.williamdes.eu.org
 mailalias: cyrielle.pondu@mail.williamdes.eu.org
-mailalias: contact@another-domain.com
+mailalias: contact@another-domain.intranet
 mailenabled: TRUE
 mailgidnumber: 5000
 mailhomedirectory: /var/mail/mail.williamdes.eu.org/cyrielle/
