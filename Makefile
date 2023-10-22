@@ -36,7 +36,7 @@ create-temp-env:
 
 setup-test-files:
 	set -eu
-	cp -rv docker-compose.yml dockerl user-patches.sh $(TEMP_DIR)
+	cp -rv docker-compose.yml dockerl user-patches.sh rspamd $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
 	rm -vf tests/data/acme.sh/*/*.csr
 	rm -vf tests/data/acme.sh/*/*.cer
