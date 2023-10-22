@@ -134,7 +134,7 @@ class SendAndReceiveTest extends TestCase
             $this->fail('The mailbox could not be opened.');
         }
 
-        $msgs = imap_sort($mbox, SORTDATE, 1, SE_UID);
+        $msgs = imap_sort($mbox, SORTDATE, true, SE_UID);
         $foundMessage = null;
         foreach ($msgs as $msguid) {
             $msgno = imap_msgno($mbox, $msguid);
