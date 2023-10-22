@@ -210,20 +210,19 @@ class SendAndReceiveTest extends TestCase
      */
     public function testImapConnectSendEmailsUnsecure(string $userName): void
     {
-        [$sent, $messageId] = $this->sendMail(
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('SMTP Error: Could not authenticate');
+
+        $this->sendMail(
             null,
             self::USERS[$userName]['username'],
             self::USERS[$userName]['password'],
             self::USERS[$userName]['username'],
             self::USERS[$userName]['username'],
             'Mail to myself using RAW:25',
-            'Just a mail to myself. Sent via RAW:25'
+            'Just a mail to myself. Sent via RAW:25',
+            true
         );
-        sleep(10);
-        $this->assertTrue($sent, 'A non TLS mail');
-        $mailFound = $this->getMailById($userName, $messageId);
-        $this->assertNotNull($mailFound, 'Mail should be found');
-        $this->assertSame('Mail to myself using RAW:25', $mailFound->headers->subject);
     }
 
     /**
@@ -342,8 +341,9 @@ class SendAndReceiveTest extends TestCase
         $useTLS,
         string $username, string $password,
         string $from, string $to,
-        string $object, string $body): array
-    {
+        string $object, string $body,
+        bool $throwError = false
+    ): array {
         $mail = new PHPMailer(true);
 
         try {
@@ -384,6 +384,9 @@ class SendAndReceiveTest extends TestCase
 
             return [$mail->send(), $mail->GetLastMessageID()];
         } catch (Exception $e) {
+            if ($throwError) {
+                throw $e;
+            }
             $this->fail('Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
         }
     }
