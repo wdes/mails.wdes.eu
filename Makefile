@@ -22,7 +22,7 @@ check-env:
 run-test: check-env
 	# Run phpunit test suite
 	IMAGE_TAG="${IMAGE_TAG}" \
-	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/docker-compose.yml up --build --pull --exit-code-from=sut --abort-on-container-exit
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/docker-compose.yml up --exit-code-from=sut --abort-on-container-exit
 
 cleanup-test: check-env
 	@echo "Stopping and removing the container"
