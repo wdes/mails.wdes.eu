@@ -5,7 +5,8 @@ namespace Datacenters\Infrastructure\tests;
 require_once '/composer/autoload.php';
 
 use PHPUnit\Framework\TestCase;
-use function imap2_open;
+use Webklex\PHPIMAP\ClientManager;
+use Webklex\PHPIMAP\Client;
 use function sprintf;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -32,6 +33,8 @@ class SendAndReceiveTest extends TestCase
         ],
     ];
 
+    private Client|null $mailboxClient = null;
+
     public static function dataProviderEmails(): array
     {
         $data = [];
@@ -41,30 +44,39 @@ class SendAndReceiveTest extends TestCase
         return $data;
     }
 
+    public function tearDown(): void
+    {
+        if ($this->mailboxClient !== null) {
+            $this->mailboxClient->disconnect();
+        }
+    }
+
+    private function connectToMailbox(string $userName): void
+    {
+        $cm = new ClientManager([]);
+        $this->mailboxClient = $cm->make([
+            'host'           => self::MAIL_HOST,
+            'port'           => 993,
+            'encryption'     => 'ssl',
+            'validate_cert'  => false,
+            'protocol'       => 'imap',
+            'username'       => self::USERS[$userName]['username'],
+            'password'       => self::USERS[$userName]['password'],
+        ]);
+
+        //Connect to the IMAP Server
+        $this->mailboxClient->connect();
+
+        $this->assertTrue($this->mailboxClient->isConnected());
+    }
+
     /**
      * @dataProvider dataProviderEmails
      */
     public function testImapConnectEmailsAndClean(string $userName): void
     {
-        $mailbox = sprintf(
-            '{%s:993/ssl/novalidate-cert}',
-            self::MAIL_HOST
-        );
-        $mbox = imap2_open(
-            $mailbox,
-            self::USERS[$userName]['username'],
-            self::USERS[$userName]['password']
-        );
-        if ($mbox === false) {
-            $this->fail('The mailbox could not be opened.');
-        }
-
-        $headers = imap2_check($mbox);
-        if ($headers->Nmsgs > 0) {
-            $this->deleteAllMails($mbox, $userName);
-        }
-
-        $this->assertTrue(imap2_close($mbox));
+        $this->connectToMailbox($userName);
+        $this->deleteAllMails();
     }
 
     /**
@@ -73,30 +85,11 @@ class SendAndReceiveTest extends TestCase
      */
     public function testImapConnectEmails(string $userName): void
     {
-        $mailbox = sprintf(
-            '{%s:993/ssl/novalidate-cert}',
-            self::MAIL_HOST
-        );
-        $mbox = imap2_open(
-            $mailbox,
-            self::USERS[$userName]['username'],
-            self::USERS[$userName]['password']
-        );
-        if ($mbox === false) {
-            $this->fail('The mailbox could not be opened.');
-        }
+        $this->connectToMailbox($userName);
 
-        $headers = imap2_check($mbox);
-        if ($headers->Nmsgs > 0) {
-            $this->deleteAllMails($userName);
-            sleep(2);
-        }
+        $this->deleteAllMails();
 
-        $folders = imap2_listmailbox($mbox, $mailbox, '*');
-
-        if ($folders === false) {
-            $this->fail('Folder listing failed.');
-        }
+        $folders = $this->mailboxClient->getFolders()->map(fn ($f) => $f->name)->toArray();
 
         natsort($folders);
         $folders = array_values($folders);
@@ -108,31 +101,13 @@ class SendAndReceiveTest extends TestCase
             $mailbox . 'Trash',
         ], $folders);
 
-        $headers = imap2_headers($mbox);
-
-        if ($headers === false) {
-            $this->fail('Headers listing failed.');
-        }
-
-        $this->assertSame([], $headers);
-
-        imap2_close($mbox);
+        $folder = $this->mailboxClient->getFolderByPath('INBOX');
+        $this->assertSame(0, $folder->messages()->all()->get()->count());
     }
 
     private function getMailById(string $userName, string $messageId): ?stdClass
     {
-        $mailbox = sprintf(
-            '{%s:993/ssl/novalidate-cert}',
-            self::MAIL_HOST
-        );
-        $mbox = imap2_open(
-            $mailbox,
-            self::USERS[$userName]['username'],
-            self::USERS[$userName]['password']
-        );
-        if ($mbox === false) {
-            $this->fail('The mailbox could not be opened.');
-        }
+        $this->connectToMailbox($userName);
 
         $msgs = imap2_sort($mbox, SORTDATE, true, SE_UID);
         $foundMessage = null;
@@ -149,37 +124,19 @@ class SendAndReceiveTest extends TestCase
             }
         }
 
-        imap2_close($mbox);
         return $foundMessage;
     }
 
-    private function deleteAllMails($mbox, string $userName): void
+    private function deleteAllMails(): void
     {
-        imap2_delete($mbox, '1:*');
-        imap2_expunge($mbox);
-    }
+        $folder = $this->mailboxClient->getFolderByPath('INBOX');
+        $messages = $folder->messages()->all()->get();
 
-    private function deleteMailById(string $userName, string $msgNumber): bool
-    {
-        $mailbox = sprintf(
-            '{%s:993/ssl/novalidate-cert}',
-            self::MAIL_HOST
-        );
-        $mbox = imap2_open(
-            $mailbox,
-            self::USERS[$userName]['username'],
-            self::USERS[$userName]['password']
-        );
-        if ($mbox === false) {
-            $this->fail('The mailbox could not be opened.');
+        if ($messages->count() > 0) {
+            foreach($messages as $message){
+                $message->delete(true);
+            }
         }
-
-        $del = imap2_delete($mbox, $msgNumber);
-
-        imap2_expunge($mbox);
-
-        imap2_close($mbox);
-        return $del;
     }
 
     /**
