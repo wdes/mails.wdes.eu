@@ -19,5 +19,4 @@ if [ -z "${NO_VERBOSE:-}" ]; then
     printf 'Running in: %s\n' "${DOCKER_PROJECT_NAME}"
 fi
 
-docker compose version
 docker compose -p ${DOCKER_PROJECT_NAME} $@
