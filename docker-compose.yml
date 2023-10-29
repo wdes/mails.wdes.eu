@@ -78,7 +78,7 @@ services:
             SMTP_GREETING: "Datacenters Network emails"
             DKIM_SELECTOR: "mail"
 
-            LDAP_SERVER_HOST: "ldap://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
+            LDAP_SERVER_HOST: "ldap://ldap.mail-server.intranet" # Must match the hostname for SSL verification
             LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
             LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
             LDAP_BIND_PW: ${LDAP_ADMIN_PASSWORD}

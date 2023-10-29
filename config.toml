@@ -3,7 +3,7 @@
 #############################################
 
 [server]
-hostname = "mail-server.mail.williamdes.eu.org"
+hostname = "emails.mail-server.intranet"
 max-connections = 8192
 
 #[server.run-as]
@@ -128,7 +128,7 @@ entries = 500
 ttl = {positive = '1h', negative = '10m'}
 
 [directory."imap".lookup]
-domains = ["mail.williamdes.eu.org"]
+domains = ["mail-server.intranet"]
 
 [directory."lmtp"]
 type = "lmtp"
@@ -155,7 +155,7 @@ entries = 500
 ttl = {positive = '1h', negative = '10m'}
 
 [directory."lmtp".lookup]
-domains = ["mail.williamdes.eu.org"]
+domains = ["mail-server.intranet"]
 
 #############################################
 # JMAP server configuration
@@ -163,7 +163,7 @@ domains = ["mail.williamdes.eu.org"]
 
 [server.listener."jmap"]
 bind = ["[::]:8080"]
-url = "https://mail-server.mail.williamdes.eu.org:8080"
+url = "https://emails.mail-server.intranet:8080"
 protocol = "jmap"
 
 [store.db]
@@ -550,7 +550,7 @@ notify = ["1d", "3d"]
 expire = "5d"
 
 [queue.outbound]
-#hostname = "mail-server.mail.williamdes.eu.org"
+#hostname = "emails.mail-server.intranet"
 next-hop = [ { if = "rcpt-domain", in-list = "ldap/domains", then = "local" },
              { else = false } ]
 ip-strategy = "ipv4-then-ipv6"
@@ -612,7 +612,7 @@ mta-sts = 1024
 [report]
 path = "/opt/stalwart-mail/reports"
 hash = 64
-#submitter = "mail-server.mail.williamdes.eu.org"
+#submitter = "emails.mail-server.intranet"
 
 [report.analysis]
 addresses = ["dmarc@*", "abuse@*", "postmaster@*"]
@@ -621,34 +621,34 @@ forward = true
 
 [report.dsn]
 from-name = "Mail Delivery Subsystem"
-from-address = "MAILER-DAEMON@mail.williamdes.eu.org"
+from-address = "MAILER-DAEMON@mail-server.intranet"
 sign = ["rsa"]
 
 [report.dkim]
 from-name = "Report Subsystem"
-from-address = "noreply-dkim@mail.williamdes.eu.org"
+from-address = "noreply-dkim@mail-server.intranet"
 subject = "DKIM Authentication Failure Report"
 sign = ["rsa"]
 send = "1/1d"
 
 [report.spf]
 from-name = "Report Subsystem"
-from-address = "noreply-spf@mail.williamdes.eu.org"
+from-address = "noreply-spf@mail-server.intranet"
 subject = "SPF Authentication Failure Report"
 send = "1/1d"
 sign = ["rsa"]
 
 [report.dmarc]
 from-name = "Report Subsystem"
-from-address = "noreply-dmarc@mail.williamdes.eu.org"
+from-address = "noreply-dmarc@mail-server.intranet"
 subject = "DMARC Authentication Failure Report"
 send = "1/1d"
 sign = ["rsa"]
 
 [report.dmarc.aggregate]
 from-name = "DMARC Report"
-from-address = "noreply-dmarc@mail.williamdes.eu.org"
-org-name = "mail.williamdes.eu.org"
+from-address = "noreply-dmarc@mail-server.intranet"
+org-name = "mail-server.intranet"
 #contact-info = ""
 send = "daily"
 max-size = 26214400 # 25mb
@@ -656,8 +656,8 @@ sign = ["rsa"]
 
 [report.tls.aggregate]
 from-name = "TLS Report"
-from-address = "noreply-tls@mail.williamdes.eu.org"
-org-name = "mail.williamdes.eu.org"
+from-address = "noreply-tls@mail-server.intranet"
+org-name = "mail-server.intranet"
 #contact-info = ""
 send = "daily"
 max-size = 26214400 # 25 mb
@@ -665,9 +665,9 @@ sign = ["rsa"]
 
 
 [signature."rsa"]
-#public-key = "file:///opt/stalwart-mail/etc/dkim/mail.williamdes.eu.org.cert"
-private-key = "file:///etc/opendkim/keys/mail.williamdes.eu.org/mail.private"
-domain = "mail.williamdes.eu.org"
+#public-key = "file:///opt/stalwart-mail/etc/dkim/mail-server.intranet.cert"
+private-key = "file:///etc/opendkim/keys/mail-server.intranet/mail.private"
+domain = "mail-server.intranet"
 selector = !DKIM_SELECTOR
 headers = ["From", "To", "Date", "Subject", "Message-ID"]
 algorithm = "rsa-sha256"
@@ -696,9 +696,9 @@ allow-invalid-certs = true
 
 [sieve]
 from-name = "Automated Message"
-from-addr = "no-reply@mail.williamdes.eu.org"
+from-addr = "no-reply@mail-server.intranet"
 return-path = ""
-#hostname = "mail-server.mail.williamdes.eu.org"
+#hostname = "emails.mail-server.intranet"
 sign = ["rsa"]
 
 [sieve.limits]
