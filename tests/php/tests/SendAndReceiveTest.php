@@ -14,21 +14,21 @@ use stdClass;
 
 class SendAndReceiveTest extends TestCase
 {
-    public const MAIL_HOST = 'mail-server.mail.williamdes.eu.org';
+    public const MAIL_HOST = 'emails.mail-server.intranet';
     public const USERS = [
         'john' => [
-            'username' => 'john@mail.williamdes.eu.org',
+            'username' => 'john@williamdes.corp',
             'password' => 'JohnPassWord!645987zefdm',
             'aliases' => [
-                'john.pondu@mail.williamdes.eu.org',
+                'john.pondu@williamdes.corp',
             ],
         ],
         'cyrielle' => [
-            'username' => 'cyrielle@mail.williamdes.eu.org',
+            'username' => 'cyrielle@williamdes.corp',
             'password' => 'PassCyrielle!ILoveDogs',
             'aliases' => [
-                'cyrielle.pondu@mail.williamdes.eu.org',
-                'contact@another-domain.intranet',
+                'cyrielle.pondu@williamdes.corp',
+                'contact@desportes.corp',
             ],
         ],
     ];
@@ -224,6 +224,7 @@ class SendAndReceiveTest extends TestCase
             'Just a mail to myself. Sent via TLS'
         );
         $this->assertTrue($sent, 'A TLS mail');
+        sleep(60);
         $mailFound = $this->getMailById($userName, $messageId);
         $this->assertNotNull($mailFound, 'Mail should be found');
         $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
@@ -247,6 +248,7 @@ class SendAndReceiveTest extends TestCase
             'Just a mail to myself. Sent via TLS'
         );
         $this->assertTrue($sent, 'A TLS mail');
+        sleep(15);
         $mailFound = $this->getMailById($userName, $messageId);
         $this->assertNotNull($mailFound, 'Mail should be found');
         $this->assertSame('Mail to myself using TLS', $mailFound->headers->subject);
@@ -266,6 +268,8 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself, postgreydelay',
             'Just a mail to myself. postgreydelay.'
         );
+        $this->assertTrue($sent, 'A TLS mail');
+        sleep(15);
         $mailFound = $this->getMailById($userName, $messageId);
         if ($mailFound) {
             // This will mark this test as risky, the mail should be greylisted
@@ -316,7 +320,7 @@ class SendAndReceiveTest extends TestCase
                 $mail->Port       = 587;
             }
             // Check it is in sync with the cert in the acme.sh dir
-            $fingerprint = file_get_contents('/etc/ssl/mail.williamdes.eu.org.cer');
+            $fingerprint = file_get_contents('/etc/ssl/emails.mail-server.intranet.cer');
             $this->assertNotFalse($fingerprint, 'Cert should be found');
             $mail->SMTPOptions = [
                 'ssl' => [

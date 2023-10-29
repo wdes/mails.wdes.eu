@@ -6,6 +6,9 @@ PLATFORM ?= linux/amd64
 ACTION ?= load
 PROGRESS_MODE ?= plain
 
+ACME_DOMAIN = emails.mail-server.intranet
+DKIM_DOMAIN = mail-server.intranet
+
 .PHONY: docker-test run-test cleanup-test test
 
 all: docker-test
@@ -36,22 +39,22 @@ create-temp-env:
 
 setup-test-files: check-env
 	set -eu
-	cp -rv docker-compose.yml dockerl user-patches.sh rspamd $(TEMP_DIR)
+	cp -rv docker-compose.yml dockerl user-patches.sh rspamd internal-dns $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
 	rm -vf tests/data/acme.sh/*/*.csr
 	rm -vf tests/data/acme.sh/*/*.cer
 	rm -vf tests/data/acme.sh/*/ca.*
 	mkdir $(TEMP_DIR)/tests
-	mkdir -p $(TEMP_DIR)/tests/data/acme.sh/mail.williamdes.eu.org
+	mkdir -p $(TEMP_DIR)/tests/data/acme.sh/$(ACME_DOMAIN)
 	cp tests/make-certs.sh $(TEMP_DIR)/tests/
 	cp -rp tests/php $(TEMP_DIR)/tests/
 	cp -rp tests/seeding $(TEMP_DIR)/tests/
-	cp -rp tests/data/acme.sh/mail.williamdes.eu.org/*.* $(TEMP_DIR)/tests/data/acme.sh/mail.williamdes.eu.org
+	cp -v tests/data/acme.sh/$(ACME_DOMAIN)/*.*nf $(TEMP_DIR)/tests/data/acme.sh/$(ACME_DOMAIN)
 
 	# Generate opendkim keys
-	mkdir -p $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/mail.williamdes.eu.org/
-	openssl genrsa -out $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/mail.williamdes.eu.org/mail.private 2048
-	openssl rsa -in $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/mail.williamdes.eu.org/mail.private -pubout -out $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/mail.williamdes.eu.org/mail.txt
+	mkdir -p $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/$(DKIM_DOMAIN)/
+	openssl genrsa -out $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/$(DKIM_DOMAIN)/mail.private 2048
+	openssl rsa -in $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/$(DKIM_DOMAIN)/mail.private -pubout -out $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/$(DKIM_DOMAIN)/mail.txt
 
 	cp -rp scripts $(TEMP_DIR)
 	chmod 777 -R $(TEMP_DIR)/tests/data/acme.sh

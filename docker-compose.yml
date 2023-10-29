@@ -1,27 +1,32 @@
 version: "3.8"
 
 services:
+    dns-server:
+        image: hickorydns/hickory-dns:latest
+        dns:
+            - "10.222.222.1"
+        hostname: dns.mail-server.intranet
+        dns_search: mail-server.intranet.
+        networks:
+            mail_infra_network:
+                ipv4_address: 10.222.222.1
+        volumes:
+            - ./internal-dns/named.toml:/etc/named.toml:ro
+            - ./internal-dns/zones/:/var/named/zones/:ro
+
     mailserver:
         image: mailserver/docker-mailserver:12.1.0
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
-        logging:
-            driver: "json-file"
-            options:
-                max-file: "5"
-                max-size: "5m"
-        hostname: mail
-        dns: ${DNS_SERVER:-1.1.1.1}
-        dns_search: ""
         stop_grace_period: 1m
+        dns:
+            - "10.222.222.1"
+        hostname: emails.mail-server.intranet
+        dns_search: mail-server.intranet.
         networks:
             mail_infra_network:
-                aliases:
-                    - mail-server.${DOMAIN_NAME}
-                    - imap.${DOMAIN_NAME}
-                    - smtp.${DOMAIN_NAME}
-                    - pop.${DOMAIN_NAME}
+                ipv4_address: 10.222.222.2
         ports:
             - "25:25"    # SMTP  (explicit TLS => STARTTLS)
             - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
@@ -88,8 +93,8 @@ services:
             # Now it's up to RSPAMD_GREYLISTING to greylist
             # POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
             # POSTGREY_AUTO_WHITELIST_CLIENTS: "1" # Defaults to 5
-            LDAP_SERVER_HOST: "${LDAP_PROTOCOL:-ldaps}://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
-            DOVECOT_URIS: "${LDAP_PROTOCOL:-ldaps}://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
+            LDAP_SERVER_HOST: "${LDAP_PROTOCOL:-ldaps}://ldap.mail-server.intranet" # Must match the hostname for SSL verification
+            DOVECOT_URIS: "${LDAP_PROTOCOL:-ldaps}://ldap.mail-server.intranet" # Must match the hostname for SSL verification
             LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
             LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
             LDAP_BIND_PW: ${LDAP_ADMIN_PASSWORD}
@@ -177,7 +182,6 @@ services:
 
     openldap:
         image: docker.io/botsudo/docker-openldap
-        dns_search: ""
         restart: on-failure:5
         mem_limit: 1G
         mem_reservation: 100M
@@ -186,15 +190,19 @@ services:
             options:
                 max-file: "5"
                 max-size: "1m"
-        hostname: ldap.${DOMAIN_NAME}
+        dns:
+            - "10.222.222.1"
+        hostname: ldap.mail-server.intranet
+        dns_search: mail-server.intranet.
+        networks:
+            mail_infra_network:
+                ipv4_address: 10.222.222.3
         healthcheck:
             test: 'ldapwhoami -D "cn=$${DOCKER_LDAP_HEALTHCHECK_USERNAME}" -w "$${DOCKER_LDAP_HEALTHCHECK_PASSWORD}"'
             start_period: 5s
             interval: 30s
             timeout: 5s
             retries: 3
-        networks:
-            mail_infra_network:
         environment:
             # 256 to enable debug
             # See: https://www.openldap.org/doc/admin24/slapdconf2.html
@@ -231,36 +239,34 @@ services:
             acme:
                 condition: service_healthy
         security_opt:
-          - no-new-privileges:true
+            - no-new-privileges:true
 
     phpldapadmin:
         image: ghcr.io/sudo-bot/docker-phpldapadmin/docker-phpldapadmin:latest
-        dns_search: ""
-        hostname: ldap-admin.${DOMAIN_NAME}
         mem_limit: 512M
         mem_reservation: 100M
-        restart: on-failure:5
-        logging:
-            driver: "json-file"
-            options:
-                max-file: "1"
-                max-size: "200k"
+        dns:
+            - "10.222.222.1"
+        hostname: phpldapadmin.mail-server.intranet
+        dns_search: mail-server.intranet.
         networks:
             mail_infra_network:
+                ipv4_address: 10.222.222.4
+        restart: on-failure:5
         environment:
-            PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.${DOMAIN_NAME}': [{'server': [{'tls': True}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
+            PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.mail-server.intranet': [{'server': [{'tls': True}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
             #PHPLDAPADMIN_HTTPS_CRT_FILENAME: "phpldapadmin-certificate.crt"
             #PHPLDAPADMIN_HTTPS_KEY_FILENAME: "phpldapadmin-certificate.key"
             #PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: "${PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME:-phpldapadmin-ca.crt}"
             #PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME: "ca.cer"
         #volumes:
-            # web UI (phpldapadmin-ca.crt, phpldapadmin-certificate.key, phpldapadmin-certificate.crt)
-            #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/server-certificate/ca.cer:ro
-            #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/server-certificate/server.cer:ro
-            #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/server-certificate/server.key:ro
-            #- ${PHP_LDAP_ADMIN_CERTS_DIR}:/container/service/phpldapadmin/assets/apache2/certs
-            # LDAP client
-            #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
+        # web UI (phpldapadmin-ca.crt, phpldapadmin-certificate.key, phpldapadmin-certificate.crt)
+        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/server-certificate/ca.cer:ro
+        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/server-certificate/server.cer:ro
+        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/server-certificate/server.key:ro
+        #- ${PHP_LDAP_ADMIN_CERTS_DIR}:/container/service/phpldapadmin/assets/apache2/certs
+        # LDAP client
+        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
         ports:
             - "${PHPLDAPADMIN_SSL_PORT:-8080}:80"
         depends_on:
@@ -269,18 +275,20 @@ services:
             acme:
                 condition: service_healthy
         security_opt:
-          - no-new-privileges:true
+            - no-new-privileges:true
+
     acme:
         image: docker.io/neilpang/acme.sh:3.0.7
-        dns_search: ""
+        dns:
+            - "10.222.222.1"
+        hostname: acme.mail-server.intranet
+        dns_search: mail-server.intranet.
+        networks:
+            mail_infra_network:
+                ipv4_address: 10.222.222.5
         mem_limit: 512M
         mem_reservation: 10M
         restart: on-failure:15
-        logging:
-            driver: "json-file"
-            options:
-                max-file: "2"
-                max-size: "200k"
         volumes:
             - ./scripts:/scripts:ro
             - ${ACME_HOME_DIR}:/acme.sh
@@ -307,7 +315,7 @@ services:
         entrypoint: /bin/sh
         command: /scripts/acme.sh-docker.sh
         security_opt:
-          - no-new-privileges:true
+            - no-new-privileges:true
 
     crowdsec:
         image: crowdsecurity/crowdsec:v1.5.5
@@ -338,5 +346,10 @@ services:
 
 networks:
     mail_infra_network:
-        driver: bridge
         name: infrastructure_mail_infra_network
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.222.222.0/28
+                  ip_range: 10.222.222.0/28
+                  gateway: 10.222.222.14

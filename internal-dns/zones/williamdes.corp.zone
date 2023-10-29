@@ -1,0 +1,15 @@
+; The zone for williamdes.corp
+@  86400  IN  SOA williamdes.corp.  tech.datacenters.network. (
+									1999010100 ; serial
+											 10800 ; refresh (3 hours)
+												 900 ; retry (15 minutes)
+											604800 ; expire (1 week)
+											 86400 ; minimum (1 day)
+										)
+
+@ 7200 IN  NS dns.mail-server.intranet.
+
+; MX
+@   60		  IN  MX   0 emails.mail-server.intranet.
+; MX
+@   60		  IN  TXT   "v=spf1 mx -all"

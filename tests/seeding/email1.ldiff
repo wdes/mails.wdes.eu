@@ -1,12 +1,12 @@
 dn: cn=John Pondu,ou=people,dc=mail,dc=williamdes,dc=eu,dc=org
 cn: John Pondu
 givenname: john
-mail: john@mail.williamdes.eu.org
-mailalias: john.pondu@mail.williamdes.eu.org
+mail: john@williamdes.corp
+mailalias: john.pondu@williamdes.corp
 mailenabled: TRUE
 mailgidnumber: 5000
-mailhomedirectory: /var/mail/mail.williamdes.eu.org/john/
-mailstoragedirectory: maildir:/var/mail/mail.williamdes.eu.org/john/
+mailhomedirectory: /var/mail/williamdes.corp/john/
+mailstoragedirectory: maildir:/var/mail/williamdes.corp/john/
 mailuidnumber: 5000
 objectclass: inetOrgPerson
 objectclass: top

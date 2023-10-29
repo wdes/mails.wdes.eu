@@ -8,9 +8,9 @@ cd $ME
 
 printf 'Running in: %s\n' "$ME"
 
-SSL_PATH="$ME/data/acme.sh/mail.williamdes.eu.org"
+SSL_PATH="$ME/data/acme.sh/emails.mail-server.intranet"
 CA_PATH="$SSL_PATH/ca"
-KEYCERT_PATH="$SSL_PATH/mail.williamdes.eu.org"
+KEYCERT_PATH="$SSL_PATH/emails.mail-server.intranet"
 
 # bake the keys
 if [ ! -f $CA_PATH.key ]; then

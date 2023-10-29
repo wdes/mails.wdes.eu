@@ -1,16 +1,22 @@
 version: "3"
 services:
     sut:
-        hostname: another-domain.intranet
+        dns:
+            - "10.222.222.1"
+        hostname: testing.mail-server.intranet
+        dns_search: mail-server.intranet.
+        networks:
+            mail_infra_network:
+                ipv4_address: 10.222.222.13
         build: ./docker/
         volumes:
           - ./tests:/tests
           # For tests
-          - ../data/acme.sh/mail.williamdes.eu.org/mail.williamdes.eu.org.cer:/etc/ssl/mail.williamdes.eu.org.cer:ro
+          - ../data/acme.sh/emails.mail-server.intranet/emails.mail-server.intranet.cer:/etc/ssl/emails.mail-server.intranet.cer:ro
         working_dir: /tests
         command: --no-configuration /tests
 
 networks:
-    default:
+    mail_infra_network:
         external: true
         name: infrastructure_mail_infra_network

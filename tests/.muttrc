@@ -1,9 +1,9 @@
-set from = "john@mail.williamdes.eu.org"
+set from = "john@williamdes.corp"
 set realname = "John Pondu"
 set use_from = yes
 
 set smtp_pass = "JohnPassWord!645987zefdm"
-set smtp_url = "smtps://john@mail.williamdes.eu.org@localhost:465"
+set smtp_url = "smtps://john@williamdes.corp@localhost:465"
 set ssl_starttls = yes
 set ssl_force_tls = yes
 set smtp_authenticators = "PLAIN"

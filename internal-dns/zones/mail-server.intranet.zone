@@ -1,0 +1,32 @@
+; The zone for mail-server.intranet
+@  86400  IN  SOA mail-server.intranet.  tech.datacenters.network. (
+									1999010100 ; serial
+											 10800 ; refresh (3 hours)
+												 900 ; retry (15 minutes)
+											604800 ; expire (1 week)
+											 86400 ; minimum (1 day)
+										)
+; Set the DNS servers for .
+@ 7200 IN  NS ns1
+; NS
+ns1 7200    IN  A   10.222.222.1
+; Hosts
+dns 7200    IN  A   10.222.222.1
+1                       PTR     dns
+emails 7200    IN  A   10.222.222.2
+2                       PTR     emails
+ldap 7200    IN  A   10.222.222.3
+3                       PTR     ldap
+phpldapadmin 7200    IN  A   10.222.222.4
+4                       PTR     phpldapadmin
+acme 7200    IN  A   10.222.222.5
+5                       PTR     acme
+crowdsec 7200    IN  A   10.222.222.6
+6                       PTR     crowdsec
+
+testing 7200    IN  A   10.222.222.13
+13                       PTR     testing
+router 7200    IN  A   10.222.222.14
+14                       PTR     router
+; MX
+@   60		  IN  MX   0 emails.mail-server.intranet.
