@@ -15,7 +15,7 @@ services:
             - ./internal-dns/zones/:/var/named/zones/:ro
 
     mailserver:
-        image: mailserver/docker-mailserver:12.1.0
+        image: ${IMAGE_TAG:-ghcr.io/datacenters-network/mails/mailserver:latest}
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
@@ -28,123 +28,63 @@ services:
             mail_infra_network:
                 ipv4_address: 10.222.222.2
         ports:
-            - "25:25"    # SMTP  (explicit TLS => STARTTLS)
-            - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
-            - "465:465"  # ESMTP (implicit TLS)
-            - "587:587"  # ESMTP (explicit TLS => STARTTLS)
-            - "993:993"  # IMAP4 (implicit TLS)
-            - "110:110"  # POP3
-            - "995:995"  # POP3 (with TLS)
-            - "4190:4190" # Sieve filters
-            - "4177:4177" # Dovecot replication
-            - "11334:11334" # Rspamd UI
-            - "11332:11332" # Rspamd proxy worker
+            - "25:25"    # -> SMTP  (explicit TLS => STARTTLS)
+            - "143:143"  # -> IMAP4 (explicit TLS => STARTTLS)
+            - "465:465"  # -> ESMTP (implicit TLS)
+            - "587:587"  # -> ESMTP (explicit TLS => STARTTLS)
+            - "993:993"  # -> IMAP4 (implicit TLS)
+            #- "110:110"  # POP3
+            #- "995:995"  # POP3 (with TLS)
+            - "4190:4190" # -> Sieve filters
+            - "8080:8080" # JMAP
+
         volumes:
-            - ${MAIL_DATA_DIR}:/var/mail
-            - ${MAIL_STATE_DIR}:/var/mail-state
+            - ${MAILSERVER_DATA_DIR}:/opt/stalwart-mail
+            - ./config.toml:/etc/config.toml:ro
+            - ${MAILSERVER_KEYS_DIR}:/etc/opendkim/keys/
+            #- ${MAIL_DATA_DIR}:/var/mail
+            #- ${MAIL_STATE_DIR}:/var/mail-state
             - ${MAIL_LOGS_DIR}:/var/log/mail
-            - ${MAIL_CONFIGS_DIR}:/tmp/docker-mailserver/
-            - ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
+            #- ${MAIL_CONFIGS_DIR}:/tmp/docker-mailserver/
+            # TODO: delete the file
+            #- ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/mail-server/server.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key:ro
-            - ${DOVECOT_REPLICATION_SSL_VOLUME:-./empty-volume}:/etc/ssl/replication/:ro
-            - ./rspamd/local.d/phishing.conf:/etc/rspamd/local.d/phishing.conf:ro
-            - ./rspamd/local.d/mx_check.conf:/etc/rspamd/local.d/mx_check.conf:ro
+            # TODO: delete
+            #- ${DOVECOT_REPLICATION_SSL_VOLUME:-./empty-volume}:/etc/ssl/replication/:ro
+            #- ./rspamd/local.d/phishing.conf:/etc/rspamd/local.d/phishing.conf:ro
+            #- ./rspamd/local.d/mx_check.conf:/etc/rspamd/local.d/mx_check.conf:ro
             # See: https://github.com/docker-mailserver/docker-mailserver/issues/2636
-            - ./rspamd/local.d/dmarc-reports.conf:/etc/rspamd/local.d/dmarc-reports.conf:ro
-            - ./rspamd/local.d/actions.conf:/etc/rspamd/local.d/actions.conf:ro
-            - ./rspamd/local.d/milter_headers.conf:/etc/rspamd/local.d/milter_headers.conf:ro
-            - ./rspamd/local.d/groups.conf:/etc/rspamd/local.d/groups.conf:ro
-            - ./rspamd/local.d/multimap.conf:/etc/rspamd/local.d/multimap.conf:ro
-            - ./rspamd/local.d/worker-controller.inc:/etc/rspamd/local.d/worker-controller.inc:ro
-            - ./rspamd/local.d/dkim_signing.conf:/etc/rspamd/local.d/dkim_signing.conf:ro
-            - ./rspamd/local.d/history_redis.conf:/etc/rspamd/local.d/history_redis.conf:ro
-            - ./rspamd/local.d/settings.conf:/etc/rspamd/local.d/settings.conf:ro
-            - ./rspamd/local.d/rbl.conf:/etc/rspamd/local.d/rbl.conf:ro
+            #- ./rspamd/local.d/dmarc-reports.conf:/etc/rspamd/local.d/dmarc-reports.conf:ro
+            #- ./rspamd/local.d/actions.conf:/etc/rspamd/local.d/actions.conf:ro
+            #- ./rspamd/local.d/milter_headers.conf:/etc/rspamd/local.d/milter_headers.conf:ro
+            #- ./rspamd/local.d/groups.conf:/etc/rspamd/local.d/groups.conf:ro
+            #- ./rspamd/local.d/multimap.conf:/etc/rspamd/local.d/multimap.conf:ro
+            #- ./rspamd/local.d/worker-controller.inc:/etc/rspamd/local.d/worker-controller.inc:ro
+            #- ./rspamd/local.d/dkim_signing.conf:/etc/rspamd/local.d/dkim_signing.conf:ro
+            #- ./rspamd/local.d/history_redis.conf:/etc/rspamd/local.d/history_redis.conf:ro
+            #- ./rspamd/local.d/settings.conf:/etc/rspamd/local.d/settings.conf:ro
+            #- ./rspamd/local.d/rbl.conf:/etc/rspamd/local.d/rbl.conf:ro
             # maps
-            - ./rspamd/maps.d/mx_whitelist.inc:/etc/rspamd/maps.d/mx_whitelist.inc:ro
-            - ./rspamd/maps.d/local_wl_domain.map:/etc/rspamd/maps.d/local_wl_domain.map:ro
-            - ./rspamd/maps.d/local_wl_from.map:/etc/rspamd/maps.d/local_wl_from.map:ro
-            - ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
-            - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
+            #- ./rspamd/maps.d/mx_whitelist.inc:/etc/rspamd/maps.d/mx_whitelist.inc:ro
+            #- ./rspamd/maps.d/local_wl_domain.map:/etc/rspamd/maps.d/local_wl_domain.map:ro
+            #- ./rspamd/maps.d/local_wl_from.map:/etc/rspamd/maps.d/local_wl_from.map:ro
+            #- ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
         environment:
             TZ: UTC
-            OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
-            ENABLE_RSPAMD: "1"
-            ENABLE_RSPAMD_REDIS: "1"
-            ENABLE_CLAMAV: "1"
-            ENABLE_AMAVIS: "1"
-            ENABLE_FAIL2BAN: "1"
-            ENABLE_POSTGREY: "0"
-            ENABLE_POP3: "1"
-            ENABLE_MANAGESIEVE: "1"
-            ENABLE_SASLAUTHD: "0" # The docker container manages it
-            ENABLE_OPENDKIM: "1"
-            ENABLE_OPENDMARC: "1"
-            ENABLE_QUOTAS: "1"
-            SPOOF_PROTECTION: "1"
-            LOGROTATE_INTERVAL: "daily"
-            ONE_DIR: "1"
-            LOG_LEVEL: "${LOG_LEVEL:-warn}"
-            ACCOUNT_PROVISIONER: "LDAP"
-            RSPAMD_LEARN: "1"
-            RSPAMD_GREYLISTING: "1"
-            MOVE_SPAM_TO_JUNK: "1"
-            # Now it's up to RSPAMD_GREYLISTING to greylist
-            # POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
-            # POSTGREY_AUTO_WHITELIST_CLIENTS: "1" # Defaults to 5
-            LDAP_SERVER_HOST: "${LDAP_PROTOCOL:-ldaps}://ldap.mail-server.intranet" # Must match the hostname for SSL verification
-            DOVECOT_URIS: "${LDAP_PROTOCOL:-ldaps}://ldap.mail-server.intranet" # Must match the hostname for SSL verification
+
+            OAUTH_KEY: "CHANGE-ME"
+
+            SMTP_GREETING: "Datacenters Network emails"
+            DKIM_SELECTOR: "mail"
+
+            LDAP_SERVER_HOST: "ldap://ldap.${DOMAIN_NAME}" # Must match the hostname for SSL verification
             LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
             LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
             LDAP_BIND_PW: ${LDAP_ADMIN_PASSWORD}
-            LDAP_QUERY_FILTER_USER: "(&(mail=%s)(mailEnabled=TRUE))"
-            LDAP_QUERY_FILTER_GROUP: "(&(mailGroupMember=%s)(mailEnabled=TRUE))"
-            LDAP_QUERY_FILTER_ALIAS: "(|(&(mailAlias=%s)(objectClass=PostfixBookMailAccount))(&(mailAlias=%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE)))"
-            LDAP_QUERY_FILTER_DOMAIN: "(|(&(mail=*@%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE))(&(mailGroupMember=*@%s)(objectClass=PostfixBookMailAccount)(mailEnabled=TRUE))(&(mailalias=*@%s)(objectClass=PostfixBookMailAccount)))"
-            DOVECOT_PASS_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%n@%d))"
-            DOVECOT_USER_FILTER: "(&(objectClass=PostfixBookMailAccount)(mail=%n@%d))"
-            DOVECOT_DEFAULT_PASS_SCHEME: "SSHA256"
-            TLS_LEVEL: "intermediate"
-            POSTFIX_MESSAGE_SIZE_LIMIT: "100000000"
 
-            # Replication
-            DOVECOT_ITERATE_ATTRS: "mail=user"
-            DOVECOT_ITERATE_FILTER: "(objectClass=PostfixBookMailAccount)"
-            # Custom ENVS: DOVECOT_REPLICATION_
-            DOVECOT_REPLICATION_SERVER: "${DOVECOT_REPLICATION_SERVER}"
-            DOVECOT_REPLICATION_ADM_PASS: "${DOVECOT_REPLICATION_ADM_PASS}"
-            DOVECOT_REPLICATION_SSL_CA_FILE: "${DOVECOT_REPLICATION_SSL_CA_FILE}"
-            DOVECOT_REPLICATION_SSL_CA_DIR: "${DOVECOT_REPLICATION_SSL_CA_DIR}"
-            DOVECOT_REPLICATION_SSL_CERT_FILE: "${DOVECOT_REPLICATION_SSL_CERT_FILE}"
-            DOVECOT_REPLICATION_SSL_KEY_FILE: "${DOVECOT_REPLICATION_SSL_KEY_FILE}"
-
-            SSL_TYPE: "manual"
-            SSL_CERT_PATH: "/etc/ssl/mail-server/server.cer"
-            SSL_KEY_PATH: "/etc/ssl/mail-server/server.key"
-            # Daily report & reporting
-            # See: https://sources.debian.org/src/cron/3.0pl1-163/debian/patches/features/Add-MAILFROM-environment-variable.patch/?hl=93#L93
-            MAILFROM: "${CRON_MAILFROM:-$POSTMASTER_ADDRESS}"
-            MAILTO: "${CRON_MAILTO:-$POSTMASTER_ADDRESS}"
-            POSTMASTER_ADDRESS: "${POSTMASTER_ADDRESS}"
-            VIRUS_ADMIN_EMAIL: "${VIRUS_ADMIN_EMAIL}"
-            VIRUS_X_HEADER_LINE: "${VIRUS_X_HEADER_LINE}"
-            PFLOGSUMM_RECIPIENT: "${PFLOGSUMM_RECIPIENT}"
-            PFLOGSUMM_TRIGGER: daily_cron
-            LOGWATCH_INTERVAL: daily
-            LOGWATCH_RECIPIENT: "${LOGWATCH_RECIPIENT}"
-            # Fail2ban config to allow IPs to make failed attempts
-            FAIL2BAN_IGNORE_IPS: "${FAIL2BAN_IGNORE_IPS}"
-            FAIL2BAN_DST_EMAIL: "${FAIL2BAN_DST_EMAIL}"
-            FAIL2BAN_SENDER_EMAIL: "${FAIL2BAN_SENDER_EMAIL}"
-            FAIL2BAN_SENDER_NAME: "${FAIL2BAN_SENDER_NAME}"
-
-            # Fail2ban reporting
-            FAIL2BAN_BLOCKLIST_DE_API_KEY: "${FAIL2BAN_BLOCKLIST_DE_API_KEY:-}"
-            FAIL2BAN_BLOCKLIST_DE_EMAIL: "${FAIL2BAN_BLOCKLIST_DE_EMAIL:-}"
-            FAIL2BAN_IPTHREAT_API_KEY: "${FAIL2BAN_IPTHREAT_API_KEY:-}"
-            FAIL2BAN_IPTHREAT_SYSTEM_NAME: "${FAIL2BAN_IPTHREAT_SYSTEM_NAME:-}"
-            FAIL2BAN_ABUSEIPDB_API_KEY: "${FAIL2BAN_ABUSEIPDB_API_KEY:-}"
+            SSL_CERT_PATH: "file:///etc/ssl/mail-server/server.cer"
+            SSL_KEY_PATH: "file:///etc/ssl/mail-server/server.key"
 
         healthcheck:
             test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
@@ -159,26 +99,26 @@ services:
         # netcap: https://stackoverflow.com/a/35485119/5155484
         # getpcaps <pid>
         # https://book.hacktricks.xyz/linux-hardening/privilege-escalation/linux-capabilities
-        cap_add:
-            - NET_ADMIN # fail2ban, spamd
-            - NET_RAW # spamd
-            - NET_BIND_SERVICE # dovecot, spamd
-            - CHOWN # dovecot, spamd
-            - DAC_OVERRIDE # dovecot, spamd
-            - SYS_CHROOT # dovecot, spamd
-            - SETUID # dovecot, spamd
-            - SETGID # dovecot, spamd
-            - KILL # dovecot, spamd
-            - FOWNER # spamd
-            - FSETID # spamd
-            - SETPCAP # spamd
-            - MKNOD # spamd
-            - AUDIT_WRITE # spamd
-            - SETFCAP # spamd
+        #cap_add:
+            # - NET_ADMIN # fail2ban, spamd
+            # - NET_RAW # spamd
+            # - NET_BIND_SERVICE # dovecot, spamd
+            # - CHOWN # dovecot, spamd
+            # - DAC_OVERRIDE # dovecot, spamd
+            # - SYS_CHROOT # dovecot, spamd
+            # - SETUID # dovecot, spamd
+            # - SETGID # dovecot, spamd
+            # - KILL # dovecot, spamd
+            # - FOWNER # spamd
+            # - FSETID # spamd
+            # - SETPCAP # spamd
+            # - MKNOD # spamd
+            # - AUDIT_WRITE # spamd
+            # - SETFCAP # spamd
         security_opt:
           - no-new-privileges:true
-        cap_drop:
-            - ALL
+        #cap_drop:
+        #    - ALL
 
     openldap:
         image: docker.io/botsudo/docker-openldap
@@ -231,7 +171,8 @@ services:
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/slapd/assets/certs/ca.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/container/service/slapd/assets/certs/server.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/server.key:ro
-            - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
+            # TODO: remove it
+            #- ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         ports:
             - "${LDAP_PORT:-389}:389"
             - "${LDAPS_PORT:-636}:636"
@@ -317,32 +258,32 @@ services:
         security_opt:
             - no-new-privileges:true
 
-    crowdsec:
-        image: crowdsecurity/crowdsec:v1.5.5
-        dns_search: ""
-        restart: always
-        environment:
-            DISABLE_LOCAL_API: "true"
-            #DISABLE_SCENARIOS: "crowdsecurity/ssh-bf crowdsecurity/ssh-slow-bf"
-            AGENT_USERNAME: "${CROWDSEC_AGENT_USERNAME}"
-            AGENT_PASSWORD: "${CROWDSEC_AGENT_PASSWORD}"
-            LOCAL_API_URL: "${CROWDSEC_AGENT_LOCAL_API_URL}"
-            CUSTOM_HOSTNAME: emails
-        depends_on:
-            mailserver:
-                condition: service_healthy
-        volumes:
-            - ${CROWDSEC_DB_DIR}:/var/lib/crowdsec/data/
-            - ${CROWDSEC_CONFIG_DIR}:/etc/crowdsec/
-            - "${MAILS_LOG_DIR}:/var/log/mails:ro"
-            - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
-            - ./crowdsec/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
-            - ./crowdsec/scenarios/postfix-dovecot-hackers.yaml:/etc/crowdsec/scenarios/postfix-dovecot-hackers.yaml:ro
-            - ./crowdsec/parsers/postfix-extended.yaml:/etc/crowdsec/parsers/s01-parse/postfix-extended.yaml:ro
-            - ./crowdsec/parsers/dovecot-extended.yaml:/etc/crowdsec/parsers/s01-parse/dovecot-extended.yaml:ro
-            - ./crowdsec/notifications/telegram.yaml:/etc/crowdsec/notifications/http.yaml:ro
-        networks:
-            mail_infra_network:
+    #crowdsec:
+    #    image: crowdsecurity/crowdsec:v1.5.5
+    #    dns_search: ""
+    #    restart: always
+    #    environment:
+    #        DISABLE_LOCAL_API: "true"
+    #        #DISABLE_SCENARIOS: "crowdsecurity/ssh-bf crowdsecurity/ssh-slow-bf"
+    #        AGENT_USERNAME: "${CROWDSEC_AGENT_USERNAME}"
+    #        AGENT_PASSWORD: "${CROWDSEC_AGENT_PASSWORD}"
+    #        LOCAL_API_URL: "${CROWDSEC_AGENT_LOCAL_API_URL}"
+    #        CUSTOM_HOSTNAME: emails
+    #    depends_on:
+    #        mailserver:
+    #            condition: service_healthy
+    #    volumes:
+    #        - ${CROWDSEC_DB_DIR}:/var/lib/crowdsec/data/
+    #        - ${CROWDSEC_CONFIG_DIR}:/etc/crowdsec/
+    #        - "${MAILS_LOG_DIR}:/var/log/mails:ro"
+    #        - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+    #        - ./crowdsec/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
+    #        - ./crowdsec/scenarios/postfix-dovecot-hackers.yaml:/etc/crowdsec/scenarios/postfix-dovecot-hackers.yaml:ro
+    #        - ./crowdsec/parsers/postfix-extended.yaml:/etc/crowdsec/parsers/s01-parse/postfix-extended.yaml:ro
+    #        - ./crowdsec/parsers/dovecot-extended.yaml:/etc/crowdsec/parsers/s01-parse/dovecot-extended.yaml:ro
+    #        - ./crowdsec/notifications/telegram.yaml:/etc/crowdsec/notifications/http.yaml:ro
+    #    networks:
+    #        mail_infra_network:
 
 networks:
     mail_infra_network:

@@ -9,9 +9,21 @@ PROGRESS_MODE ?= plain
 ACME_DOMAIN = emails.mail-server.intranet
 DKIM_DOMAIN = mail-server.intranet
 
-.PHONY: docker-test run-test cleanup-test test
+.PHONY: docker-build docker-test run-test cleanup-test test
 
-all: docker-test
+all: docker-build docker-test
+
+docker-build:
+	# https://github.com/docker/buildx#building
+	docker buildx build \
+		--build-arg VCS_REF="$(shell git rev-parse HEAD)" \
+		--build-arg BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+		--tag $(IMAGE_TAG) \
+		--progress $(PROGRESS_MODE) \
+		--platform $(PLATFORM) \
+		--pull \
+		--$(ACTION) \
+		./docker
 
 docker-test: test
 
@@ -39,13 +51,15 @@ create-temp-env:
 
 setup-test-files: check-env
 	set -eu
-	cp -rv docker-compose.yml dockerl user-patches.sh rspamd internal-dns $(TEMP_DIR)
+	cp -rv docker-compose.yml dockerl config.toml docker internal-dns $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
 	rm -vf tests/data/acme.sh/*/*.csr
 	rm -vf tests/data/acme.sh/*/*.cer
 	rm -vf tests/data/acme.sh/*/ca.*
 	mkdir $(TEMP_DIR)/tests
 	mkdir -p $(TEMP_DIR)/tests/data/acme.sh/$(ACME_DOMAIN)
+	mkdir -p $(TEMP_DIR)/tests/data/maildata
+	mkdir $(TEMP_DIR)/tests/data/maildata/queue $(TEMP_DIR)/tests/data/maildata/reports $(TEMP_DIR)/tests/data/maildata/data $(TEMP_DIR)/tests/data/maildata/data/blobs
 	cp tests/make-certs.sh $(TEMP_DIR)/tests/
 	cp -rp tests/php $(TEMP_DIR)/tests/
 	cp -rp tests/seeding $(TEMP_DIR)/tests/

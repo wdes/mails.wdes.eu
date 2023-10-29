@@ -1,0 +1,764 @@
+#############################################
+# Server configuration
+#############################################
+
+[server]
+hostname = "mail-server.mail.williamdes.eu.org"
+max-connections = 8192
+
+#[server.run-as]
+#user = "stalwart-mail"
+#group = "stalwart-mail"
+
+[server.tls]
+enable = true
+implicit = false
+timeout = "1m"
+certificate = "default"
+#sni = [{subject = "", certificate = ""}]
+#protocols = ["TLSv1.2", "TLSv1.3"]
+#ciphers = [ "TLS13_AES_256_GCM_SHA384", "TLS13_AES_128_GCM_SHA256",
+#            "TLS13_CHACHA20_POLY1305_SHA256", "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+#            "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256", "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+#            "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+#            "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256"]
+ignore-client-order = true
+
+[server.socket]
+nodelay = true
+reuse-addr = true
+#reuse-port = true
+backlog = 1024
+#ttl = 3600
+#send-buffer-size = 65535
+#recv-buffer-size = 65535
+#linger = 1
+#tos = 1
+
+[global]
+shared-map = {shard = 32, capacity = 10}
+#thread-pool = 8
+
+#[global.tracing]
+#method = "log"
+#path = "/var/log/mail"
+#prefix = "mailserver.log"
+#rotate = "daily"
+#level = "debug"
+#ansi = false
+
+[global.tracing]
+method = "stdout"
+level = "debug"
+
+[certificate."default"]
+cert = !SSL_CERT_PATH
+private-key = !SSL_KEY_PATH
+
+#############################################
+# Directory configuration
+#############################################
+
+[directory."ldap"]
+type = "ldap"
+address = !LDAP_SERVER_HOST
+base-dn = !LDAP_SEARCH_BASE
+
+[directory."ldap".bind]
+dn = !LDAP_BIND_DN
+secret = !LDAP_BIND_PW
+
+[directory."ldap".cache]
+entries = 500
+ttl = {positive = '1h', negative = '10m'}
+
+[directory."ldap".options]
+catch-all = true
+#catch-all = { map = "(.+)@(.+)$", to = "info@${2}" }
+subaddressing = true
+#subaddressing = { map = "^([^.]+)\.([^.]+)@(.+)$", to = "${2}@${3}" }
+superuser-group = "superusers"
+
+[directory."ldap".pool]
+max-connections = 10
+min-connections = 0
+max-lifetime = "30m"
+idle-timeout = "10m"
+connect-timeout = "30s"
+
+
+[directory."ldap".filter]
+name = "(&(|(objectClass=PostfixBookMailAccount)(objectClass=posixGroup))(mail=?)(mailEnabled=TRUE))"
+email = "(&(|(objectClass=PostfixBookMailAccount)(objectClass=posixGroup))(|(mail=?)(mailAlias=?)(mailList=?))(mailEnabled=TRUE))"
+verify = "(&(|(objectClass=PostfixBookMailAccount)(objectClass=posixGroup))(|(mail=*?*)(mailAlias=*?*))(mailEnabled=TRUE))"
+expand = "(&(|(objectClass=PostfixBookMailAccount)(objectClass=posixGroup))(mailList=?)(mailEnabled=TRUE))"
+domains = "(&(|(objectClass=PostfixBookMailAccount)(objectClass=posixGroup))(|(mail=*@?)(mailAlias=*@?))(mailEnabled=TRUE))"
+
+[directory."ldap".object-classes]
+user = "PostfixBookMailAccount"
+group = "posixGroup"
+
+[directory."ldap".attributes]
+name = "uid"
+description = ["principalName", "description"]
+secret = "userPassword"
+groups = ["memberOf", "otherGroups"]
+email = "mail"
+email-alias = "mailAlias"
+quota = "diskQuota"
+
+[directory."imap"]
+type = "imap"
+address = "127.0.0.1"
+port = 993
+
+[directory."imap".pool]
+max-connections = 10
+min-connections = 0
+max-lifetime = "30m"
+idle-timeout = "10m"
+connect-timeout = "30s"
+
+[directory."imap".tls]
+implicit = true
+allow-invalid-certs = true
+
+[directory."imap".cache]
+entries = 500
+ttl = {positive = '1h', negative = '10m'}
+
+[directory."imap".lookup]
+domains = ["mail.williamdes.eu.org"]
+
+[directory."lmtp"]
+type = "lmtp"
+address = "127.0.0.1"
+port = 11200
+
+[directory."lmtp".limits]
+auth-errors = 3
+rcpt = 5
+
+[directory."lmtp".pool]
+max-connections = 10
+min-connections = 0
+max-lifetime = "30m"
+idle-timeout = "10m"
+connect-timeout = "30s"
+
+[directory."lmtp".tls]
+implicit = false
+allow-invalid-certs = true
+
+[directory."lmtp".cache]
+entries = 500
+ttl = {positive = '1h', negative = '10m'}
+
+[directory."lmtp".lookup]
+domains = ["mail.williamdes.eu.org"]
+
+#############################################
+# JMAP server configuration
+#############################################
+
+[server.listener."jmap"]
+bind = ["[::]:8080"]
+url = "https://mail-server.mail.williamdes.eu.org:8080"
+protocol = "jmap"
+
+[store.db]
+path = "/opt/stalwart-mail/data/index.sqlite3"
+
+[store.db.pool]
+max-connections = 10
+#workers = 8
+
+[store.db.cache]
+size = 1000
+
+[store.blob]
+type = "local"
+
+[store.blob.local]
+path = "/opt/stalwart-mail/data/blobs"
+
+
+[jmap]
+directory = "ldap"
+
+[jmap.http]
+#headers = ["Access-Control-Allow-Origin: *",
+#           "Access-Control-Allow-Methods: POST, GET, HEAD, OPTIONS",
+#           "Access-Control-Allow-Headers: *"]
+
+[jmap.encryption]
+enable = true
+append = false
+
+[jmap.session.cache]
+ttl = "1h"
+size = 100
+
+[jmap.protocol.get]
+max-objects = 500
+
+[jmap.protocol.set]
+max-objects = 500
+
+[jmap.protocol.request]
+max-concurrent = 4
+max-size = 10000000
+max-calls = 16
+
+[jmap.protocol.query]
+max-results = 5000
+
+[jmap.protocol.upload]
+max-size = 50000000
+max-concurrent = 4
+ttl = "1h"
+
+[jmap.protocol.upload.quota]
+files = 1000
+size = 50000000
+
+[jmap.protocol.changes]
+max-results = 5000
+
+[jmap.rate-limit]
+account = "1000/1m"
+authentication = "10/1m"
+anonymous = "100/1m"
+use-forwarded = false
+
+[jmap.rate-limit.cache]
+size = 1024
+
+[jmap.mailbox]
+max-depth = 10
+max-name-length = 255
+
+[jmap.email]
+max-attachment-size = 50000000
+max-size = 75000000
+
+[jmap.email.parse]
+max-items = 10
+
+[jmap.principal]
+allow-lookups = true
+
+[jmap.sieve]
+disable-capabilities = []
+notification-uris = ["mailto"]
+protected-headers = ["Original-Subject", "Original-From", "Received", "Auto-Submitted"]
+
+[jmap.sieve.limits]
+name-length = 512
+max-scripts = 256
+script-size = 102400
+string-length = 4096
+variable-name-length = 32
+variable-size = 4096
+nested-blocks = 15
+nested-tests = 15
+nested-foreverypart = 3
+match-variables = 30
+local-variables = 128
+header-size = 1024
+includes = 3
+nested-includes = 3
+cpu = 5000
+redirects = 1
+received-headers = 10
+outgoing-messages = 3
+
+[jmap.sieve.vacation]
+default-subject = "Automated reply"
+subject-prefix = "Auto: "
+
+[jmap.sieve.default-expiry]
+vacation = "30d"
+duplicate = "7d"
+
+[jmap.event-source]
+throttle = "1s"
+
+[jmap.web-sockets]
+throttle = "1s"
+timeout = "10m"
+heartbeat = "1m"
+
+[jmap.push]
+max-total = 100
+throttle = "1ms"
+
+[jmap.push.attempts]
+interval = "1m"
+max = 3
+
+[jmap.push.retry]
+interval = "1s"
+
+[jmap.push.timeout]
+request = "10s"
+verify = "1s"
+
+[jmap.fts]
+default-language = "en"
+
+[oauth]
+key = !OAUTH_KEY
+
+[oauth.auth]
+max-attempts = 3
+
+[oauth.expiry]
+user-code = "30m"
+auth-code = "10m"
+token = "1h"
+refresh-token = "30d"
+refresh-token-renew = "4d"
+
+[oauth.cache]
+size = 128
+
+[jmap.purge.schedule]
+db = "0 3 *"
+blobs = "30 3 *"
+sessions = "15 * *"
+
+#############################################
+# IMAP server configuration
+#############################################
+
+[server.listener."imap"]
+bind = ["[::]:143"]
+protocol = "imap"
+
+[server.listener."imaptls"]
+bind = ["[::]:993"]
+protocol = "imap"
+tls.implicit = true
+
+[server.listener."sieve"]
+bind = ["[::]:4190"]
+protocol = "managesieve"
+tls.implicit = true
+
+[imap.request]
+max-size = 52428800
+
+[imap.auth]
+max-failures = 3
+allow-plain-text = false
+
+[imap.folders.name]
+shared = "Shared Folders"
+all = "All Mail"
+
+[imap.timeout]
+authenticated = "30m"
+anonymous = "1m"
+idle = "30m"
+
+[imap.rate-limit]
+requests = "2000/1m"
+concurrent = 4
+
+#############################################
+# SMTP server configuration
+#############################################
+
+[server.listener."smtp"]
+bind = ["[::]:25"]
+greeting = !SMTP_GREETING
+protocol = "smtp"
+
+[server.listener."submission"]
+bind = ["[::]:587"]
+protocol = "smtp"
+
+[server.listener."submissions"]
+bind = ["[::]:465"]
+protocol = "smtp"
+tls.implicit = true
+
+[server.listener."management"]
+bind = ["0.0.0.0:8080"]
+protocol = "http"
+
+[session]
+timeout = "5m"
+transfer-limit = 262144000 # 250 MB
+duration = "10m"
+
+[session.connect]
+#script = "connect.sieve"
+
+[session.ehlo]
+require = true
+reject-non-fqdn = [ { if = "listener", eq = "smtp", then = true},
+                    { else = false } ]
+#script = "ehlo"
+
+[session.extensions]
+pipelining = true
+chunking = true
+requiretls = true
+no-soliciting = ""
+dsn = [ { if = "authenticated-as", ne = "", then = true},
+        { else = false } ]
+expn = [ { if = "authenticated-as", ne = "", then = true},
+        { else = false } ]
+vrfy = [ { if = "authenticated-as", ne = "", then = true},
+        { else = false } ]
+future-release = [ { if = "authenticated-as", ne = "", then = "7d"},
+                   { else = false } ]
+deliver-by = [ { if = "authenticated-as", ne = "", then = "15d"},
+               { else = false } ]
+mt-priority = [ { if = "authenticated-as", ne = "", then = "mixer"},
+                { else = false } ]
+
+[session.auth]
+mechanisms = [ { if = "listener", ne = "smtp", then = ["plain", "login"]},
+               { else = [] } ]
+directory = [ { if = "listener", ne = "smtp", then = "ldap" },
+           { else = false } ]
+require = [ { if = "listener", ne = "smtp", then = true},
+            { else = false } ]
+allow-plain-text = false
+
+[session.auth.errors]
+total = 3
+wait = "5s"
+
+[session.mail]
+#script = "mail-from"
+#rewrite = [ { all-of = [ { if = "listener", ne = "smtp" },
+#                         { if = "rcpt", matches = "^([^.]+)@([^.]+)\.(.+)$"},
+#                       ], then = "${1}@${3}" },
+#            { else = false } ]
+
+[session.rcpt]
+#script = "rcpt-to"
+relay = [ { if = "authenticated-as", ne = "", then = true },
+          { else = false } ]
+#rewrite = [ { all-of = [ { if = "rcpt-domain", in-list = "ldap/domains" },
+#                         { if = "rcpt", matches = "^([^.]+)\.([^.]+)@(.+)$"},
+#                       ], then = "${1}+${2}@${3}" },
+#            { else = false } ]
+max-recipients = 25
+directory = "ldap"
+
+[session.rcpt.errors]
+total = 5
+wait = "5s"
+
+[session.data]
+#script = "data"
+
+#[session.data.milter."rspamd"]
+#enable = [ { if = "listener", eq = "smtp", then = true },
+#           { else = false } ]
+#hostname = "127.0.0.1"
+#port = 11332
+#tls = false
+#allow-invalid-certs = false
+
+#[session.data.milter."rspamd".timeout]
+#connect = "30s"
+#command = "30s"
+#data = "60s"
+
+#[session.data.milter."rspamd".options]
+#tempfail-on-error = true
+#max-response-size = 52428800 # 50mb
+#version = 6
+
+#[session.data.pipe."spam-assassin"]
+#command = "spamc"
+#arguments = []
+#timeout = "10s"
+
+[session.data.limits]
+messages = 10
+size = 104857600
+received-headers = 50
+
+[session.data.add-headers]
+received = [ { if = "listener", eq = "smtp", then = true },
+             { else = false } ]
+received-spf = [ { if = "listener", eq = "smtp", then = true },
+                 { else = false } ]
+auth-results = [ { if = "listener", eq = "smtp", then = true },
+                 { else = false } ]
+message-id = [ { if = "listener", eq = "smtp", then = false },
+               { else = true } ]
+date = [ { if = "listener", eq = "smtp", then = false },
+         { else = true } ]
+return-path = false
+
+[[session.throttle]]
+#match = {if = "remote-ip", eq = "10.0.0.1"}
+key = ["remote-ip"]
+concurrency = 5
+#rate = "5/1h"
+
+[[session.throttle]]
+key = ["sender-domain", "rcpt"]
+rate = "25/1h"
+
+[auth.dnsbl]
+verify = [ { if = "listener", eq = "smtp", then = ["ip", "iprev", "ehlo", "return-path", "from"] },
+           { else = [] } ]
+
+[auth.dnsbl.lookup]
+ip = ["zen.spamhaus.org", "bl.spamcop.net", "b.barracudacentral.org"]
+domain = ["dbl.spamhaus.org"]
+
+[auth.iprev]
+verify = [ { if = "listener", eq = "smtp", then = "relaxed" },
+           { else = "disable" } ]
+
+[auth.dkim]
+verify = "relaxed"
+sign = [ { if = "listener", ne = "smtp", then = ["rsa"] },
+         { else = [] } ]
+
+[auth.spf.verify]
+ehlo = [ { if = "listener", eq = "smtp", then = "relaxed" },
+         { else = "disable" } ]
+mail-from = [ { if = "listener", eq = "smtp", then = "relaxed" },
+              { else = "disable" } ]
+
+[auth.arc]
+verify = "relaxed"
+seal = ["rsa"]
+
+[auth.dmarc]
+verify = [ { if = "listener", eq = "smtp", then = "relaxed" },
+           { else = "disable" } ]
+
+[queue]
+path = "/opt/stalwart-mail/queue"
+hash = 64
+
+[queue.schedule]
+retry = ["2m", "5m", "10m", "15m", "30m", "1h", "2h"]
+notify = ["1d", "3d"]
+expire = "5d"
+
+[queue.outbound]
+#hostname = "mail-server.mail.williamdes.eu.org"
+next-hop = [ { if = "rcpt-domain", in-list = "ldap/domains", then = "local" },
+             { else = false } ]
+ip-strategy = "ipv4-then-ipv6"
+
+[queue.outbound.tls]
+dane = "optional"
+mta-sts = "optional"
+starttls = "require"
+allow-invalid-certs = true
+
+#[queue.outbound.source-ip]
+#v4 = ["10.0.0.10", "10.0.0.11"]
+#v6 = ["a::b", "a::c"]
+
+[queue.outbound.limits]
+mx = 7
+multihomed = 2
+
+[queue.outbound.timeouts]
+connect = "3m"
+greeting = "3m"
+tls = "2m"
+ehlo = "3m"
+mail-from = "3m"
+rcpt-to = "3m"
+data = "10m"
+mta-sts = "2m"
+
+[[queue.quota]]
+#match = {if = "sender-domain", eq = "foobar.org"}
+#key = ["rcpt"]
+messages = 100000
+size = 10737418240 # 10gb
+
+[[queue.throttle]]
+key = ["rcpt-domain"]
+#rate = "100/1h"
+concurrency = 5
+
+[resolver]
+type = "system"
+#preserve-intermediates = true
+concurrency = 2
+timeout = "5s"
+attempts = 2
+try-tcp-on-error = true
+public-suffix = ["https://publicsuffix.org/list/public_suffix_list.dat",
+                 "file:///opt/stalwart-mail/etc/lists/public-suffix-list.dat.gz"]
+
+[resolver.cache]
+txt = 2048
+mx = 1024
+ipv4 = 1024
+ipv6 = 1024
+ptr = 1024
+tlsa = 1024
+mta-sts = 1024
+
+[report]
+path = "/opt/stalwart-mail/reports"
+hash = 64
+#submitter = "mail-server.mail.williamdes.eu.org"
+
+[report.analysis]
+addresses = ["dmarc@*", "abuse@*", "postmaster@*"]
+forward = true
+#store = "/opt/stalwart-mail/incoming"
+
+[report.dsn]
+from-name = "Mail Delivery Subsystem"
+from-address = "MAILER-DAEMON@mail.williamdes.eu.org"
+sign = ["rsa"]
+
+[report.dkim]
+from-name = "Report Subsystem"
+from-address = "noreply-dkim@mail.williamdes.eu.org"
+subject = "DKIM Authentication Failure Report"
+sign = ["rsa"]
+send = "1/1d"
+
+[report.spf]
+from-name = "Report Subsystem"
+from-address = "noreply-spf@mail.williamdes.eu.org"
+subject = "SPF Authentication Failure Report"
+send = "1/1d"
+sign = ["rsa"]
+
+[report.dmarc]
+from-name = "Report Subsystem"
+from-address = "noreply-dmarc@mail.williamdes.eu.org"
+subject = "DMARC Authentication Failure Report"
+send = "1/1d"
+sign = ["rsa"]
+
+[report.dmarc.aggregate]
+from-name = "DMARC Report"
+from-address = "noreply-dmarc@mail.williamdes.eu.org"
+org-name = "mail.williamdes.eu.org"
+#contact-info = ""
+send = "daily"
+max-size = 26214400 # 25mb
+sign = ["rsa"]
+
+[report.tls.aggregate]
+from-name = "TLS Report"
+from-address = "noreply-tls@mail.williamdes.eu.org"
+org-name = "mail.williamdes.eu.org"
+#contact-info = ""
+send = "daily"
+max-size = 26214400 # 25 mb
+sign = ["rsa"]
+
+
+[signature."rsa"]
+#public-key = "file:///opt/stalwart-mail/etc/dkim/mail.williamdes.eu.org.cert"
+private-key = "file:///etc/opendkim/keys/mail.williamdes.eu.org/mail.private"
+domain = "mail.williamdes.eu.org"
+selector = !DKIM_SELECTOR
+headers = ["From", "To", "Date", "Subject", "Message-ID"]
+algorithm = "rsa-sha256"
+canonicalization = "relaxed/relaxed"
+#expire = "10d"
+#third-party = ""
+#third-party-algo = ""
+#auid = ""
+set-body-length = false
+report = true
+
+[remote."lmtp"]
+address = "127.0.0.1"
+port = 11200
+protocol = "lmtp"
+concurrency = 10
+timeout = "1m"
+
+[remote."lmtp".tls]
+implicit = false
+allow-invalid-certs = true
+
+#[remote."lmtp".auth]
+#username = ""
+#secret = ""
+
+[sieve]
+from-name = "Automated Message"
+from-addr = "no-reply@mail.williamdes.eu.org"
+return-path = ""
+#hostname = "mail-server.mail.williamdes.eu.org"
+sign = ["rsa"]
+
+[sieve.limits]
+redirects = 3
+out-messages = 5
+received-headers = 50
+cpu = 10000
+nested-includes = 5
+duplicate-expiry = "7d"
+
+[sieve.scripts]
+# Note: These scripts are included here for demonstration purposes.
+#       They should not be used in their current form.
+connect = '''
+    require ["variables", "extlists", "reject"];
+
+    if string :list "${env.remote_ip}" "ldap/blocked-ips" {
+        reject "Your IP '${env.remote_ip}' is not welcomed here.";
+    }
+'''
+ehlo = '''
+    require ["variables", "extlists", "reject"];
+
+    if string :list "${env.helo_domain}" "ldap/blocked-domains" {
+        reject "551 5.1.1 Your domain '${env.helo_domain}' has been blacklisted.";
+    }
+'''
+mail = '''
+    require ["variables", "envelope", "reject"];
+
+    if envelope :localpart :is "from" "known_spammer" {
+        reject "We do not accept SPAM.";
+    }
+'''
+rcpt = '''
+    require ["variables", "vnd.stalwart.expressions", "envelope", "reject"];
+
+    set "triplet" "${env.remote_ip}.${envelope.from}.${envelope.to}";
+
+    if eval "!query('sql', 'SELECT 1 FROM greylist WHERE addr=? LIMIT 1', [triplet])" {
+        eval "query('sql', 'INSERT INTO greylist (addr) VALUES (?)', [triplet])";
+        reject "422 4.2.2 Greylisted, please try again in a few moments.";
+    }
+'''
+data = '''
+    require ["envelope", "variables", "replace", "mime", "foreverypart", "editheader", "extracttext"];
+
+    if envelope :domain :is "to" "foobar.net" {
+        set "counter" "a";
+        foreverypart {
+            if header :mime :contenttype "content-type" "text/html" {
+                extracttext :upper "text_content";
+                replace "${text_content}";
+            }
+            set :length "part_num" "${counter}";
+            addheader :last "X-Part-Number" "${part_num}";
+            set "counter" "${counter}a";
+        }
+    }
+'''
+
+[management]
+directory = "ldap"
