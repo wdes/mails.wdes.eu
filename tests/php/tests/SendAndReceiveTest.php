@@ -53,6 +53,10 @@ class SendAndReceiveTest extends TestCase
 
     private function connectToMailbox(string $userName): void
     {
+        if ($this->mailboxClient !== null) {
+            $this->mailboxClient->disconnect();
+        }
+
         $cm = new ClientManager([]);
         $this->mailboxClient = $cm->make([
             'host'           => self::MAIL_HOST,
@@ -68,6 +72,7 @@ class SendAndReceiveTest extends TestCase
         $this->mailboxClient->connect();
 
         $this->assertTrue($this->mailboxClient->isConnected());
+        sleep(2);
     }
 
     /**
@@ -102,29 +107,28 @@ class SendAndReceiveTest extends TestCase
         ], $folders);
 
         $folder = $this->mailboxClient->getFolderByPath('INBOX');
-        $this->assertSame(0, $folder->messages()->all()->get()->count());
+        $this->assertSame(0, $folder->messages()->count());
     }
 
     private function getMailById(string $userName, string $messageId): ?stdClass
     {
         $this->connectToMailbox($userName);
 
-        $msgs = imap2_sort($mbox, SORTDATE, true, SE_UID);
-        $foundMessage = null;
-        foreach ($msgs as $msguid) {
-            $msgno = imap2_msgno($mbox, $msguid);
-            $headers = imap2_headerinfo($mbox, $msgno);
-            $structure = imap2_fetchstructure($mbox, $msguid, FT_UID);
-            if ($headers->message_id === $messageId) {
-                $foundMessage = (object) [
-                    'headers' => $headers,
-                    'structure' => $structure,
+        $folder = $this->mailboxClient->getFolderByPath('INBOX');
+        $msgs = $folder->overview('1:*');
+
+        foreach ($msgs as $msg) {
+            var_dump($msg, $messageId);
+            if ('<' . $msg['message_id'] . '>' === $messageId) {
+                return (object) [
+                    'headers' => (object) [
+                        'subject' => $msg['subject'],
+                    ],
                 ];
-                break;
             }
         }
 
-        return $foundMessage;
+        return null;
     }
 
     private function deleteAllMails(): void
@@ -154,7 +158,6 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself using TLS',
             'Just a mail to myself. Sent via TLS'
         );
-        sleep(3);
         $this->assertTrue($sent, 'A TLS mail');
         $mailFound = $this->getMailById($userName, $messageId);
         $this->assertNotNull($mailFound, 'Mail should be found');
@@ -197,7 +200,6 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself using SMTPS',
             'Just a mail to myself. Sent via SMTPS'
         );
-        sleep(10);
         $this->assertTrue($sent, 'A non TLS mail');
         $mailFound = $this->getMailById($userName, $messageId);
         $this->assertNotNull($mailFound, 'Mail should be found');
@@ -221,7 +223,6 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself using TLS',
             'Just a mail to myself. Sent via TLS'
         );
-        sleep(10);
         $this->assertTrue($sent, 'A TLS mail');
         $mailFound = $this->getMailById($userName, $messageId);
         $this->assertNotNull($mailFound, 'Mail should be found');
@@ -245,7 +246,6 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself using TLS',
             'Just a mail to myself. Sent via TLS'
         );
-        sleep(2);
         $this->assertTrue($sent, 'A TLS mail');
         $mailFound = $this->getMailById($userName, $messageId);
         $this->assertNotNull($mailFound, 'Mail should be found');
@@ -266,7 +266,6 @@ class SendAndReceiveTest extends TestCase
             'Mail to myself, postgreydelay',
             'Just a mail to myself. postgreydelay.'
         );
-        sleep(2);
         $mailFound = $this->getMailById($userName, $messageId);
         if ($mailFound) {
             // This will mark this test as risky, the mail should be greylisted
