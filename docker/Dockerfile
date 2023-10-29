@@ -3,7 +3,7 @@ FROM docker.io/debian:bookworm-slim AS source
 
 WORKDIR /source
 
-ARG VERSION="0.3.10"
+ARG VERSION="0.4.2"
 ADD https://github.com/stalwartlabs/mail-server/archive/refs/tags/v$VERSION.tar.gz /tmp/v$VERSION.tar.gz
 RUN tar --strip-components=1 -C /source -xzf /tmp/v$VERSION.tar.gz
 
@@ -52,6 +52,6 @@ CMD ["/usr/local/bin/stalwart-mail"]
 # cat /opt/stalwart-mail/etc/config.toml
 
 # Supports ENVs in the form !ENV_NAME
-# See: https://github.com/stalwartlabs/mail-server/blob/v0.3.10/crates/utils/src/config/parser.rs#L381
+# See: https://github.com/stalwartlabs/mail-server/blob/v0.4.2/crates/utils/src/config/parser.rs#L381
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh", "/etc/config.toml"]
