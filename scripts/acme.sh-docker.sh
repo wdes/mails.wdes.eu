@@ -45,4 +45,4 @@ rm /tmp/system.lock
 # Make the container keep running
 # /entry.sh daemon
 # New method
-crond -f -l0 -L /dev/stdout
+crond -n -s -m off
