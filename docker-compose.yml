@@ -271,7 +271,7 @@ services:
         security_opt:
           - no-new-privileges:true
     acme:
-        image: docker.io/neilpang/acme.sh:3.0.5
+        image: docker.io/neilpang/acme.sh:3.0.7
         dns_search: ""
         mem_limit: 512M
         mem_reservation: 10M
@@ -310,7 +310,7 @@ services:
           - no-new-privileges:true
 
     crowdsec:
-        image: crowdsecurity/crowdsec:v1.5.4
+        image: crowdsecurity/crowdsec:v1.5.5
         dns_search: ""
         restart: always
         environment:
