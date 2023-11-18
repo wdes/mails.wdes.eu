@@ -1,5 +1,5 @@
-; The zone for williamdes.corp
-@  86400  IN  SOA williamdes.corp.  tech.datacenters.network. (
+; The zone for aladin.private
+@  86400  IN  SOA aladin.private.  tech.datacenters.network. (
 									1999010100 ; serial
 											 10800 ; refresh (3 hours)
 												 900 ; retry (15 minutes)
@@ -9,7 +9,5 @@
 
 @ 7200 IN  NS dns.mail-server.intranet.
 
-; MX
-@   60		  IN  MX   0 emails.mail-server.intranet.
 ; SPF
-@   60		  IN  TXT   "v=spf1 mx -all"
+@   60		  IN  TXT   "v=spf1 ip4:10.222.222.0/28 -all"

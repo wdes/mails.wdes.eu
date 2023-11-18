@@ -263,7 +263,7 @@ class SendAndReceiveTest extends TestCase
         $userName = 'cyrielle';
         [$sent, $messageId] = $this->sendNoSmtpMail(
             true,
-            'contact@external-domain.org',
+            'sesame@aladin.private',
             self::USERS[$userName]['aliases'][1],
             'Mail to myself, postgreydelay',
             'Just a mail to myself. postgreydelay.'
@@ -282,7 +282,7 @@ class SendAndReceiveTest extends TestCase
         sleep(10);// Sleep again
         [$sent, $messageId] = $this->sendNoSmtpMail(
             true,
-            'contact@external-domain.org',
+            'sesame@aladin.private',
             self::USERS[$userName]['aliases'][1],
             'Mail to myself passing postgrey',
             'Just a mail to myself. postgrey pass.'
