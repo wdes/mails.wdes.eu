@@ -3,6 +3,8 @@ version: "3.8"
 services:
     dns-server:
         image: hickorydns/hickory-dns:latest
+        environment:
+            RUST_LOG: debug
         dns:
             - "10.222.222.1"
         hostname: dns.mail-server.intranet
