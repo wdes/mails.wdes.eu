@@ -255,6 +255,46 @@ class SendAndReceiveTest extends TestCase
     }
 
     /**
+     * This test sending an email for a domain that denies it in SPF is rejected
+     * @depends testImapConnectEmails
+     */
+    public function testSendingAnEmailRelayAccessDenied(): void
+    {
+        // In this scenario there is no SMTP server to login, so we send directly to destination
+        // But since the destination does not know the destination email: sesame+relay-access-test@aladin.private
+        // It says that relay sending is denied
+        [,, $e, $errorInfo] = $this->sendNoSmtpMail(
+            true,
+            'john@williamdes.corp',
+            'sesame+relay-access-test@aladin.private',
+            'Relay access denied test',
+            'Just a test email.'
+        );
+        $this->assertSame('Could not instantiate mail function.', $errorInfo);
+        $this->assertSame('Could not instantiate mail function.', $e->getMessage());
+    }
+
+    /**
+     * This test sending an email for a domain that denies it in SPF is rejected
+     * @depends testImapConnectEmails
+     */
+    public function testSendingAnEmailFromSPFNotAllowedIsDenied(): void
+    {
+        // In this scenario there is no SMTP server to login, so we send directly to destination
+        // The server knows the recipient email: john@williamdes.corp
+        // It checks SPF on williamdes.corp
+        [,, $e, $errorInfo] = $this->sendNoSmtpMail(
+            true,
+            'contact+parked-domain@cream.home',
+            'contact+parked-domain@cream.home',
+            'SPF test',
+            'Just a test email.'
+        );
+        $this->assertSame('Could not instantiate mail function.', $errorInfo);
+        $this->assertSame('Could not instantiate mail function.', $e->getMessage());
+    }
+
+    /**
      * This test sends an email from an external server to an internal email but not the primary domain
      * @depends testImapConnectEmails
      */
@@ -363,12 +403,15 @@ class SendAndReceiveTest extends TestCase
             $mail->addAddress($to);
             $mail->Subject = $object;
             $mail->Body    = $body;
-            return [$mail->send(), $mail->GetLastMessageID()];
+            //$mail->SMTPDebug = 3;
+            // $mail->Debugoutput = function($str, $level) {fwrite(STDERR, "debug level $level; message: $str" . PHP_EOL);};
+            $mailSent = $mail->send();
+            return [$mailSent, $mail->GetLastMessageID()];
         } catch (Exception $e) {
             if (! $skipFailure) {
                 $this->fail('Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
             }
-            return [null, $mail->GetLastMessageID()];
+            return [null, $mail->GetLastMessageID(), $e, $mail->ErrorInfo];
         }
     }
 }

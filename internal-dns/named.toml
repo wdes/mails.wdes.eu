@@ -27,6 +27,11 @@ zone_type = "Primary"
 file = "zones/aladin.private.zone"
 
 [[zones]]
+zone = "cream.home"
+zone_type = "Primary"
+file = "zones/cream.home.zone"
+
+[[zones]]
 ## zone: this is the ORIGIN of the zone, aka the base name, '.' is implied on the end
 ##  specifying something other than '.' here, will restrict this forwarder to only queries
 ##  where the search name is a subzone of the name, e.g. if zone is "example.com.", then
