@@ -275,6 +275,54 @@ class SendAndReceiveTest extends TestCase
     }
 
     /**
+     * This test sending an email from an address the user does not own
+     * @depends testImapConnectEmails
+     */
+    public function testSendingAnEmailFromAnEmailThatIsNotOwned(): void
+    {
+        $userName = 'cyrielle';
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(
+            'SMTP Error: The following recipients failed: contact@desportes.corp: <sesame+relay-access-test@aladin.private>: Sender address rejected: not owned by user cyrielle@williamdes.corp'
+        );
+        [$sent, $messageId] = $this->sendMail(
+            true,
+            self::USERS[$userName]['username'],
+            self::USERS[$userName]['password'],
+            'sesame+relay-access-test@aladin.private',// from
+            self::USERS[$userName]['aliases'][1],// to
+            'Mail to myself using TLS',
+            'Just a mail to myself. Sent via TLS',
+            true
+        );
+    }
+
+    /**
+     * This test sending an email from an address the user does not own but is owned by an internal user
+     * @depends testImapConnectEmails
+     */
+    public function testSendingAnEmailFromAnEmailThatIsNotOwnedAndInternal(): void
+    {
+        $userName = 'cyrielle';
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(
+            'SMTP Error: The following recipients failed: contact@desportes.corp: <john.pondu@williamdes.corp>: Sender address rejected: not owned by user cyrielle@williamdes.corp'
+        );
+        [$sent, $messageId] = $this->sendMail(
+            true,
+            self::USERS[$userName]['username'],
+            self::USERS[$userName]['password'],
+            self::USERS['john']['aliases'][0],// from
+            self::USERS[$userName]['aliases'][1],// to
+            'Mail to myself using TLS',
+            'Just a mail to myself. Sent via TLS',
+            true
+        );
+    }
+
+    /**
      * This test sending an email for a domain that denies it in SPF is rejected
      * @depends testImapConnectEmails
      */
