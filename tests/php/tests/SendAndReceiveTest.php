@@ -99,11 +99,12 @@ class SendAndReceiveTest extends TestCase
         natsort($folders);
         $folders = array_values($folders);
         $this->assertSame([
-            $mailbox . 'Drafts',
-            $mailbox . 'INBOX',
-            $mailbox . 'Junk',
-            $mailbox . 'Sent',
-            $mailbox . 'Trash',
+            'All Mail',
+            'Deleted Items',
+            'Drafts',
+            'INBOX',
+            'Junk Mail',
+            'Sent Items',
         ], $folders);
 
         $folder = $this->mailboxClient->getFolderByPath('INBOX');
