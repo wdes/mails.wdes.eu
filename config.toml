@@ -591,7 +591,7 @@ key = ["rcpt-domain"]
 concurrency = 5
 
 [resolver]
-type = "system"
+type = "custom"
 #preserve-intermediates = true
 concurrency = 2
 timeout = "5s"
@@ -608,6 +608,11 @@ ipv6 = 1024
 ptr = 1024
 tlsa = 1024
 mta-sts = 1024
+
+[[resolver.nameservers]]
+ip = "10.222.222.1"
+port = 53
+protocol = "udp"
 
 [report]
 path = "/opt/stalwart-mail/reports"

@@ -7,6 +7,16 @@ ARG VERSION="0.4.2"
 ADD https://github.com/stalwartlabs/mail-server/archive/refs/tags/v$VERSION.tar.gz /tmp/v$VERSION.tar.gz
 RUN tar --strip-components=1 -C /source -xzf /tmp/v$VERSION.tar.gz
 
+RUN apt update && apt install -y patch
+
+# Enhancement: Custom resolver nameservers
+ADD https://patch-diff.githubusercontent.com/raw/stalwartlabs/mail-server/pull/141.patch /tmp/141.patch
+RUN patch -p1 < /tmp/141.patch
+
+# Fix: Return an error to client if STARTTLS is not available
+ADD https://patch-diff.githubusercontent.com/raw/stalwartlabs/mail-server/pull/135.patch /tmp/135.patch
+RUN patch -p1 < /tmp/135.patch
+
 FROM --platform=$BUILDPLATFORM docker.io/lukemathwalker/cargo-chef:latest-rust-slim-bookworm AS chef
 WORKDIR /build
 
