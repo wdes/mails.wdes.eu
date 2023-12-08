@@ -11,7 +11,7 @@ services:
             mail_infra_network:
                 ipv4_address: 10.222.222.1
         volumes:
-            - ./internal-dns/named.toml:/etc/named.toml:ro
+            - ${HICKORY_DNS_NAMED_CONFIG:-./internal-dns/named.toml}:/etc/named.toml:ro
             - ./internal-dns/zones/:/var/named/zones/:ro
         environment:
             RUST_LOG: ${HICKORY_DNS_LOG_LEVEL:-info}

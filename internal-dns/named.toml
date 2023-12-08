@@ -1,6 +1,3 @@
-# See: https://serverfault.com/a/937808/336084
-log_level = "Debug"
-
 [[zones]]
 zone = "mail-server.intranet"
 zone_type = "Primary"
@@ -30,6 +27,11 @@ file = "zones/aladin.private.zone"
 zone = "cream.home"
 zone_type = "Primary"
 file = "zones/cream.home.zone"
+
+#[[zones]]
+#zone = "datacenters-network.intranet"
+#zone_type = "Forward"
+#stores = { type = "forward", name_servers = [{ socket_addr = "10.x:53", protocol = "udp", trust_nx_responses = false }] }
 
 [[zones]]
 ## zone: this is the ORIGIN of the zone, aka the base name, '.' is implied on the end
