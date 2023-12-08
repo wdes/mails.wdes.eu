@@ -13,6 +13,8 @@ services:
         volumes:
             - ./internal-dns/named.toml:/etc/named.toml:ro
             - ./internal-dns/zones/:/var/named/zones/:ro
+        environment:
+            RUST_LOG: ${HICKORY_DNS_LOG_LEVEL:-info}
 
     mailserver:
         image: mailserver/docker-mailserver:13.0.1
