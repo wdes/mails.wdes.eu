@@ -257,7 +257,7 @@ services:
                 ipv4_address: 10.222.222.4
         restart: on-failure:5
         environment:
-            PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.mail-server.intranet': [{'server': [{'tls': True}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
+            PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.mail-server.intranet': [{'server': [{'tls': False}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
             #PHPLDAPADMIN_HTTPS_CRT_FILENAME: "phpldapadmin-certificate.crt"
             #PHPLDAPADMIN_HTTPS_KEY_FILENAME: "phpldapadmin-certificate.key"
             #PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: "${PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME:-phpldapadmin-ca.crt}"
