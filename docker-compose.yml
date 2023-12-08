@@ -15,7 +15,7 @@ services:
             - ./internal-dns/zones/:/var/named/zones/:ro
 
     mailserver:
-        image: mailserver/docker-mailserver:12.1.0
+        image: mailserver/docker-mailserver:13.0.1
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
@@ -59,7 +59,6 @@ services:
             - ./rspamd/local.d/worker-controller.inc:/etc/rspamd/local.d/worker-controller.inc:ro
             - ./rspamd/local.d/dkim_signing.conf:/etc/rspamd/local.d/dkim_signing.conf:ro
             - ./rspamd/local.d/history_redis.conf:/etc/rspamd/local.d/history_redis.conf:ro
-            - ./rspamd/local.d/settings.conf:/etc/rspamd/local.d/settings.conf:ro
             - ./rspamd/local.d/rbl.conf:/etc/rspamd/local.d/rbl.conf:ro
             # maps
             - ./rspamd/maps.d/mx_whitelist.inc:/etc/rspamd/maps.d/mx_whitelist.inc:ro
@@ -89,6 +88,7 @@ services:
             ACCOUNT_PROVISIONER: "LDAP"
             RSPAMD_LEARN: "1"
             RSPAMD_GREYLISTING: "1"
+            RSPAMD_CHECK_AUTHENTICATED: "0" # Do not spam check outgoing emails
             MOVE_SPAM_TO_JUNK: "1"
             # Now it's up to RSPAMD_GREYLISTING to greylist
             # POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
