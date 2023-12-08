@@ -90,7 +90,7 @@ services:
             RSPAMD_GREYLISTING: "1"
             RSPAMD_CHECK_AUTHENTICATED: "0" # Do not spam check outgoing emails
             MOVE_SPAM_TO_JUNK: "1"
-            OPENDKIM_TRUSTED_HOSTS: "${OPENDKIM_TRUSTED_HOSTS:-127.0.0.1\nlocalhost}"
+            OPENDKIM_TRUSTED_HOSTS: "${OPENDKIM_TRUSTED_HOSTS:-$'127.0.0.1\\nlocalhost'}"
             # Now it's up to RSPAMD_GREYLISTING to greylist
             # POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
             # POSTGREY_AUTO_WHITELIST_CLIENTS: "1" # Defaults to 5
