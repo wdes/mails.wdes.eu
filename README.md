@@ -44,7 +44,17 @@ Test the generated value:
 - Implement email quota: https://github.com/docker-mailserver/docker-mailserver/issues/2957
 - Check why DMARC reports are not sent: https://github.com/docker-mailserver/docker-mailserver/issues/2636
 - Test the fix for: https://github.com/docker-mailserver/docker-mailserver/issues/3323
+- Apply feedback about replication: https://github.com/docker-mailserver/docker-mailserver/issues/2048#issuecomment-1712950580
 
 ## Interesting documentations
 
 - https://www.renater.fr/wp-content/uploads/2022/01/article-complet-tordons-le-cou-au-phishing_compresse-1.pdf (in French)
+
+## Manage bans
+
+```sh
+docker exec -it xxxx-crowdsec-1 cscli decisions list
+docker exec -it xxxx-crowdsec-1 cscli alerts remove --ip=x.x.x.x
+docker exec -it xxxx-mailserver-1 fail2ban-client banned
+docker exec -it xxxx-crowdsec-1 setup fail2ban unban x.x.x.x
+```
