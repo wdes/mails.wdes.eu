@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-namespace Datacenters\Infrastructure\tests;
+namespace Wdes\Mails\Infrastructure\tests;
 
 require_once '/composer/autoload.php';
 

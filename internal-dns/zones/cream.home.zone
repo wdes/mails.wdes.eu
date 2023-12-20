@@ -1,5 +1,5 @@
 ; The zone for cream.home
-@  86400  IN  SOA cream.home.  tech.datacenters.network. (
+@  86400  IN  SOA cream.home.  tech.wdes.eu. (
 									1999010100 ; serial
 											 10800 ; refresh (3 hours)
 												 900 ; retry (15 minutes)

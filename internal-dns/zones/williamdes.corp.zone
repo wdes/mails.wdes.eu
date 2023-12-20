@@ -1,5 +1,5 @@
 ; The zone for williamdes.corp
-@  86400  IN  SOA williamdes.corp.  tech.datacenters.network. (
+@  86400  IN  SOA williamdes.corp.  tech.wdes.eu. (
 									1999010100 ; serial
 											 10800 ; refresh (3 hours)
 												 900 ; retry (15 minutes)
