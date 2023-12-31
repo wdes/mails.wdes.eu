@@ -17,7 +17,7 @@ services:
             RUST_LOG: ${HICKORY_DNS_LOG_LEVEL:-info}
 
     mailserver:
-        image: mailserver/docker-mailserver:13.0.1
+        image: mailserver/docker-mailserver:13.1.0
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
@@ -78,6 +78,7 @@ services:
             ENABLE_FAIL2BAN: "1"
             ENABLE_POSTGREY: "0"
             ENABLE_POP3: "1"
+            ENABLE_IMAP: "1"
             ENABLE_MANAGESIEVE: "1"
             ENABLE_SASLAUTHD: "0" # The docker container manages it
             ENABLE_OPENDKIM: "1"
