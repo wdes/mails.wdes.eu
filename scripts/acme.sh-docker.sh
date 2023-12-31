@@ -17,7 +17,7 @@ if [ ! -f /acme.sh/account.conf ]; then
 fi
 
 # shellcheck disable=SC2154
-if [ ! -f "/acme.sh/${DOMAIN_NAME}/fullchain.cer" ]; then
+if [ ! -f "/acme.sh/${DOMAIN_NAME}_ecc/fullchain.cer" ]; then
     echo 'Asking for certificates'
 
     CLI_DOMAIN_NAMES=""
