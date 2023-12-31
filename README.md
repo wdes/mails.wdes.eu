@@ -45,6 +45,7 @@ Test the generated value:
 - Check why DMARC reports are not sent: https://github.com/docker-mailserver/docker-mailserver/issues/2636
 - Test the fix for: https://github.com/docker-mailserver/docker-mailserver/issues/3323
 - Apply feedback about replication: https://github.com/docker-mailserver/docker-mailserver/issues/2048#issuecomment-1712950580
+- Integrate NTP: https://docs.ntpd-rs.pendulum-project.org/man/ntp.toml.5/
 
 ## Interesting documentations
 
