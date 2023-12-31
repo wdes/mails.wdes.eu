@@ -209,8 +209,6 @@ if [ "${DOVECOT_REPLICATION_SERVER:-}" != "" ]; then
     echo 'Hint: rspamc stat'
     echo 'Hint: rspamadm pw'
 
-    sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins quota notify replication/' /etc/dovecot/conf.d/10-mail.conf
-
     cat <<EOF > /etc/dovecot/conf.d/10-replication.conf
 service doveadm {
 	inet_listener {
@@ -248,23 +246,14 @@ service aggregator {
         mode = 0666
 	}
 }
+plugin {
+    mail_replica = tcps:${DOVECOT_REPLICATION_SERVER}
+}
+mail_plugins = \$mail_plugins notify replication
 EOF
-
-    # Open the config
-    sed -i '/^}/d' /etc/dovecot/conf.d/90-plugin.conf
-    # Remove a possible old value of mail_replica
-    sed -i '/^mail_replica/d' /etc/dovecot/conf.d/90-plugin.conf
-    # Insert the config and close it back
-    printf '\nmail_replica = tcps:%s\n}\n' "${DOVECOT_REPLICATION_SERVER}" >> /etc/dovecot/conf.d/90-plugin.conf
 else
-
     echo 'Disabling replication'
-
-    # Remove a possible old value of mail_replica
-    sed -i '/^mail_replica/d' /etc/dovecot/conf.d/90-plugin.conf
     rm -fv /etc/dovecot/conf.d/10-replication.conf
-    sed -i 's/^mail_plugins =.*/mail_plugins = \$mail_plugins quota notify/' /etc/dovecot/conf.d/10-mail.conf
 fi
 
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-echo ">>>>>>>>>>>>>>>>>>>>>>>Finished starting services<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
