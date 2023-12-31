@@ -47,8 +47,8 @@ services:
             - ${MAIL_LOGS_DIR}:/var/log/mail
             - ${MAIL_CONFIGS_DIR}:/tmp/docker-mailserver/
             - ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/mail-server/server.cer:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/fullchain.cer:/etc/ssl/mail-server/server.cer:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key:ro
             - ${DOVECOT_REPLICATION_SSL_VOLUME:-./empty-volume}:/etc/ssl/replication/:ro
             - ./rspamd/local.d/phishing.conf:/etc/rspamd/local.d/phishing.conf:ro
             - ./rspamd/local.d/mx_check.conf:/etc/rspamd/local.d/mx_check.conf:ro
@@ -229,11 +229,11 @@ services:
             # Add ldaps:/// to SSL listen
             LDAP_LISTEN_URLS: "ldap:/// ldapi:/// ldaps:///"
         volumes:
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/certs/ca-certificates.crt:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/ca.cer:/etc/ssl/certs/ca-certificates.crt:ro
             - ${LDAP_DATA_DIR}:/var/lib/openldap/openldap-data
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/slapd/assets/certs/ca.cer:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/container/service/slapd/assets/certs/server.cer:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/server.key:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/ca.cer:/container/service/slapd/assets/certs/ca.cer:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/fullchain.cer:/container/service/slapd/assets/certs/server.cer:ro
+            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/server.key:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         ports:
             - "${LDAP_PORT:-389}:389"
@@ -264,12 +264,12 @@ services:
             #PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME: "ca.cer"
         #volumes:
         # web UI (phpldapadmin-ca.crt, phpldapadmin-certificate.key, phpldapadmin-certificate.crt)
-        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/etc/ssl/server-certificate/ca.cer:ro
-        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/fullchain.cer:/etc/ssl/server-certificate/server.cer:ro
-        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/${DOMAIN_NAME}.key:/etc/ssl/server-certificate/server.key:ro
+        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/ca.cer:/etc/ssl/server-certificate/ca.cer:ro
+        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/fullchain.cer:/etc/ssl/server-certificate/server.cer:ro
+        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/${DOMAIN_NAME}.key:/etc/ssl/server-certificate/server.key:ro
         #- ${PHP_LDAP_ADMIN_CERTS_DIR}:/container/service/phpldapadmin/assets/apache2/certs
         # LDAP client
-        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
+        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
         ports:
             - "${PHPLDAPADMIN_SSL_PORT:-8080}:80"
         depends_on:
