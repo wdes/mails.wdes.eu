@@ -10,5 +10,5 @@ insert_final_newline = true
 [Makefile]
 indent_style = tab
 
-[templates/dns/zone.txt.tera]
+[user-patches.sh]
 indent_style = tab

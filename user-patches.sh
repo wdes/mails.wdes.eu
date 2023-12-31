@@ -59,50 +59,50 @@ use strict;
 EOF
 
 if [ -f /etc/amavis/conf.d/60-dms_default_config ]; then
-    echo 'Removed to fix (https://github.com/docker-mailserver/docker-mailserver/issues/2123)'
-    rm /etc/amavis/conf.d/60-dms_default_config
+	echo 'Removed to fix (https://github.com/docker-mailserver/docker-mailserver/issues/2123)'
+	rm /etc/amavis/conf.d/60-dms_default_config
 fi
 
 echo 'Tweak fail2ban config'
 
 # Check if configured
 if [ "${FAIL2BAN_BLOCKLIST_DE_API_KEY:-}" != "" ]; then
-    sed -i '/^apikey =/d' /etc/fail2ban/action.d/blocklist_de.conf
-    printf '\napikey = %s\n' "${FAIL2BAN_BLOCKLIST_DE_API_KEY}" >> /etc/fail2ban/action.d/blocklist_de.conf
+	sed -i '/^apikey =/d' /etc/fail2ban/action.d/blocklist_de.conf
+	printf '\napikey = %s\n' "${FAIL2BAN_BLOCKLIST_DE_API_KEY}" >> /etc/fail2ban/action.d/blocklist_de.conf
 else
-    sed -i '/^apikey =/d' /etc/fail2ban/action.d/blocklist_de.conf
+	sed -i '/^apikey =/d' /etc/fail2ban/action.d/blocklist_de.conf
 fi
 
 # Check if configured
 if [ "${FAIL2BAN_BLOCKLIST_DE_EMAIL:-}" != "" ]; then
-    sed -i '/^email =/d' /etc/fail2ban/action.d/blocklist_de.conf
-    printf '\nemail = %s\n' "${FAIL2BAN_BLOCKLIST_DE_EMAIL}" >> /etc/fail2ban/action.d/blocklist_de.conf
+	sed -i '/^email =/d' /etc/fail2ban/action.d/blocklist_de.conf
+	printf '\nemail = %s\n' "${FAIL2BAN_BLOCKLIST_DE_EMAIL}" >> /etc/fail2ban/action.d/blocklist_de.conf
 else
-    sed -i '/^email =/d' /etc/fail2ban/action.d/blocklist_de.conf
+	sed -i '/^email =/d' /etc/fail2ban/action.d/blocklist_de.conf
 fi
 
 # Check if configured
 if [ "${FAIL2BAN_IPTHREAT_API_KEY:-}" != "" ]; then
-    sed -i '/^ipthreat_apikey =/d' /etc/fail2ban/action.d/ipthreat.conf
-    printf '\nipthreat_apikey = %s\n' "${FAIL2BAN_IPTHREAT_API_KEY}" >> /etc/fail2ban/action.d/ipthreat.conf
+	sed -i '/^ipthreat_apikey =/d' /etc/fail2ban/action.d/ipthreat.conf
+	printf '\nipthreat_apikey = %s\n' "${FAIL2BAN_IPTHREAT_API_KEY}" >> /etc/fail2ban/action.d/ipthreat.conf
 else
-    sed -i '/^ipthreat_apikey =/d' /etc/fail2ban/action.d/ipthreat.conf
+	sed -i '/^ipthreat_apikey =/d' /etc/fail2ban/action.d/ipthreat.conf
 fi
 
 # Check if configured
 if [ "${FAIL2BAN_IPTHREAT_SYSTEM_NAME:-}" != "" ]; then
-    sed -i '/^ipthreat_system =/d' /etc/fail2ban/action.d/ipthreat.conf
-    printf '\nipthreat_system = %s\n' "${FAIL2BAN_IPTHREAT_SYSTEM_NAME}" >> /etc/fail2ban/action.d/ipthreat.conf
+	sed -i '/^ipthreat_system =/d' /etc/fail2ban/action.d/ipthreat.conf
+	printf '\nipthreat_system = %s\n' "${FAIL2BAN_IPTHREAT_SYSTEM_NAME}" >> /etc/fail2ban/action.d/ipthreat.conf
 else
-    sed -i '/^ipthreat_system =/d' /etc/fail2ban/action.d/ipthreat.conf
+	sed -i '/^ipthreat_system =/d' /etc/fail2ban/action.d/ipthreat.conf
 fi
 
 # Check if configured
 if [ "${FAIL2BAN_ABUSEIPDB_API_KEY:-}" != "" ]; then
-    sed -i '/^abuseipdb_apikey =/d' /etc/fail2ban/action.d/abuseipdb.conf
-    printf '\nabuseipdb_apikey = %s\n' "${FAIL2BAN_ABUSEIPDB_API_KEY}" >> /etc/fail2ban/action.d/abuseipdb.conf
+	sed -i '/^abuseipdb_apikey =/d' /etc/fail2ban/action.d/abuseipdb.conf
+	printf '\nabuseipdb_apikey = %s\n' "${FAIL2BAN_ABUSEIPDB_API_KEY}" >> /etc/fail2ban/action.d/abuseipdb.conf
 else
-    sed -i '/^abuseipdb_apikey =/d' /etc/fail2ban/action.d/abuseipdb.conf
+	sed -i '/^abuseipdb_apikey =/d' /etc/fail2ban/action.d/abuseipdb.conf
 fi
 
 # Check if configured
@@ -159,8 +159,8 @@ action_abuseipdb = abuseipdb
 
 # Ban IP and report to AbuseIPDB for Brute-Forcing
 action = %(action_)s
-         %(action_abuseipdb)s[abuseipdb_category="18"]
-         ipthreat[]
+		 %(action_abuseipdb)s[abuseipdb_category="18"]
+		 ipthreat[]
 
 [dovecot]
 enabled = true
@@ -194,17 +194,17 @@ printf '\niterate_attrs = mail=user\n' >> /etc/dovecot/dovecot-ldap.conf.ext
 # Check if configured
 if [ "${DOVECOT_REPLICATION_SERVER:-}" != "" ]; then
 
-    echo 'Enabling replication'
-    echo 'Hint: doveadm replicator status'
-    echo "Hint: doveadm user '*'"
-    echo 'Hint: doveadm replicator dsync-status'
-    echo 'Hint: doveadm -D sync -u williamdes@example.org -d -N -l 30 -U'
-    echo 'Hint: doveadm mailbox status -u test@wdes.fr all INBOX'
-    echo 'Hint: rspamc uptime'
-    echo 'Hint: rspamc stat'
-    echo 'Hint: rspamadm pw'
+	echo 'Enabling replication'
+	echo 'Hint: doveadm replicator status'
+	echo "Hint: doveadm user '*'"
+	echo 'Hint: doveadm replicator dsync-status'
+	echo 'Hint: doveadm -D sync -u williamdes@example.org -d -N -l 30 -U'
+	echo 'Hint: doveadm mailbox status -u test@wdes.fr all INBOX'
+	echo 'Hint: rspamc uptime'
+	echo 'Hint: rspamc stat'
+	echo 'Hint: rspamadm pw'
 
-    cat <<EOF > /etc/dovecot/conf.d/10-replication.conf
+	cat <<EOF > /etc/dovecot/conf.d/10-replication.conf
 service doveadm {
 	inet_listener {
 		port = 4177
@@ -212,10 +212,10 @@ service doveadm {
 	}
 }
 protocol doveadm {
-    ssl_cert = <${DOVECOT_REPLICATION_SSL_CERT_FILE}
-    ssl_key = <${DOVECOT_REPLICATION_SSL_KEY_FILE}
-    ssl_client_ca_file = ${DOVECOT_REPLICATION_SSL_CA_FILE}
-    ssl_client_ca_dir = ${DOVECOT_REPLICATION_SSL_CA_DIR}
+	ssl_cert = <${DOVECOT_REPLICATION_SSL_CERT_FILE}
+	ssl_key = <${DOVECOT_REPLICATION_SSL_KEY_FILE}
+	ssl_client_ca_file = ${DOVECOT_REPLICATION_SSL_CA_FILE}
+	ssl_client_ca_dir = ${DOVECOT_REPLICATION_SSL_CA_DIR}
 }
 instance_name = ${OVERRIDE_HOSTNAME}
 doveadm_ssl = ssl
@@ -225,30 +225,30 @@ service replicator {
 	process_min_avail = 1
 	unix_listener replicator-doveadm {
 		user = dovecot
-        group = dovecot
+		group = dovecot
 		mode = 0666
 	}
 }
 service aggregator {
 	fifo_listener replication-notify-fifo {
 		user = dovecot
-        group = dovecot
-        mode = 0666
+		group = dovecot
+		mode = 0666
 	}
 	unix_listener replication-notify {
 		user = dovecot
-        group = dovecot
-        mode = 0666
+		group = dovecot
+		mode = 0666
 	}
 }
 plugin {
-    mail_replica = tcps:${DOVECOT_REPLICATION_SERVER}
+	mail_replica = tcps:${DOVECOT_REPLICATION_SERVER}
 }
 mail_plugins = \$mail_plugins notify replication
 EOF
 else
-    echo 'Disabling replication'
-    rm -fv /etc/dovecot/conf.d/10-replication.conf
+	echo 'Disabling replication'
+	rm -fv /etc/dovecot/conf.d/10-replication.conf
 fi
 
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
