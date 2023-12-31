@@ -29,11 +29,6 @@ printf '\nsmtpd_tls_received_header = yes\n' "localhost" >> /etc/postfix/main.cf
 sed -i '/^smtp_helo_name =/d' /etc/postfix/main.cf
 printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
-echo 'Setup trusted hosts'
-echo -e $OPENDKIM_TRUSTED_HOSTS > /etc/opendkim/TrustedHosts
-echo 'Trusted hosts'
-cat /etc/opendkim/TrustedHosts
-
 echo 'Add spam check config'
 
 cat <<EOF > /etc/amavis/conf.d/50-user
