@@ -11,7 +11,7 @@ printf 'Running in: %s\n' "$ME"
 DOMAIN="emails.mail-server.intranet"
 SSL_PATH="$ME/data/acme.sh/${DOMAIN}_ecc"
 CA_PATH="$SSL_PATH/ca"
-KEYCERT_PATH="$SSL_PATH/${DOMAIN}_ecc"
+KEYCERT_PATH="$SSL_PATH/${DOMAIN}"
 
 # bake the keys
 if [ ! -f $CA_PATH.key ]; then
