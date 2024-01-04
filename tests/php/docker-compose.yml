@@ -12,7 +12,7 @@ services:
         volumes:
           - ./tests:/tests
           # For tests
-          - ../data/acme.sh/emails.mail-server.intranet/emails.mail-server.intranet.cer:/etc/ssl/emails.mail-server.intranet.cer:ro
+          - ../data/acme.sh/emails.mail-server.intranet_ecc/emails.mail-server.intranet.cer:/etc/ssl/emails.mail-server.intranet.cer:ro
         working_dir: /tests
         command: --no-configuration /tests
 
