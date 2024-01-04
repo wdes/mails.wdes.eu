@@ -45,11 +45,11 @@ setup-test-files: check-env
 	rm -vf tests/data/acme.sh/*/*.cer
 	rm -vf tests/data/acme.sh/*/ca.*
 	mkdir $(TEMP_DIR)/tests
-	mkdir -p $(TEMP_DIR)/tests/data/acme.sh/$(ACME_DOMAIN)
+	mkdir -p $(TEMP_DIR)/tests/data/acme.sh/$(ACME_DOMAIN)_ecc
 	cp tests/make-certs.sh $(TEMP_DIR)/tests/
 	cp -rp tests/php $(TEMP_DIR)/tests/
 	cp -rp tests/seeding $(TEMP_DIR)/tests/
-	cp -v tests/data/acme.sh/$(ACME_DOMAIN)/*.*nf $(TEMP_DIR)/tests/data/acme.sh/$(ACME_DOMAIN)
+	cp -v tests/data/acme.sh/$(ACME_DOMAIN)_ecc/*.*nf $(TEMP_DIR)/tests/data/acme.sh/$(ACME_DOMAIN)_ecc
 
 	# Generate opendkim keys
 	mkdir -p $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/$(DKIM_DOMAIN)/
