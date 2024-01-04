@@ -15,11 +15,11 @@ KEYCERT_PATH="$SSL_PATH/${DOMAIN}"
 
 # bake the keys
 if [ ! -f $CA_PATH.key ]; then
-    openssl genrsa -out $CA_PATH.key 2048
+    openssl ecparam -out $CA_PATH.key -name prime256v1 -genkey
 fi
 
 if [ ! -f $KEYCERT_PATH.key ]; then
-    openssl genrsa -out $KEYCERT_PATH.key 2048
+    openssl ecparam -out $KEYCERT_PATH.key -name prime256v1 -genkey
 fi
 
 # bake the CA
