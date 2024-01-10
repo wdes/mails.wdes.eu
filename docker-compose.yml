@@ -29,6 +29,8 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.2
+                aliases:
+                  - ${OVERRIDE_HOSTNAME}
         ports:
             - "25:25"    # SMTP  (explicit TLS => STARTTLS)
             - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
