@@ -58,3 +58,21 @@ docker exec -it xxxx-crowdsec-1 cscli alerts remove --ip=x.x.x.x
 docker exec -it xxxx-mailserver-1 fail2ban-client banned
 docker exec -it xxxx-crowdsec-1 setup fail2ban unban x.x.x.x
 ```
+
+## Empty queue for an email
+
+```sh
+mailq | tail +2 | awk 'BEGIN { RS = "" } /postmaster@domain.intranet$/ { print $1 }' | tr -d '*!#' | postsuper -d -
+```
+
+## Re-queue emails for an email
+
+```sh
+mailq | tail +2 | awk 'BEGIN { RS = "" } /postmaster@domain.intranet$/ { print $1 }' | tr -d '*!#' | postsuper -r -
+```
+
+## Mails in queue
+
+```sh
+mailq | cut -d ' ' -f 1 | sort | uniq | wc -l
+```
