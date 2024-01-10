@@ -31,6 +31,29 @@ printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
 echo 'Add spam check config'
 
+cat <<EOF > /etc/amavis/conf.d/05-domain_id
+use strict;
+
+# \$mydomain is used just for convenience in the config files and it is not
+# used internally by amavisd-new except in the default X_HEADER_LINE (which
+# Debian overrides by default anyway).
+
+\$mydomain = '$OVERRIDE_HOSTNAME';
+
+# amavisd-new needs to know which email domains are to be considered local
+# to the administrative domain.  Only emails to "local" domains are subject
+# to certain functionality, such as the addition of spam tags.
+#
+# Default local domains to \$mydomain and all subdomains.  Remember to
+# override or redefine this if \$mydomain is changed later in the config
+# sequence.
+
+@local_domains_acl = ( "$OVERRIDE_HOSTNAME" );
+
+1;  # ensure a defined return
+
+EOF
+
 cat <<EOF > /etc/amavis/conf.d/50-user
 use strict;
 
@@ -51,8 +74,7 @@ use strict;
 \$enable_dkim_verification = 1; # Check DKIM
 
 \$virus_admin = '${VIRUS_ADMIN_EMAIL}';
-
-\$X_HEADER_LINE = '${VIRUS_X_HEADER_LINE}';
+\$banned_quarantine_to = '${VIRUS_ADMIN_EMAIL}';
 
 #------------ Do not modify anything below this line -------------
 1;  # ensure a defined return
