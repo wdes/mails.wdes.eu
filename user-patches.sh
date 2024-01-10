@@ -21,8 +21,8 @@ sed -i '/^mydestination =/d' /etc/postfix/main.cf
 # Delete this value to default as empty default
 sed -i '/^smtpd_sasl_local_domain =/d' /etc/postfix/main.cf
 
-printf '\nmydomain = %s\n' "localhost" >> /etc/postfix/main.cf
-printf '\nmydestination = %s\n' "localhost" >> /etc/postfix/main.cf
+printf '\nmydomain = %s\n' '$myhostname' >> /etc/postfix/main.cf
+printf '\nmydestination = %s\n' '$myhostname, localhost' >> /etc/postfix/main.cf
 # For: https://github.com/GermanCoding/Roundcube_TLS_Icon
 printf '\nsmtpd_tls_received_header = yes\n' "localhost" >> /etc/postfix/main.cf
 
