@@ -73,6 +73,7 @@ services:
         environment:
             TZ: UTC
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
+            ENABLE_MTA_STS: "1"
             ENABLE_RSPAMD: "1"
             ENABLE_RSPAMD_REDIS: "1"
             ENABLE_CLAMAV: "1"
