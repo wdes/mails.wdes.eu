@@ -17,7 +17,7 @@ services:
             RUST_LOG: ${HICKORY_DNS_LOG_LEVEL:-info}
 
     mailserver:
-        image: mailserver/docker-mailserver:13.2.0
+        image: mailserver/docker-mailserver:13.3.0
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
