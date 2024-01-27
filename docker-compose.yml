@@ -88,6 +88,8 @@ services:
             ENABLE_OPENDMARC: "1"
             ENABLE_QUOTAS: "1"
             SPOOF_PROTECTION: "1"
+            ENABLE_SPAMASSASSIN: "0"
+            ENABLE_SPAMASSASSIN_KAM: "0"
             LOGROTATE_INTERVAL: "daily"
             ONE_DIR: "1"
             LOG_LEVEL: "${LOG_LEVEL:-warn}"
