@@ -323,7 +323,7 @@ services:
             - no-new-privileges:true
 
     crowdsec:
-        image: crowdsecurity/crowdsec:v1.5.5
+        image: crowdsecurity/crowdsec:v1.6.0
         dns_search: ""
         restart: always
         environment:
