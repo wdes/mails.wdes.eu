@@ -2,6 +2,8 @@ version: "3.8"
 
 services:
     dns-server:
+        logging:
+          driver: none
         image: hickorydns/hickory-dns:latest
         dns:
             - "10.222.222.1"
@@ -17,6 +19,8 @@ services:
             RUST_LOG: ${HICKORY_DNS_LOG_LEVEL:-info}
 
     mailserver:
+        logging:
+          driver: none
         image: mailserver/docker-mailserver:13.3.1
         mem_limit: 4G
         mem_reservation: 2G
@@ -193,10 +197,7 @@ services:
         mem_limit: 1G
         mem_reservation: 100M
         logging:
-            driver: "json-file"
-            options:
-                max-file: "5"
-                max-size: "1m"
+          driver: none
         dns:
             - "10.222.222.1"
         hostname: ldap.mail-server.intranet
@@ -249,6 +250,8 @@ services:
             - no-new-privileges:true
 
     phpldapadmin:
+        logging:
+          driver: none
         image: ghcr.io/sudo-bot/docker-phpldapadmin/docker-phpldapadmin:latest
         mem_limit: 512M
         mem_reservation: 100M
@@ -285,6 +288,8 @@ services:
             - no-new-privileges:true
 
     acme:
+        logging:
+          driver: none
         image: docker.io/neilpang/acme.sh:3.0.7
         dns:
             - "10.222.222.1"
@@ -325,6 +330,8 @@ services:
             - no-new-privileges:true
 
     crowdsec:
+        logging:
+          driver: none
         image: crowdsecurity/crowdsec:v1.6.0
         dns_search: ""
         restart: always
