@@ -48,7 +48,7 @@ echo "Allow this network (${CONTAINER_NETWORK_V4})"
 __add_to_postfix_mynetworks 'Container network' "${CONTAINER_NETWORK_V4}"
 
 echo "Allow this network (${CONTAINER_NETWORK_V6})"
-#__add_to_postfix_mynetworks 'Container network' "${CONTAINER_NETWORK_V6}"
+__add_to_postfix_mynetworks 'Container network' "${CONTAINER_NETWORK_V6}"
 
 echo 'Add spam check config'
 
