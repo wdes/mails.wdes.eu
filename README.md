@@ -9,6 +9,8 @@ Our Docker-Mailserver infra.
 - https://dane.sys4.de/
 - https://stats.dnssec-tools.org/explore/
 - https://cryptcheck.fr/
+- [Validate v4 or v6 on all MX](https://network-tools.webwiz.net/email-test.htm)
+- [Full scan](https://email-security-scans.org/)
 
 ## DANE (TSLA records)
 
