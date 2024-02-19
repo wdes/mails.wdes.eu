@@ -12,21 +12,21 @@
 ns1 7200    IN  A   10.222.222.1
 ; Hosts
 dns 7200    IN  A   10.222.222.1
-1                       PTR     dns
+1                       PTR     dns.mail-server.intranet.
 emails 7200    IN  A   10.222.222.2
-2                       PTR     emails
+2                       PTR     emails.mail-server.intranet.
 ldap 7200    IN  A   10.222.222.3
 3                       PTR     ldap
 phpldapadmin 7200    IN  A   10.222.222.4
-4                       PTR     phpldapadmin
+4                       PTR     phpldapadmin.mail-server.intranet.
 acme 7200    IN  A   10.222.222.5
-5                       PTR     acme
+5                       PTR     acme.mail-server.intranet.
 crowdsec 7200    IN  A   10.222.222.6
-6                       PTR     crowdsec
+6                       PTR     crowdsec.mail-server.intranet.
 
 testing 7200    IN  A   10.222.222.13
-13                       PTR     testing
+13                       PTR     testing.mail-server.intranet.
 router 7200    IN  A   10.222.222.14
-14                       PTR     router
+14                       PTR     router.mail-server.intranet.
 ; MX
 @   60		  IN  MX   0 emails.mail-server.intranet.
