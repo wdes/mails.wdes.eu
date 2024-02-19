@@ -16,7 +16,7 @@ dns 7200    IN  A   10.222.222.1
 emails 7200    IN  A   10.222.222.2
 2                       PTR     emails.mail-server.intranet.
 ldap 7200    IN  A   10.222.222.3
-3                       PTR     ldap
+3                       PTR     ldap.mail-server.intranet.
 phpldapadmin 7200    IN  A   10.222.222.4
 4                       PTR     phpldapadmin.mail-server.intranet.
 acme 7200    IN  A   10.222.222.5
