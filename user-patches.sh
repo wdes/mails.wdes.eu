@@ -31,7 +31,19 @@ printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
 echo "Allow this network (${CONTAINER_NETWORK_V4})"
 
-source /usr/local/bin/setup.d/networking.sh
+source /usr/local/bin/helpers/utils.sh
+# Copied from /usr/local/bin/setup.d/networking.sh
+__add_to_postfix_mynetworks() {
+	local NETWORK_TYPE=$1
+	local NETWORK=$2
+
+	_log 'trace' "Adding ${NETWORK_TYPE} (${NETWORK}) to Postfix 'main.cf:mynetworks'"
+	_adjust_mtime_for_postfix_maincf
+	postconf "$(postconf | grep '^mynetworks =') ${NETWORK}"
+	[[ ${ENABLE_OPENDMARC} -eq 1 ]] && echo "${NETWORK}" >>/etc/opendmarc/ignore.hosts
+	[[ ${ENABLE_OPENDKIM} -eq 1 ]] && echo "${NETWORK}" >>/etc/opendkim/TrustedHosts
+}
+
 __add_to_postfix_mynetworks 'Container network' "${CONTAINER_NETWORK_V4}"
 
 echo 'Add spam check config'
