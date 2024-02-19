@@ -3,7 +3,8 @@ version: "3.8"
 services:
     dns-server:
         logging:
-          driver: none
+          driver: journald
+          tag: dns-server
         image: hickorydns/hickory-dns:latest
         dns:
             - "10.222.222.1"
@@ -20,7 +21,8 @@ services:
 
     mailserver:
         logging:
-          driver: none
+          driver: journald
+          tag: mailserver
         image: mailserver/docker-mailserver:13.3.1
         mem_limit: 4G
         mem_reservation: 2G
@@ -198,7 +200,8 @@ services:
         mem_limit: 1G
         mem_reservation: 100M
         logging:
-          driver: none
+          driver: journald
+          tag: openldap
         dns:
             - "10.222.222.1"
         hostname: ldap.mail-server.intranet
@@ -252,7 +255,8 @@ services:
 
     phpldapadmin:
         logging:
-          driver: none
+          driver: journald
+          tag: phpldapadmin
         image: ghcr.io/sudo-bot/docker-phpldapadmin/docker-phpldapadmin:latest
         mem_limit: 512M
         mem_reservation: 100M
@@ -290,7 +294,8 @@ services:
 
     acme:
         logging:
-          driver: none
+          driver: journald
+          tag: acme
         image: docker.io/neilpang/acme.sh:3.0.7
         dns:
             - "10.222.222.1"
@@ -332,7 +337,8 @@ services:
 
     crowdsec:
         logging:
-          driver: none
+          driver: journald
+          tag: crowdsec
         image: crowdsecurity/crowdsec:v1.6.0
         dns_search: ""
         restart: always
