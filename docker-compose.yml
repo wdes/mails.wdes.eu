@@ -14,7 +14,7 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.1
-                ipv6_address: fd00:bee::1
+                #ipv6_address: fd00:bee::1
         volumes:
             - ${HICKORY_DNS_NAMED_CONFIG:-./internal-dns/named.toml}:/etc/named.toml:ro
             - ./internal-dns/zones/:/var/named/zones/:ro
@@ -38,7 +38,7 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.2
-                ipv6_address: fd00:bee::2
+                #ipv6_address: fd00:bee::2
                 aliases:
                   - ${OVERRIDE_HOSTNAME}
         ports:
@@ -215,7 +215,7 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.3
-                ipv6_address: fd00:bee::3
+                #ipv6_address: fd00:bee::3
         healthcheck:
             test: 'ldapwhoami -D "cn=$${DOCKER_LDAP_HEALTHCHECK_USERNAME}" -w "$${DOCKER_LDAP_HEALTHCHECK_PASSWORD}"'
             start_period: 5s
@@ -275,7 +275,7 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.4
-                ipv6_address: fd00:bee::4
+                #ipv6_address: fd00:bee::4
         restart: on-failure:5
         environment:
             PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.mail-server.intranet': [{'server': [{'tls': False}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
@@ -314,7 +314,7 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.5
-                ipv6_address: fd00:bee::5
+                #ipv6_address: fd00:bee::5
         mem_limit: 512M
         mem_reservation: 10M
         restart: on-failure:15
@@ -390,8 +390,8 @@ networks:
                   ip_range: 10.222.222.0/28
                   gateway: 10.222.222.14
 
-                - subnet: fd00:bee::/124
+                #- subnet: fd00:bee::/124
                   # 16 hosts
                   # From fd00:bee:: to fd00:bee::f
-                  gateway: fd00:bee::f
+                  #gateway: fd00:bee::f
 
