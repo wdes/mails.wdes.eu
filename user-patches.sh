@@ -31,6 +31,7 @@ printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
 echo "Allow this network (${CONTAINER_NETWORK_V4})"
 
+source /usr/local/bin/helpers/log.sh
 source /usr/local/bin/helpers/utils.sh
 # Copied from /usr/local/bin/setup.d/networking.sh
 __add_to_postfix_mynetworks() {
