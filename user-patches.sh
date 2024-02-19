@@ -29,10 +29,9 @@ printf '\nsmtpd_tls_received_header = yes\n' "localhost" >> /etc/postfix/main.cf
 sed -i '/^smtp_helo_name =/d' /etc/postfix/main.cf
 printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
-echo "Allow this network (${CONTAINER_NETWORK_V4})"
-
 source /usr/local/bin/helpers/log.sh
 source /usr/local/bin/helpers/utils.sh
+
 # Copied from /usr/local/bin/setup.d/networking.sh
 __add_to_postfix_mynetworks() {
 	local NETWORK_TYPE=$1
@@ -45,7 +44,11 @@ __add_to_postfix_mynetworks() {
 	[[ ${ENABLE_OPENDKIM} -eq 1 ]] && echo "${NETWORK}" >>/etc/opendkim/TrustedHosts
 }
 
+echo "Allow this network (${CONTAINER_NETWORK_V4})"
 __add_to_postfix_mynetworks 'Container network' "${CONTAINER_NETWORK_V4}"
+
+echo "Allow this network (${CONTAINER_NETWORK_V6})"
+__add_to_postfix_mynetworks 'Container network' "${CONTAINER_NETWORK_V6}"
 
 echo 'Add spam check config'
 

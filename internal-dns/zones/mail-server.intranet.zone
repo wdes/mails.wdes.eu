@@ -9,24 +9,47 @@
 ; Set the DNS servers for .
 @ 7200 IN  NS ns1
 ; NS
-ns1 7200    IN  A   10.222.222.1
-; Hosts
-dns 7200    IN  A   10.222.222.1
-1                       PTR     dns.mail-server.intranet.
-emails 7200    IN  A   10.222.222.2
-2                       PTR     emails.mail-server.intranet.
-ldap 7200    IN  A   10.222.222.3
-3                       PTR     ldap.mail-server.intranet.
-phpldapadmin 7200    IN  A   10.222.222.4
-4                       PTR     phpldapadmin.mail-server.intranet.
-acme 7200    IN  A   10.222.222.5
-5                       PTR     acme.mail-server.intranet.
-crowdsec 7200    IN  A   10.222.222.6
-6                       PTR     crowdsec.mail-server.intranet.
+ns1 7200    IN  A      10.222.222.1
+ns1 7200    IN  AAAA   fd00:bee::1
 
-testing 7200    IN  A   10.222.222.13
-13                       PTR     testing.mail-server.intranet.
+; Hosts
+dns 7200    IN  A      10.222.222.1
+dns 7200    IN  AAAA   fd00:bee::1
+1                       IN PTR     dns.mail-server.intranet.
+1                       IN PTR     dns.mail-server.intranet.
+
+emails 7200    IN  A      10.222.222.2
+emails 7200    IN  AAAA   fd00:bee::2
+2                       IN PTR     emails.mail-server.intranet.
+2                       IN PTR     emails.mail-server.intranet.
+
+ldap 7200    IN  A      10.222.222.3
+ldap 7200    IN  AAAA   fd00:bee::3
+3                       IN PTR     ldap.mail-server.intranet.
+3                       IN PTR     ldap.mail-server.intranet.
+
+phpldapadmin 7200    IN  A      10.222.222.4
+phpldapadmin 7200    IN  AAAA   fd00:bee::4
+4                       IN PTR     phpldapadmin.mail-server.intranet.
+4                       IN PTR     phpldapadmin.mail-server.intranet.
+
+acme 7200    IN  A      10.222.222.5
+acme 7200    IN  AAAA   fd00:bee::5
+5                       IN PTR     acme.mail-server.intranet.
+5                       IN PTR     acme.mail-server.intranet.
+
+crowdsec 7200    IN  A      10.222.222.6
+crowdsec 7200    IN  AAAA   fd00:bee::6
+6                       IN PTR     crowdsec.mail-server.intranet.
+6                       IN PTR     crowdsec.mail-server.intranet.
+
+testing 7200    IN  A      10.222.222.13
+testing 7200    IN  AAAA   fd00:bee::13
+13                       IN PTR     testing.mail-server.intranet.
+e                        IN PTR     testing.mail-server.intranet.
 router 7200    IN  A   10.222.222.14
-14                       PTR     router.mail-server.intranet.
+router 7200    IN  AAAA   fd00:bee::f
+14             IN  PTR     router.mail-server.intranet.
+f              IN  PTR     router.mail-server.intranet.
 ; MX
 @   60		  IN  MX   0 emails.mail-server.intranet.

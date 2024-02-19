@@ -8,6 +8,7 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.13
+                ipv6_address: fd00:bee::e
         build: ./docker/
         volumes:
           - ./tests:/tests

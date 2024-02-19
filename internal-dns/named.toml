@@ -9,6 +9,11 @@ zone_type = "Primary"
 file = "zones/mail-server.intranet.zone"
 
 [[zones]]
+zone = "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.e.e.b.0.0.0.d.f.ip6.arpa"
+zone_type = "Primary"
+file = "zones/mail-server.intranet.zone"
+
+[[zones]]
 zone = "desportes.corp"
 zone_type = "Primary"
 file = "zones/desportes.corp.zone"

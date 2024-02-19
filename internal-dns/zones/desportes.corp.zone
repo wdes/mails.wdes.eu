@@ -12,4 +12,4 @@
 ; MX
 @   60		  IN  MX   0 emails.mail-server.intranet.
 ; SPF
-@   60		  IN  TXT   "v=spf1 mx ip4:10.222.222.13 -all"
+@   60		  IN  TXT   "v=spf1 mx a:testing.mail-server.intranet. -all"
