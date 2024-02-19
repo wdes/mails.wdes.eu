@@ -75,6 +75,7 @@ services:
             - ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
             - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         environment:
+            CONTAINER_NETWORK_V4: 10.222.222.0/28
             TZ: UTC
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
             ENABLE_MTA_STS: "1"
@@ -364,6 +365,7 @@ networks:
         ipam:
             driver: default
             config:
+                # See: __add_to_postfix_mynetworks in user-patches
                 - subnet: 10.222.222.0/28
                   ip_range: 10.222.222.0/28
                   gateway: 10.222.222.14

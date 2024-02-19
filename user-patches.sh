@@ -29,6 +29,11 @@ printf '\nsmtpd_tls_received_header = yes\n' "localhost" >> /etc/postfix/main.cf
 sed -i '/^smtp_helo_name =/d' /etc/postfix/main.cf
 printf '\nsmtp_helo_name = %s\n' "${OVERRIDE_HOSTNAME}" >> /etc/postfix/main.cf
 
+echo "Allow this network (${CONTAINER_NETWORK_V4})"
+
+source /usr/local/bin/setup.d/networking.sh
+__add_to_postfix_mynetworks 'Container network' "${CONTAINER_NETWORK_V4}"
+
 echo 'Add spam check config'
 
 cat <<EOF > /etc/amavis/conf.d/05-domain_id
@@ -272,5 +277,8 @@ else
 	echo 'Disabling replication'
 	rm -fv /etc/dovecot/conf.d/10-replication.conf
 fi
+
+echo 'Chmod postfix maildrop'
+chmod 777 /var/mail-state/spool-postfix/maildrop/
 
 echo ">>>>>>>>>>>>>>>>>>>>>>>Finished applying patches<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
