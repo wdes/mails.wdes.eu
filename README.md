@@ -80,3 +80,9 @@ mailq | tail +2 | awk 'BEGIN { RS = "" } /postmaster@domain.intranet$/ { print $
 ```sh
 mailq | cut -d ' ' -f 1 | sort | uniq | wc -l
 ```
+
+## Inspect mail in queue
+
+```sh
+postcat -q 5E6E5800B9
+```
