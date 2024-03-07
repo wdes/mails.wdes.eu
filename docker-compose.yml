@@ -260,47 +260,6 @@ services:
         security_opt:
             - no-new-privileges:true
 
-    phpldapadmin:
-        logging:
-          driver: syslog
-          options:
-            tag: phpldapadmin
-        image: ghcr.io/sudo-bot/docker-phpldapadmin/docker-phpldapadmin:latest
-        mem_limit: 512M
-        mem_reservation: 100M
-        dns:
-            - "10.222.222.1"
-        hostname: phpldapadmin.mail-server.intranet
-        dns_search: mail-server.intranet.
-        networks:
-            mail_infra_network:
-                ipv4_address: 10.222.222.4
-                #ipv6_address: fd00:bee::4
-        restart: on-failure:5
-        environment:
-            PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap.mail-server.intranet': [{'server': [{'tls': False}]},{'login': [{'bind_id': 'cn=admin,${LDAP_BASE_DN}'}]}]}]"
-            #PHPLDAPADMIN_HTTPS_CRT_FILENAME: "phpldapadmin-certificate.crt"
-            #PHPLDAPADMIN_HTTPS_KEY_FILENAME: "phpldapadmin-certificate.key"
-            #PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: "${PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME:-phpldapadmin-ca.crt}"
-            #PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME: "ca.cer"
-        #volumes:
-        # web UI (phpldapadmin-ca.crt, phpldapadmin-certificate.key, phpldapadmin-certificate.crt)
-        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/ca.cer:/etc/ssl/server-certificate/ca.cer:ro
-        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/fullchain.cer:/etc/ssl/server-certificate/server.cer:ro
-        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/${DOMAIN_NAME}.key:/etc/ssl/server-certificate/server.key:ro
-        #- ${PHP_LDAP_ADMIN_CERTS_DIR}:/container/service/phpldapadmin/assets/apache2/certs
-        # LDAP client
-        #- ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/ca.cer:/container/service/ldap-client/assets/certs/ca.cer:ro
-        ports:
-            - "${PHPLDAPADMIN_SSL_PORT:-8080}:80"
-        depends_on:
-            openldap:
-                condition: service_healthy
-            acme:
-                condition: service_healthy
-        security_opt:
-            - no-new-privileges:true
-
     acme:
         logging:
           driver: syslog
