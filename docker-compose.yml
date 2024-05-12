@@ -310,7 +310,7 @@ services:
           driver: syslog
           options:
             tag: crowdsec
-        image: crowdsecurity/crowdsec:v1.6.0
+        image: crowdsecurity/crowdsec:v1.6.1-2-debian
         dns_search: ""
         restart: always
         environment:
@@ -353,4 +353,3 @@ networks:
                   # 16 hosts
                   # From fd00:bee:: to fd00:bee::f
                   #gateway: fd00:bee::f
-
