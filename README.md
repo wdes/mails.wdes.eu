@@ -86,3 +86,9 @@ mailq | cut -d ' ' -f 1 | sort | uniq | wc -l
 ```sh
 postcat -q 5E6E5800B9
 ```
+
+## Remove mail in queue
+
+```sh
+postsuper -d CA48B81E3C
+```
