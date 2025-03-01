@@ -61,7 +61,6 @@ services:
             - ${USER_PATCHES_FILE:-./user-patches.sh}:/tmp/docker-mailserver/user-patches.sh:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/fullchain.cer:/etc/ssl/mail-server/server.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key:ro
-            - ${DOVECOT_REPLICATION_SSL_VOLUME:-./empty-volume}:/etc/ssl/replication/:ro
             - ./rspamd/local.d/phishing.conf:/etc/rspamd/local.d/phishing.conf:ro
             - ./rspamd/local.d/mx_check.conf:/etc/rspamd/local.d/mx_check.conf:ro
             # See: https://github.com/docker-mailserver/docker-mailserver/issues/2636
@@ -130,13 +129,6 @@ services:
             # Replication
             DOVECOT_ITERATE_ATTRS: "mail=user"
             DOVECOT_ITERATE_FILTER: "(objectClass=PostfixBookMailAccount)"
-            # Custom ENVS: DOVECOT_REPLICATION_
-            DOVECOT_REPLICATION_SERVER: "${DOVECOT_REPLICATION_SERVER}"
-            DOVECOT_REPLICATION_ADM_PASS: "${DOVECOT_REPLICATION_ADM_PASS}"
-            DOVECOT_REPLICATION_SSL_CA_FILE: "${DOVECOT_REPLICATION_SSL_CA_FILE}"
-            DOVECOT_REPLICATION_SSL_CA_DIR: "${DOVECOT_REPLICATION_SSL_CA_DIR}"
-            DOVECOT_REPLICATION_SSL_CERT_FILE: "${DOVECOT_REPLICATION_SSL_CERT_FILE}"
-            DOVECOT_REPLICATION_SSL_KEY_FILE: "${DOVECOT_REPLICATION_SSL_KEY_FILE}"
 
             SSL_TYPE: "manual"
             SSL_CERT_PATH: "/etc/ssl/mail-server/server.cer"
