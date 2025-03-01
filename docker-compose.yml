@@ -219,7 +219,7 @@ services:
             retries: 30
         environment:
             # CloudFlare
-            CF_Key: ${CF_API_KEY}
+            CF_Token: ${CF_API_KEY}
             CF_Email: ${CF_API_EMAIL}
             DOMAIN_NAME: ${DOMAIN_NAME}
             DOMAIN_NAMES: "${DOMAIN_NAMES}"
