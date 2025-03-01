@@ -33,10 +33,12 @@ zone = "cream.home"
 zone_type = "Primary"
 file = "zones/cream.home.zone"
 
+# See: ./internal-dns/named.private.toml
+
 #[[zones]]
 #zone = "wdes.intranet"
-#zone_type = "Forward"
-#stores = { type = "forward", name_servers = [{ socket_addr = "10.x:53", protocol = "udp", trust_nx_responses = false }] }
+#zone_type = "External"
+#stores = { type = "forward", name_servers = [{ socket_addr = "10.x:53", protocol = "udp" }] }
 
 [[zones]]
 ## zone: this is the ORIGIN of the zone, aka the base name, '.' is implied on the end
