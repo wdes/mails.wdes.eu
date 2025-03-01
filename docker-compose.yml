@@ -20,6 +20,11 @@ services:
             - ./internal-dns/zones/:/var/named/zones/:ro
         environment:
             RUST_LOG: ${HICKORY_DNS_LOG_LEVEL:-info}
+        healthcheck:
+            test: "nslookup -type=A dns.mail-server.intranet 10.222.222.1 1>/dev/null"
+            timeout: 3s
+            retries: 10
+            start_period: 2s
 
     mailserver:
         logging:
@@ -163,6 +168,8 @@ services:
             start_period: 20s
         depends_on:
             acme:
+                condition: service_healthy
+            dns-server:
                 condition: service_healthy
         # netcap: https://stackoverflow.com/a/35485119/5155484
         # getpcaps <pid>
