@@ -93,7 +93,7 @@ services:
             ENABLE_POP3: "1"
             ENABLE_IMAP: "1"
             ENABLE_MANAGESIEVE: "1"
-            ENABLE_SASLAUTHD: "1"
+            ENABLE_SASLAUTHD: "0"
             ENABLE_OPENDKIM: "1"
             ENABLE_OPENDMARC: "1"
             ENABLE_QUOTAS: "1"
