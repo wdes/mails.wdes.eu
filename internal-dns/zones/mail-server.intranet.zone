@@ -23,16 +23,6 @@ emails 7200    IN  AAAA   fd00:bee::2
 2                       IN PTR     emails.mail-server.intranet.
 2                       IN PTR     emails.mail-server.intranet.
 
-ldap 7200    IN  A      10.222.222.3
-ldap 7200    IN  AAAA   fd00:bee::3
-3                       IN PTR     ldap.mail-server.intranet.
-3                       IN PTR     ldap.mail-server.intranet.
-
-phpldapadmin 7200    IN  A      10.222.222.4
-phpldapadmin 7200    IN  AAAA   fd00:bee::4
-4                       IN PTR     phpldapadmin.mail-server.intranet.
-4                       IN PTR     phpldapadmin.mail-server.intranet.
-
 acme 7200    IN  A      10.222.222.5
 acme 7200    IN  AAAA   fd00:bee::5
 5                       IN PTR     acme.mail-server.intranet.

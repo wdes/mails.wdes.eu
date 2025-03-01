@@ -79,7 +79,6 @@ services:
             - ./rspamd/maps.d/local_wl_domain.map:/etc/rspamd/maps.d/local_wl_domain.map:ro
             - ./rspamd/maps.d/local_wl_from.map:/etc/rspamd/maps.d/local_wl_from.map:ro
             - ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
-            - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         environment:
             CONTAINER_NETWORK_V4: "10.222.222.0/28"
             CONTAINER_NETWORK_V6: "[fd00:bee::]/124"
@@ -95,7 +94,7 @@ services:
             ENABLE_POP3: "1"
             ENABLE_IMAP: "1"
             ENABLE_MANAGESIEVE: "1"
-            ENABLE_SASLAUTHD: "0" # The docker container manages it
+            ENABLE_SASLAUTHD: "1"
             ENABLE_OPENDKIM: "1"
             ENABLE_OPENDMARC: "1"
             ENABLE_QUOTAS: "1"
@@ -113,10 +112,10 @@ services:
             # Now it's up to RSPAMD_GREYLISTING to greylist
             # POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
             # POSTGREY_AUTO_WHITELIST_CLIENTS: "1" # Defaults to 5
-            LDAP_SERVER_HOST: "${LDAP_PROTOCOL:-ldaps}://ldap.mail-server.intranet" # Must match the hostname for SSL verification
-            DOVECOT_URIS: "${LDAP_PROTOCOL:-ldaps}://ldap.mail-server.intranet" # Must match the hostname for SSL verification
+            LDAP_SERVER_HOST: "${LDAP_PROTOCOL:-ldaps}://10.10.10.5" # Must match the hostname for SSL verification
+            DOVECOT_URIS: "${LDAP_PROTOCOL:-ldaps}://10.10.10.5" # Must match the hostname for SSL verification
             LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
-            LDAP_BIND_DN: "cn=admin,${LDAP_BASE_DN}"
+            LDAP_BIND_DN: ${LDAP_ADMIN_DN}
             LDAP_BIND_PW: ${LDAP_ADMIN_PASSWORD}
             LDAP_QUERY_FILTER_USER: "(&(mail=%s)(mailEnabled=TRUE))"
             LDAP_QUERY_FILTER_GROUP: "(&(mailGroupMember=%s)(mailEnabled=TRUE))"
@@ -199,73 +198,12 @@ services:
         cap_drop:
             - ALL
 
-    openldap:
-        image: docker.io/botsudo/docker-openldap
-        restart: on-failure:5
-        mem_limit: 1G
-        mem_reservation: 100M
-        logging:
-          driver: syslog
-          options:
-            tag: openldap
-        dns:
-            - "10.222.222.1"
-        hostname: ldap.mail-server.intranet
-        dns_search: mail-server.intranet.
-        networks:
-            mail_infra_network:
-                ipv4_address: 10.222.222.3
-                #ipv6_address: fd00:bee::3
-        healthcheck:
-            test: 'ldapwhoami -D "cn=$${DOCKER_LDAP_HEALTHCHECK_USERNAME}" -w "$${DOCKER_LDAP_HEALTHCHECK_PASSWORD}"'
-            start_period: 5s
-            interval: 30s
-            timeout: 5s
-            retries: 3
-        environment:
-            # 256 to enable debug
-            # See: https://www.openldap.org/doc/admin24/slapdconf2.html
-            LDAP_LOG_LEVEL: ${LDAP_LOG_LEVEL:-0}
-            LDAP_OPENLDAP_GID: 0
-            LDAP_OPENLDAP_UID: 0
-            LDAP_TLS_CRT_FILENAME: "/container/service/slapd/assets/certs/server.cer"
-            LDAP_TLS_KEY_FILENAME: "/container/service/slapd/assets/certs/server.key"
-            LDAP_TLS_CA_CRT_FILENAME: "/container/service/slapd/assets/certs/ca.cer"
-            LDAP_TLS_CIPHER_SUITE: "HIGH:MEDIUM:-SSLv2"
-            # never | allow | try | demand
-            LDAP_TLS_VERIFY_CLIENT: "try"
-            LDAP_BASE_DN: "${LDAP_BASE_DN}"
-            LDAP_AUTH_BASE_DN: "ou=people,${LDAP_BASE_DN}"
-            LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
-            LDAP_CONFIG_PASSWORD: ${LDAP_CONFIG_PASSWORD}
-            LDAP_MONITOR_PASSWORD: ${LDAP_MONITOR_PASSWORD}
-            # Only used by healthcheck command defined above
-            DOCKER_LDAP_HEALTHCHECK_USERNAME: ${DOCKER_LDAP_HEALTHCHECK_USERNAME}
-            DOCKER_LDAP_HEALTHCHECK_PASSWORD: ${DOCKER_LDAP_HEALTHCHECK_PASSWORD}
-            # Add ldaps:/// to SSL listen
-            LDAP_LISTEN_URLS: "ldap:/// ldapi:/// ldaps:///"
-        volumes:
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/ca.cer:/etc/ssl/certs/ca-certificates.crt:ro
-            - ${LDAP_DATA_DIR}:/var/lib/openldap/openldap-data
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/ca.cer:/container/service/slapd/assets/certs/ca.cer:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/fullchain.cer:/container/service/slapd/assets/certs/server.cer:ro
-            - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/server.key:ro
-            - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
-        ports:
-            - "${LDAP_PORT:-389}:389"
-            - "${LDAPS_PORT:-636}:636"
-        depends_on:
-            acme:
-                condition: service_healthy
-        security_opt:
-            - no-new-privileges:true
-
     acme:
         logging:
           driver: syslog
           options:
             tag: acme
-        image: docker.io/neilpang/acme.sh:3.0.7
+        image: docker.io/neilpang/acme.sh:3.1.0
         dns:
             - "10.222.222.1"
         hostname: acme.mail-server.intranet
@@ -310,7 +248,7 @@ services:
           driver: syslog
           options:
             tag: crowdsec
-        image: crowdsecurity/crowdsec:v1.6.1-2-debian
+        image: crowdsecurity/crowdsec:v1.6.5-debian
         dns_search: ""
         restart: always
         environment:
