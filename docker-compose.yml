@@ -162,8 +162,6 @@ services:
             retries: 10
             start_period: 20s
         depends_on:
-            openldap:
-                condition: service_healthy
             acme:
                 condition: service_healthy
         # netcap: https://stackoverflow.com/a/35485119/5155484
