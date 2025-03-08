@@ -68,6 +68,7 @@ services:
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/${DOMAIN_NAME}.key:/etc/ssl/mail-server/server.key:ro
             - ./rspamd/local.d/phishing.conf:/etc/rspamd/local.d/phishing.conf:ro
             - ./rspamd/local.d/mx_check.conf:/etc/rspamd/local.d/mx_check.conf:ro
+            - ./rspamd/local.d/redis.conf:/etc/rspamd/local.d/redis.conf:ro
             # See: https://github.com/docker-mailserver/docker-mailserver/issues/2636
             - ./rspamd/local.d/dmarc-reports.conf:/etc/rspamd/local.d/dmarc-reports.conf:ro
             - ./rspamd/local.d/actions.conf:/etc/rspamd/local.d/actions.conf:ro
@@ -90,7 +91,7 @@ services:
             OVERRIDE_HOSTNAME: ${OVERRIDE_HOSTNAME}
             ENABLE_MTA_STS: "1"
             ENABLE_RSPAMD: "1"
-            ENABLE_RSPAMD_REDIS: "1"
+            ENABLE_RSPAMD_REDIS: "0"
             ENABLE_CLAMAV: "1"
             ENABLE_AMAVIS: "1"
             ENABLE_FAIL2BAN: "1"
