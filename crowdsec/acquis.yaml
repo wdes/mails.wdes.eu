@@ -1,4 +1,0 @@
-filenames:
- - /var/log/mails/mail.log
-labels:
-  type: syslog
