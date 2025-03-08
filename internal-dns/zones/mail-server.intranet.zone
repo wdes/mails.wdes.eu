@@ -23,11 +23,6 @@ emails 7200    IN  AAAA   fd00:bee::2
 2                       IN PTR     emails.mail-server.intranet.
 2                       IN PTR     emails.mail-server.intranet.
 
-acme 7200    IN  A      10.222.222.5
-acme 7200    IN  AAAA   fd00:bee::5
-5                       IN PTR     acme.mail-server.intranet.
-5                       IN PTR     acme.mail-server.intranet.
-
 crowdsec 7200    IN  A      10.222.222.6
 crowdsec 7200    IN  AAAA   fd00:bee::6
 6                       IN PTR     crowdsec.mail-server.intranet.

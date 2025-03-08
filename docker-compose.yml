@@ -167,8 +167,6 @@ services:
             retries: 10
             start_period: 20s
         depends_on:
-            acme:
-                condition: service_healthy
             dns-server:
                 condition: service_healthy
         # netcap: https://stackoverflow.com/a/35485119/5155484
@@ -194,51 +192,6 @@ services:
           - no-new-privileges:true
         cap_drop:
             - ALL
-
-    acme:
-        logging:
-          driver: syslog
-          options:
-            tag: acme
-        image: docker.io/neilpang/acme.sh:3.1.0
-        dns:
-            - "10.222.222.1"
-        hostname: acme.mail-server.intranet
-        dns_search: mail-server.intranet.
-        networks:
-            mail_infra_network:
-                ipv4_address: 10.222.222.5
-                #ipv6_address: fd00:bee::5
-        mem_limit: 512M
-        mem_reservation: 10M
-        restart: on-failure:15
-        volumes:
-            - ./scripts:/scripts:ro
-            - ${ACME_HOME_DIR}:/acme.sh
-        working_dir: /scripts/
-        healthcheck:
-            test: ["CMD", "sh", "/scripts/healthcheck.sh"]
-            start_period: 10s
-            interval: ${ACME_INTERVAL:-30s}
-            timeout: 2s
-            retries: 30
-        environment:
-            # CloudFlare
-            CF_Token: ${CF_API_KEY}
-            CF_Email: ${CF_API_EMAIL}
-            DOMAIN_NAME: ${DOMAIN_NAME}
-            DOMAIN_NAMES: "${DOMAIN_NAMES}"
-            DNS_API: "dns_cf"
-            ACME_SH_EMAIL: "${ACME_SH_EMAIL:-}"
-            ACME_SH_EAB_KID: "${ACME_SH_EAB_KID:-}"
-            ACME_SH_EAB_HMAC: "${ACME_SH_EAB_HMAC:-}"
-            ACME_COMMAND_ARGUMENTS: ${ACME_COMMAND_ARGUMENTS:-}
-            ACME_ISSUE_ARGUMENTS: ${ACME_ISSUE_ARGUMENTS:-}
-            ACTIVATE_VOLSWAGEN: ${ACTIVATE_VOLSWAGEN:-}
-        entrypoint: /bin/sh
-        command: /scripts/acme.sh-docker.sh
-        security_opt:
-            - no-new-privileges:true
 
     crowdsec:
         logging:
