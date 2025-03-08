@@ -23,11 +23,6 @@ emails 7200    IN  AAAA   fd00:bee::2
 2                       IN PTR     emails.mail-server.intranet.
 2                       IN PTR     emails.mail-server.intranet.
 
-crowdsec 7200    IN  A      10.222.222.6
-crowdsec 7200    IN  AAAA   fd00:bee::6
-6                       IN PTR     crowdsec.mail-server.intranet.
-6                       IN PTR     crowdsec.mail-server.intranet.
-
 testing 7200    IN  A      10.222.222.13
 testing 7200    IN  AAAA   fd00:bee::13
 13                       IN PTR     testing.mail-server.intranet.
