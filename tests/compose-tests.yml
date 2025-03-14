@@ -70,3 +70,9 @@ services:
                 condition: service_healthy
         security_opt:
             - no-new-privileges:true
+
+networks:
+    mail_infra_network:
+      extends:
+        file: ../compose.yml
+        network: mail_infra_network
