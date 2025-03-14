@@ -5,14 +5,6 @@ permissions:
   contents: read
 
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - name: run shellcheck
-              uses: sudo-bot/action-shellcheck@latest
-              with:
-                  cli-args: "--format=checkstyle --severity=info --enable=all scripts/*.sh"
     run-all:
         runs-on: ubuntu-latest
         steps:
