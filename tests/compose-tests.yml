@@ -62,7 +62,6 @@ services:
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/ca.cer:/container/service/slapd/assets/certs/ca.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/fullchain.cer:/container/service/slapd/assets/certs/server.cer:ro
             - ${ACME_HOME_DIR}/${DOMAIN_NAME}_ecc/${DOMAIN_NAME}.key:/container/service/slapd/assets/certs/server.key:ro
-            - ${SASLAUTHD_SOCKET_FILE}:/var/run/saslauthd/mux
         ports:
             - "${LDAP_PORT:-389}:389"
             - "${LDAPS_PORT:-636}:636"
