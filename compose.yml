@@ -115,8 +115,8 @@ services:
             # Now it's up to RSPAMD_GREYLISTING to greylist
             # POSTGREY_DELAY: "${POSTGREY_DELAY:-300}"
             # POSTGREY_AUTO_WHITELIST_CLIENTS: "1" # Defaults to 5
-            LDAP_SERVER_HOST: "${LDAP_PROTOCOL:-ldaps}://10.10.10.5" # Must match the hostname for SSL verification
-            DOVECOT_URIS: "${LDAP_PROTOCOL:-ldaps}://10.10.10.5" # Must match the hostname for SSL verification
+            LDAP_SERVER_HOST: "${LDAP_PROTOCOL:-ldaps}://${LDAP_HOST}" # Must match the hostname for SSL verification
+            DOVECOT_URIS: "${LDAP_PROTOCOL:-ldaps}://${LDAP_HOST}" # Must match the hostname for SSL verification
             LDAP_SEARCH_BASE: "ou=people,${LDAP_BASE_DN}"
             LDAP_BIND_DN: ${LDAP_ADMIN_DN}
             LDAP_BIND_PW: ${LDAP_ADMIN_PASSWORD}

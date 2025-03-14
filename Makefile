@@ -25,7 +25,7 @@ check-env:
 run-test: check-env
 	# Run phpunit test suite
 	IMAGE_TAG="${IMAGE_TAG}" \
-	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/compose.yml up --exit-code-from=sut --abort-on-container-exit
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/compose-tests.yml up --exit-code-from=sut --abort-on-container-exit
 
 cleanup-test: check-env
 	@echo "Stopping and removing the container"
@@ -49,6 +49,7 @@ setup-test-files: check-env
 	cp tests/make-certs.sh $(TEMP_DIR)/tests/
 	cp -rp tests/php $(TEMP_DIR)/tests/
 	cp -rp tests/seeding $(TEMP_DIR)/tests/
+	cp -v tests/compose-tests.yml $(TEMP_DIR)/tests/compose-tests.yml
 	cp -v tests/data/acme.sh/$(ACME_DOMAIN)_ecc/*.*nf $(TEMP_DIR)/tests/data/acme.sh/$(ACME_DOMAIN)_ecc
 
 	# Generate opendkim keys
@@ -82,4 +83,4 @@ setup-test: create-temp-env check-env setup-test-files
 	# Seed ldap test users
 	$(TEMP_DIR)/tests/seeding/seed-ldap.sh
 	# Build phpunit test suite
-	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/compose.yml build
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/compose-tests.yml build
