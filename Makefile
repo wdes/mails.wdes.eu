@@ -56,7 +56,6 @@ setup-test-files: check-env
 	openssl genrsa -out $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/$(DKIM_DOMAIN)/mail.private 2048
 	openssl rsa -in $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/$(DKIM_DOMAIN)/mail.private -pubout -out $(TEMP_DIR)/tests/data/mailconfig/opendkim/keys/$(DKIM_DOMAIN)/mail.txt
 
-	cp -rp scripts $(TEMP_DIR)
 	chmod 777 -R $(TEMP_DIR)/tests/data/acme.sh
 	$(TEMP_DIR)/tests/make-certs.sh
 	# rxrxrx
