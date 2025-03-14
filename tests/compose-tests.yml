@@ -65,9 +65,6 @@ services:
         ports:
             - "${LDAP_PORT:-389}:389"
             - "${LDAPS_PORT:-636}:636"
-        depends_on:
-            acme:
-                condition: service_healthy
         security_opt:
             - no-new-privileges:true
 
