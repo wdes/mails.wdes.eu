@@ -61,12 +61,6 @@ setup-test-files: check-env
 	$(TEMP_DIR)/tests/make-certs.sh
 	# rxrxrx
 	chmod 555 -R $(TEMP_DIR)/tests/data/acme.sh
-	@cd $(TEMP_DIR)
-	@echo "Running in $(PWD)"
-	mkdir -p $(TEMP_DIR)/tests/data/phpldapadmin
-	openssl req -nodes -x509 -newkey rsa:4096 -keyout $(TEMP_DIR)/tests/data/phpldapadmin/phpldapadmin-certificate.key \
-    -out $(TEMP_DIR)/tests/data/phpldapadmin/phpldapadmin-certificate.crt -days 15 \
-    -subj "/C=FR/O=Wdes SAS/OU=Test/CN=phpldapadmin/emailAddress=williamdes@wdes.fr"
 
 setup-test: create-temp-env check-env setup-test-files
 	set -eu

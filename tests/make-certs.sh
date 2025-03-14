@@ -39,3 +39,6 @@ openssl x509 -in $KEYCERT_PATH.cer -noout -text
 
 cat $KEYCERT_PATH.cer > $SSL_PATH/fullchain.cer
 cat $CA_PATH.cer >> $SSL_PATH/fullchain.cer
+
+echo "Files in: $SSL_PATH"
+ls -lah $SSL_PATH
