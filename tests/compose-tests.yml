@@ -4,6 +4,9 @@ services:
         file: ../compose.yml
         service: dns-server
     mailserver:
+      depends_on:
+        - openldap
+        - dns-server
       extends:
         file: ../compose.yml
         service: mailserver
