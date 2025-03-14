@@ -30,7 +30,7 @@ run-test: check-env
 cleanup-test: check-env
 	@echo "Stopping and removing the container"
 	IMAGE_TAG="${IMAGE_TAG}" \
-	$(TEMP_DIR)/dockerl down
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/compose-tests.yml down
 	sudo rm -rf $(TEMP_DIR)
 	rm -v /tmp/current-temp-env
 
@@ -71,13 +71,13 @@ setup-test-files: check-env
 setup-test: create-temp-env check-env setup-test-files
 	set -eu
 	# Build images
-	$(TEMP_DIR)/dockerl build
+	$(TEMP_DIR)/dockerl  -f $(TEMP_DIR)/tests/php/compose-tests.yml build
 	# Build images
-	$(TEMP_DIR)/dockerl pull
+	$(TEMP_DIR)/dockerl  -f $(TEMP_DIR)/tests/php/compose-tests.yml pull
 	# Bring down just in case
-	$(TEMP_DIR)/dockerl down || echo 'maybe already down'
+	$(TEMP_DIR)/dockerl  -f $(TEMP_DIR)/tests/php/compose-tests.yml down || echo 'maybe already down'
 	# Bring up
-	$(TEMP_DIR)/dockerl up -d --remove-orphans || $(TEMP_DIR)/dockerl up -d --remove-orphans
+	$(TEMP_DIR)/dockerl  -f $(TEMP_DIR)/tests/php/compose-tests.yml up -d --remove-orphans || $(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/compose-tests.yml up -d --remove-orphans
 	# Sleep 10 sec
 	@sleep 10
 	# Seed ldap test users
