@@ -25,7 +25,7 @@ check-env:
 run-test: check-env
 	# Run phpunit test suite
 	IMAGE_TAG="${IMAGE_TAG}" \
-	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/docker-compose.yml up --exit-code-from=sut --abort-on-container-exit
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/compose.yml up --exit-code-from=sut --abort-on-container-exit
 
 cleanup-test: check-env
 	@echo "Stopping and removing the container"
@@ -39,7 +39,7 @@ create-temp-env:
 
 setup-test-files: check-env
 	set -eu
-	cp -rv docker-compose.yml dockerl user-patches.sh rspamd internal-dns $(TEMP_DIR)
+	cp -rv compose.yml dockerl user-patches.sh rspamd internal-dns $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
 	rm -vf tests/data/acme.sh/*/*.csr
 	rm -vf tests/data/acme.sh/*/*.cer
@@ -83,4 +83,4 @@ setup-test: create-temp-env check-env setup-test-files
 	# Seed ldap test users
 	$(TEMP_DIR)/tests/seeding/seed-ldap.sh
 	# Build phpunit test suite
-	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/docker-compose.yml build
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/php/compose.yml build
