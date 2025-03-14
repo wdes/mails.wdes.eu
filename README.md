@@ -69,6 +69,16 @@ docker exec -it xxxx-crowdsec-1 setup fail2ban unban x.x.x.x
 mailq | tail +2 | awk 'BEGIN { RS = "" } /postmaster@domain.intranet$/ { print $1 }' | tr -d '*!#' | postsuper -d -
 ```
 
+## Remove all emails from bad domains
+
+```sh
+mailq | tail +2 | grep -F "@mail.com" | cut -d '!' -f 1 | postsuper -d -
+```
+
+```sh
+mailq | tail +2 | grep -F ".co.jp" | cut -d '!' -f 1 | postsuper -d -
+```
+
 ## Re-queue emails for an email
 
 ```sh
