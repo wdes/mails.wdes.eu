@@ -78,6 +78,8 @@ setup-test: create-temp-env check-env setup-test-files
 	$(TEMP_DIR)/tests/seeding/seed-ldap.sh
 	# Print all containers
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml ps -a
+	# Print mailserver container logs
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml logs mailserver
 	# Check DNS works
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml exec mailserver dig emails.mail-server.intranet +short
 	# Build phpunit test suite
