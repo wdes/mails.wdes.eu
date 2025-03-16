@@ -81,8 +81,6 @@ setup-test: create-temp-env check-env setup-test-files
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml ps -a
 	# Print mailserver container logs
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml logs mailserver
-	# Inspect mailserver container (https://github.com/docker/compose/issues/4155)
-	docker inspect $(shell docker ps -a -f label=com.docker.compose.service=mailserver --format '{{.ID}}')
 	# Check DNS works
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml exec mailserver dig emails.mail-server.intranet +short
 	# Build phpunit test suite
