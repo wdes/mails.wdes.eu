@@ -79,7 +79,7 @@ setup-test: create-temp-env check-env setup-test-files
 	# Print all containers
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml ps -a
 	# Inspect mailserver container (https://github.com/docker/compose/issues/4155)
-	docker inspect $(shell docker ps -f label=com.docker.compose.service=mailserver --format '{{.ID}}')
+	docker inspect $(shell docker ps -a -f label=com.docker.compose.service=mailserver --format '{{.ID}}')
 	# Print mailserver container logs
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml logs mailserver
 	# Check DNS works
