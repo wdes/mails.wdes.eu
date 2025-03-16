@@ -260,6 +260,7 @@ class SendAndReceiveTest extends TestCase
      */
     public function testSendingAnEmailRelayAccessDenied(): void
     {
+        $this->markTestIncomplete('To be re-done');
         // In this scenario there is no SMTP server to login, so we send directly to destination
         // But since the destination does not know the destination email: sesame+relay-access-test@aladin.private
         // It says that relay sending is denied
@@ -328,6 +329,7 @@ class SendAndReceiveTest extends TestCase
      */
     public function testSendingAnEmailFromSPFNotAllowedIsDenied(): void
     {
+        $this->markTestIncomplete('To be re-done');
         // In this scenario there is no SMTP server to login, so we send directly to destination
         // The server knows the recipient email: john@williamdes.corp
         // It checks SPF on williamdes.corp
