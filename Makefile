@@ -76,5 +76,7 @@ setup-test: create-temp-env check-env setup-test-files
 	@sleep 10
 	# Seed ldap test users
 	$(TEMP_DIR)/tests/seeding/seed-ldap.sh
+	# Check DNS works
+	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml exec mailserver dig emails.mail-server.intranet +short
 	# Build phpunit test suite
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml build
