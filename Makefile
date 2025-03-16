@@ -41,7 +41,7 @@ setup-test-files: check-env
 	set -eu
 	cp -rv compose.yml dockerl user-patches.sh rspamd internal-dns $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
-	sed -i 's/<rootdir>/$(TEMP_DIR)/' $(TEMP_DIR)/.env
+	sed -i 's|<rootdir>|$(TEMP_DIR)|' $(TEMP_DIR)/.env
 	rm -vf tests/data/acme.sh/*/*.csr
 	rm -vf tests/data/acme.sh/*/*.cer
 	rm -vf tests/data/acme.sh/*/ca.*
