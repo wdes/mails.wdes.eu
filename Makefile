@@ -78,8 +78,8 @@ setup-test: create-temp-env check-env setup-test-files
 	$(TEMP_DIR)/tests/seeding/seed-ldap.sh
 	# Print all containers
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml ps -a
-	# Inspect mailserver container
-	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml inspect mailserver
+	# Inspect mailserver container (https://github.com/docker/compose/issues/4155)
+	docker inspect $$(docker ps -f label=com.docker.compose.service=mailserver --format '{{.ID}}')
 	# Print mailserver container logs
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml logs mailserver
 	# Check DNS works
