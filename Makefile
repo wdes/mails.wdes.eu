@@ -41,6 +41,7 @@ setup-test-files: check-env
 	set -eu
 	cp -rv compose.yml dockerl user-patches.sh rspamd internal-dns $(TEMP_DIR)
 	cp tests/.env.test1 $(TEMP_DIR)/.env
+	sed -i 's/<rootdir>/$(TEMP_DIR)/' $(TEMP_DIR)/.env
 	rm -vf tests/data/acme.sh/*/*.csr
 	rm -vf tests/data/acme.sh/*/*.cer
 	rm -vf tests/data/acme.sh/*/ca.*
@@ -78,10 +79,10 @@ setup-test: create-temp-env check-env setup-test-files
 	$(TEMP_DIR)/tests/seeding/seed-ldap.sh
 	# Print all containers
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml ps -a
-	# Inspect mailserver container (https://github.com/docker/compose/issues/4155)
-	docker inspect $(shell docker ps -a -f label=com.docker.compose.service=mailserver --format '{{.ID}}')
 	# Print mailserver container logs
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml logs mailserver
+	# Inspect mailserver container (https://github.com/docker/compose/issues/4155)
+	docker inspect $(shell docker ps -a -f label=com.docker.compose.service=mailserver --format '{{.ID}}')
 	# Check DNS works
 	$(TEMP_DIR)/dockerl -f $(TEMP_DIR)/tests/compose-tests.yml exec mailserver dig emails.mail-server.intranet +short
 	# Build phpunit test suite
