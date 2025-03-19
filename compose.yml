@@ -77,6 +77,7 @@ services:
             - ./rspamd/local.d/dkim_signing.conf:/etc/rspamd/local.d/dkim_signing.conf:ro
             - ./rspamd/local.d/history_redis.conf:/etc/rspamd/local.d/history_redis.conf:ro
             - ./rspamd/local.d/rbl.conf:/etc/rspamd/local.d/rbl.conf:ro
+            - ./rspamd/local.d/phishing_whitelist.inc:/etc/rspamd/local.d/phishing_whitelist.inc:ro
             # maps
             - ./rspamd/maps.d/mx_whitelist.inc:/etc/rspamd/maps.d/mx_whitelist.inc:ro
             - ./rspamd/maps.d/local_wl_domain.map:/etc/rspamd/maps.d/local_wl_domain.map:ro
