@@ -83,6 +83,7 @@ services:
             - ./rspamd/maps.d/local_wl_domain.map:/etc/rspamd/maps.d/local_wl_domain.map:ro
             - ./rspamd/maps.d/local_wl_from.map:/etc/rspamd/maps.d/local_wl_from.map:ro
             - ./rspamd/maps.d/local_reject_from.map:/etc/rspamd/maps.d/local_reject_from.map:ro
+            - ./rspamd/maps.d/local_reject_from_email.map:/etc/rspamd/maps.d/local_reject_from_email.map:ro
             - ./cron/rspamd-learn:/etc/cron.d/rspamd-learn:ro
         environment:
             CONTAINER_NETWORK_V4: "10.222.222.0/28"
