@@ -4,7 +4,7 @@ services:
           driver: syslog
           options:
             tag: dns-server
-        image: hickorydns/hickory-dns:latest
+        image: hickorydns/hickory-dns:0.25.1
         dns:
             - "10.222.222.1"
         hostname: dns.mail-server.intranet
