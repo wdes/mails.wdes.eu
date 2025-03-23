@@ -55,8 +55,8 @@ type = "recursor"
 roots = "/usr/share/dns/root.hints"
 ns_cache_size = 1024
 record_cache_size = 1048576
-recursion_limit = 12
-ns_recursion_limit = 16
+recursion_limit = 70
+ns_recursion_limit = 70
 
 ## allow_server: these networks will override entries in deny_server and allow you to make
 ## granular exceptions to networks you otherwise want to deny.  This allows queries to be
