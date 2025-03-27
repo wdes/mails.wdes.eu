@@ -29,7 +29,7 @@ services:
           driver: syslog
           options:
             tag: mailserver
-        image: mailserver/docker-mailserver:15.0.1
+        image: mailserver/docker-mailserver:15.0.2
         mem_limit: 4G
         mem_reservation: 2G
         restart: on-failure:40
