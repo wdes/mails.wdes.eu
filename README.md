@@ -102,3 +102,16 @@ postcat -q 5E6E5800B9
 ```sh
 postsuper -d CA48B81E3C
 ```
+
+## Quarantined Emails
+
+```sh
+# Find them
+find /var/mail-state/lib-amavis/virusmails/ -type f
+# Release it
+amavisd-release O/badh-OQY5j9l0Zuxw
+# To another user
+amavisd-release J/badh-JRP3HDDqOx6y user@domain.fr
+# Drop it
+rm -v /var/mail-state/lib-amavis/virusmails/J/badh-JRP3HDDqOx6y
+```
