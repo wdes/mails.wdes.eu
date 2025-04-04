@@ -1,10 +1,35 @@
 services:
+    #dns-server:
+    #    logging:
+    #      driver: syslog
+    #      options:
+    #        tag: dns-server
+    #    image: hickorydns/hickory-dns:0.25.1
+    #    dns:
+    #        - "10.222.222.1"
+    #    hostname: dns.mail-server.intranet
+    #    dns_search: mail-server.intranet.
+    #    networks:
+    #        mail_infra_network:
+    #            ipv4_address: 10.222.222.1
+    #            #ipv6_address: fd00:bee::1
+    #    volumes:
+    #        - ${HICKORY_DNS_NAMED_CONFIG:-./internal-dns/named.toml}:/etc/named.toml:ro
+    #        - ./internal-dns/zones/:/var/named/zones/:ro
+    #    environment:
+    #        RUST_LOG: ${HICKORY_DNS_LOG_LEVEL:-info}
+    #    healthcheck:
+    #        test: "nslookup -type=A dns.mail-server.intranet 10.222.222.1 1>/dev/null"
+    #        timeout: 3s
+    #        retries: 10
+    #        start_period: 2s
+
     dns-server:
         logging:
           driver: syslog
           options:
             tag: dns-server
-        image: hickorydns/hickory-dns:0.25.1
+        image: ubuntu/bind9:9.18-24.04_beta
         dns:
             - "10.222.222.1"
         hostname: dns.mail-server.intranet
@@ -14,15 +39,14 @@ services:
                 ipv4_address: 10.222.222.1
                 #ipv6_address: fd00:bee::1
         volumes:
-            - ${HICKORY_DNS_NAMED_CONFIG:-./internal-dns/named.toml}:/etc/named.toml:ro
-            - ./internal-dns/zones/:/var/named/zones/:ro
-        environment:
-            RUST_LOG: ${HICKORY_DNS_LOG_LEVEL:-info}
+            - ${BIND_DNS_NAMED_CONFIG:-./internal-dns/named.conf}:/etc/bind/named.conf:ro
+            - ./internal-dns/zones/:/var/bind/zones/:ro
         healthcheck:
             test: "nslookup -type=A dns.mail-server.intranet 10.222.222.1 1>/dev/null"
             timeout: 3s
             retries: 10
             start_period: 2s
+
 
     mailserver:
         logging:
