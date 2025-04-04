@@ -64,7 +64,7 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.2
-                ipv6_address: 2a10:4640:5:b:80::1
+                ipv6_address: 2a10:4640:5:b:80::2
                 aliases:
                   - ${OVERRIDE_HOSTNAME}
         ports:
@@ -235,4 +235,4 @@ networks:
                 - subnet: 2a10:4640:5:b:80::/124
                   # 16 hosts
                   # From 2a10:4640:5:b:80:: to 2a10:4640:5:b:80::f
-                  gateway: 2a10:4640:5:b:80::1
+                  gateway: 2a10:4640:5:b:80::f
