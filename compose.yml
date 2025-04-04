@@ -41,11 +41,11 @@ services:
         volumes:
             - ${BIND_DNS_NAMED_CONFIG:-./internal-dns/named.conf}:/etc/bind/named.conf:ro
             - ./internal-dns/zones/:/etc/bind/zones/:ro
-        healthcheck:
-            test: "nslookup -type=A dns.mail-server.intranet 10.222.222.1 1>/dev/null"
-            timeout: 3s
-            retries: 10
-            start_period: 2s
+        #healthcheck:
+        #    test: "nslookup -type=A dns.mail-server.intranet 10.222.222.1 1>/dev/null"
+        #    timeout: 3s
+        #    retries: 10
+        #    start_period: 2s
 
 
     mailserver:
