@@ -222,7 +222,7 @@ services:
 networks:
     mail_infra_network:
         name: infrastructure_mail_infra_network
-        enable_ipv6: true
+        #enable_ipv6: true
         ipam:
             driver: default
             # See: __add_to_postfix_mynetworks in user-patches
@@ -232,7 +232,7 @@ networks:
                   ip_range: 10.222.222.0/28
                   gateway: 10.222.222.14
 
-                - subnet: fd00:bee::/124
+                #- subnet: fd00:bee::/124
                   # 16 hosts
                   # From fd00:bee:: to fd00:bee::f
-                  gateway: fd00:bee::f
+                  #gateway: fd00:bee::f
