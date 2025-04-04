@@ -37,7 +37,7 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.1
-                ipv6_address: fd00:bee::1
+                #ipv6_address: fd00:bee::1
         volumes:
             - ${BIND_DNS_NAMED_CONFIG:-./internal-dns/named.conf}:/etc/bind/named.conf:ro
             - ./internal-dns/zones/:/etc/bind/zones/:ro
@@ -64,7 +64,7 @@ services:
         networks:
             mail_infra_network:
                 ipv4_address: 10.222.222.2
-                ipv6_address: fd00:bee::2
+                #ipv6_address: fd00:bee::2
                 aliases:
                   - ${OVERRIDE_HOSTNAME}
         ports:
