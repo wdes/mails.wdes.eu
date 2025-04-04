@@ -42,11 +42,10 @@ services:
             - ${BIND_DNS_NAMED_CONFIG:-./internal-dns/named.conf}:/etc/bind/named.conf:ro
             - ./internal-dns/zones/:/etc/bind/zones/:ro
         healthcheck:
-            test: "true"
+            test: "getent hosts dns.mail-server.intranet | grep -F '10.222.222.1    dns.mail-server.intranet dns' -c 1>/dev/null"
             timeout: 3s
             retries: 10
             start_period: 2s
-
 
     mailserver:
         logging:
