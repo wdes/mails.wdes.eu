@@ -119,7 +119,7 @@ services:
             ENABLE_RSPAMD_REDIS: "0"
             ENABLE_CLAMAV: "1"
             ENABLE_AMAVIS: "1"
-            ENABLE_FAIL2BAN: "1"
+            ENABLE_FAIL2BAN: "0"
             ENABLE_POSTGREY: "0"
             ENABLE_POP3: "1"
             ENABLE_IMAP: "1"
